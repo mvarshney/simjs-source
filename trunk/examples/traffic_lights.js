@@ -1,17 +1,4 @@
-//if (this.load) {
-//	load('../src/sim.js');
-//	load('../src/random.js');
-//	load('../src/queues.js');
-//	load('../src/stats.js');
-//	load('../src/request.js');
-//	var document = {
-//		write: function(msg) {
-//			print(msg);
-//		}
-//	};
-//}
-
-(function(SEED, GREEN_TIME, MEAN_ARRIVAL, SIMTIME) {
+function trafficLightSimulation(GREEN_TIME, MEAN_ARRIVAL, SEED, SIMTIME) {
 	var sim = new Sim();
 	var random = new Random(SEED);
 	var trafficLights = [new Sim.Event("North-South Light"),
@@ -69,8 +56,8 @@
     
     sim.addEntity(LightController);
     sim.addEntity(Traffic);
-    
-    document.write("<pre>");
+   
+//    Uncomment to display logging information
 //    sim.setLogger(function (str) {
 //    	document.write(str);
 //    });
@@ -78,19 +65,9 @@
     // simulate for SIMTIME time
     sim.simulate(SIMTIME); 
     
-    document.write("Number of vehicles at intersection (average) = " 
-    		+ stats.sizeSeries.average().toFixed(3) 
-    		+ " (+/- " + stats.sizeSeries.deviation().toFixed(3)
-    		+ ")\n");
-    document.write("Time spent at the intersection (average) = " 
-    		+ stats.durationSeries.average().toFixed(3)
-    		+ " (+/- " + stats.durationSeries.deviation().toFixed(3)
-    		+ ")\n");
+    return [stats.durationSeries.average(),
+            stats.durationSeries.deviation(),
+            stats.sizeSeries.average(),
+            stats.sizeSeries.deviation()];
 	
 }
-(
-		1234,  // SEED
-		5.0,  // seconds, time that traffic line is green
-		1.0,   // mean arrival of vehicles
-		30.0   // simulation time
-));
