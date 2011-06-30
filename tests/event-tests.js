@@ -106,3 +106,41 @@ function testEventSustain() {
 	sim.simulate(100);
 	entities = 1;
 }
+
+function testEventWaitQueue () {
+	var barrier = new Sim.Event('Barrier');
+	var funnel = new Sim.Event('Funnel');
+	var wcount = 0;
+	var qcount = 0;
+	var Entity = {
+	    start: function () {
+	        this.waitEvent(barrier).done(function () {
+	            wcount++;
+	        });
+
+	        this.queueEvent(funnel).done(function () {
+	            qcount++;
+	        });
+
+	        if (this.master) {
+	            this.setTimer(10)
+	            .done(barrier.fire, barrier)
+	            .done(funnel.fire, funnel);
+	        }
+	    },
+	    finalize: function () {
+	    	finalized ++;
+	    }
+	};
+
+	var sim = new Sim();
+	var e = [];
+	for (var i = 0; i < 100; i++) {
+	    e.push(sim.addEntity(Entity));
+	}
+	e[0].master = true;
+	sim.simulate(100);
+	entities = 100;
+	assertEquals(wcount, 100);
+	assertEquals(qcount, 1);
+}
