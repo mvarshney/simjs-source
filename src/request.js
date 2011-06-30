@@ -55,7 +55,7 @@ Sim.Request.prototype.done = function (callback, context, argument) {
 
 Sim.Request.prototype.waitUntil = function (delay, callback, context, argument) {
 	var ro = this._addRequest(this.scheduledAt + delay, callback, context, argument);
-	this.entity.sim.queue.enqueue(ro.deliverAt, ro);
+	this.entity.sim.queue.insert(ro);
 	return this;
 };
 

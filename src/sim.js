@@ -1,34 +1,10 @@
-/** Priority Queue
- * 
- * @returns {PQueue}
- */
-function PQueue() {
-	this.data = [];
-}
-PQueue.prototype.enqueue = function (key, value) {
-	for (var i = 0; i < this.data.length; i++) {
-		if (this.data[i][0] > key) {
-			break;
-		}
-	}
-	this.data.splice(i, 0, [key, value]);
-};
-
-PQueue.prototype.dequeue = function () {
-	if (this.data.length === 0) {
-		return undefined;
-	}
-	var v = this.data.shift();
-	return v[1];
-};
-
 /** Simulator Object
  * 
  */
 function Sim() {
 	this.simTime = 0;
 	this.entities = [];
-	this.queue = new PQueue();
+	this.queue = new Sim.PQueue();
 	this.endTime = 0;
 }
 
@@ -50,13 +26,13 @@ Sim.prototype.sendMessage = function () {
 	
 	if (!entities) {
 		// send to all entities
-		for (var i = 0; i < sim.entities.length; i++) {
+		for (var i = sim.entities.length - 1; i >= 0; i--) {
 			var entity = sim.entities[i];
 			if (entity === sender) continue;
 			if (entity.onMessage) entity.onMessage.call(entity, sender, message);
 		}
 	} else if (entities instanceof Array) {
-		for (var i = 0; i < entities.length; i++) {
+		for (var i = entities.length - 1; i >= 0; i--) {
 			var entity = entities[i];
 			if (entity === sender) continue;
 			if (entity.onMessage) entity.onMessage.call(entity, sender, message);
@@ -85,7 +61,7 @@ Sim.prototype.addEntity = function (proto) {
 					this.sim.time(), 
 					this.sim.time() + duration);
 			
-			this.sim.queue.enqueue(ro.deliverAt, ro);
+			this.sim.queue.insert(ro);
 			return ro;
 		};
 		
@@ -133,7 +109,11 @@ Sim.prototype.addEntity = function (proto) {
 			ro.data = entities;
 			ro.deliver = this.sim.sendMessage;
 			
-			this.sim.queue.enqueue(ro.deliverAt, ro);
+			this.sim.queue.insert(ro);
+		};
+		
+		proto.log = function (message) {
+			this.sim.log(message);
 		};
 	}
 	
@@ -170,7 +150,7 @@ Sim.prototype.simulate = function (endTime, flags) {
 Sim.prototype.runLoop = function () {
 	while (true) {
 		// Get the earliest event
-		var ro = this.queue.dequeue();
+		var ro = this.queue.remove();
 		
 		// If there are no more events, we are done with simulation here.
 		if (ro == undefined) break;
@@ -204,8 +184,10 @@ Sim.prototype.setLogger = function (logger) {
 
 Sim.prototype.log = function (message, entity) {
 	if (!this.logger) return;
+	var entityMsg = "";
+	if (entity !== undefined) entityMsg = " [" + entity.id + "] ";
 	this.logger(this.simTime.toFixed(6)
-			+ (entity === undefined ? "" : entity.id)
+			+ entityMsg
 			+ "   " 
 			+ message 
 			+ "\n");
@@ -298,7 +280,7 @@ Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
 		ro.cancelRenegeClauses();
 
 		ro.deliverAt = ro.entity.time() + ro.duration;
-		ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+		ro.entity.sim.queue.insert(ro);
 	}
 };
 
@@ -353,7 +335,7 @@ Sim.Facility.prototype.useLCFS = function (duration, ro) {
 	
 	// schedule this new event
 	ro.deliverAt = ro.entity.time() + duration;
-	ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+	ro.entity.sim.queue.insert(ro);
 };
 
 Sim.Facility.prototype.useLCFSCallback = function () {
@@ -404,7 +386,7 @@ Sim.Buffer.prototype.get = function (amount, ro) {
 		this.available -= amount;
 		
 		ro.deliverAt = ro.entity.time();
-		ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+		ro.entity.sim.queue.insert(ro);
 		
 		this.getQueue.passby(ro.deliverAt);
 		
@@ -422,7 +404,7 @@ Sim.Buffer.prototype.put = function (amount, ro) {
 		this.available += amount;
 		
 		ro.deliverAt = ro.entity.time();
-		ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+		ro.entity.sim.queue.insert(ro);
 		
 		this.putQueue.passby(ro.deliverAt);
 		
@@ -450,7 +432,7 @@ Sim.Buffer.prototype.progressGetQueue = function () {
 			this.getQueue.shift(obj.entity.time());
 			this.available -= obj.amount;
 			obj.deliverAt = obj.entity.time();
-			obj.entity.sim.queue.enqueue(obj.deliverAt, obj);
+			obj.entity.sim.queue.insert(obj);
 		} else {
 			// this request cannot be satisfied
 			break;
@@ -473,7 +455,7 @@ Sim.Buffer.prototype.progressPutQueue = function () {
 			this.putQueue.shift(obj.entity.time());
 			this.available += obj.amount;
 			obj.deliverAt = obj.entity.time();
-			obj.entity.sim.queue.enqueue(obj.deliverAt, obj);
+			obj.entity.sim.queue.insert(obj);
 		} else {
 			// this request cannot be satisfied
 			break;
@@ -502,7 +484,7 @@ Sim.Event = function (name) {
 Sim.Event.prototype.addWaitList = function(ro) {
 	if (this.isFired) {
 		ro.deliverAt = ro.entity.time();
-		ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+		ro.entity.sim.queue.insert(ro);
 		return;
 	}
 	this.waitList.push(ro);
@@ -511,7 +493,7 @@ Sim.Event.prototype.addWaitList = function(ro) {
 Sim.Event.prototype.addQueue = function(ro) {
 	if (this.isFired) {
 		ro.deliverAt = ro.entity.time();
-		ro.entity.sim.queue.enqueue(ro.deliverAt, ro);
+		ro.entity.sim.queue.insert(ro);
 		return;
 	}
 	this.queue.push(ro);
