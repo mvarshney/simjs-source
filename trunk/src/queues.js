@@ -83,3 +83,87 @@ Sim.Queue.prototype.size = function () {
 	return this.data.length;
 };
 
+/** Priority Queue. Uses binary heap.
+ *
+ * This is not a general purpose priority queue. It is custom made for
+ * Request object. Request.deliverAt is the key.
+ */
+
+Sim.PQueue = function () {
+	this.data = [];
+};
+
+/* Root at index 0
+ * Parent (i) = Math.floor((i-1) / 2)
+ * Left (i) = 2i + 1
+ * Right (i) = 2i + 2
+ */
+
+Sim.PQueue.prototype.insert = function (ro) {
+	var index = this.data.length;
+	this.data.push(ro);
+
+	// insert into data at the end
+	var a = this.data;
+	var node = a[index];
+
+	// heap up
+	while (index > 0) {
+		var parentIndex = Math.floor((index - 1) / 2);
+		if (a[parentIndex].deliverAt > ro.deliverAt) {
+			a[index] = a[parentIndex];
+			index = parentIndex;
+		} else {
+			break;
+		}
+	}
+	a[index] = node;
+};
+
+Sim.PQueue.prototype.remove = function () {
+	var a = this.data;
+	var len = a.length;
+	if (len <= 0) {
+		return undefined;
+	}
+	if (len == 1) {
+		return this.data.pop();
+	}
+	var top = a[0];
+	// move the last node up
+	a[0] = a.pop();
+	len --;
+	
+	// heap down
+	var index = 0;
+	var node = a[index];
+
+	while (index < Math.floor(len / 2)) {
+		var leftChildIndex = 2 * index + 1;
+		var rightChildIndex = 2 * index + 2;
+
+		var smallerChildIndex = rightChildIndex < len 
+		&& a[rightChildIndex].deliverAt < a[leftChildIndex].deliverAt 
+				? rightChildIndex : leftChildIndex;
+
+		if (a[smallerChildIndex].deliverAt > node.deliverAt) {
+			break;
+		}
+
+		a[index] = a[smallerChildIndex];
+		index = smallerChildIndex;
+	}
+	a[index] = node;
+	
+	return top;
+};
+
+
+
+
+
+
+
+
+
+
