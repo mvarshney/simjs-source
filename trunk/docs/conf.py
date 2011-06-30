@@ -101,6 +101,7 @@ html_sidebars = {
 	'**': ['localtoc.html', 'relations.html', 'searchbox.html'],
 	'index': [],
 }
+html_use_index = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
