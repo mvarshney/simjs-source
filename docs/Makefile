@@ -38,6 +38,7 @@ clean:
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@cd _build/html; mv index.html index-orig.html; awk '{sub(/default.css/, "cloud.css"); print}' index-orig.html > index.html; rm -f index-orig.html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 

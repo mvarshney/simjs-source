@@ -8,14 +8,15 @@ Discrete Event Simulation
 ===========================
 
 
-There is a lot to be said on Discrete Event Simulations that can be covered here. We refer to the excellent article at `Wikipedia <en.wikipedia.org/wiki/Discrete_event_simulation>`_ and the references therein as an entry point to this interesting field of Computer Science.
+There is a lot to be said on Discrete Event Simulations that can be covered here. We refer to the excellent article at `Wikipedia <http://en.wikipedia.org/wiki/Discrete_event_simulation>`_ and the references therein as an entry point to this interesting field of Computer Science.
 
-Briefly speaking, Discrete Event Simulation (DES) is a technique to *model* a complex system in order to study its behavior. The system is modeled as collection of *states* that change over time. Within DES, the time advances in a discrete fashion.
+Briefly speaking, Discrete Event Simulation (DES) is a technique to *model* a complex system in order to study its behavior. The system is modeled as collection of *states* that change over time. Within DES, the time advances in discrete steps.
 
 A typical model of a system includes (a) *entities*, which are the active actors in the system and encapsulate the state and logic of the system operations, (b) *resources*, which are consumed by the entities, (c) *communication* primitives, to coordinate actions between entities across time, and of course, (d) *statistics*, which is the output of a simulation run.
 
 As we will see shortly, the SIM.JS library provides support for entities, resources (of two types: Facility and Buffer), communication (via Timers, Events and Messages) and statistics (with Data Series, Time Series and Population statistics).
 
+.. _basics-design:
 
 SIM.JS Design Principles
 =========================
@@ -52,11 +53,11 @@ In event-based simulation, the entities all run in a single thread. At the time 
     entity_get_resource (resource)::
         do_more_local_computation
 
-The proponents of process-based programming claim that this design leads to a better readability of code. Whereas the adherents of event-based programming argue that their approach is more structured since the actions for each different kind of events are encapsulated as different functions.
+The proponents of process-based programming claim that their design leads to a better readability of code. Whereas the adherents of event-based programming argue that their approach is more structured since the actions for each different kind of events are encapsulated as different functions.
 
 The SIM.JS library provides *event-based* programming model, for the following reasons:
 
-* At the time of writing, only Mozilla Firefox with JavaScript version 1.7 supports process-based programming model via the ``yield`` keyword (`New is JavaScript 1.7 <developer.mozilla.org/en/new_in_javascript_1.7>`_). There are plans to add this support in the next version of ECMAScript Harmony (`the wiki page <wiki.ecmascript.org/doku.php?id=harmony:generators&s=generator>`_); however, as of today, process-based programming is not a portable paradigm across all platforms.
+* At the time of writing, only Mozilla Firefox with JavaScript version 1.7 supports process-based programming model via the ``yield`` keyword (`New is JavaScript 1.7 <http://developer.mozilla.org/en/new_in_javascript_1.7>`_). There are plans to add this support in the next version of ECMAScript Harmony (`the wiki page <http://wiki.ecmascript.org/doku.php?id=harmony:generators&s=generator>`_); however, as of today, process-based programming is not a portable paradigm across all platforms.
 * The process-based designs are resource intensive, since each entity must run as separate thread and at the time of context switch, the entire call stack must be stored (and later restored).
 * Process-based programming is not *idiomatic* JavaScript. Practitioners of JavaScript largely follow the event-based programming, and specially so given the powerful features of JavaScript, such as first class functions, closures, anonymous functions, function call chains and so on.
 
@@ -123,10 +124,7 @@ The ``Sim`` namespace further provides following classes:
 |                       |discrete time instance (the time at which the observation     |
 |                       |was made). For example, the size of queue at time *t*         |
 |                       |during the simulation run, number of customers in a           |
-|                       |restaurant at time *t* during evening hours. Note that        |
-|                       |the time instances when the observations are made are         |
-|                       |discrete. Also note the difference between ``Data Series``    |
-|                       |statistics which records time independent statistics. The     |
+|                       |restaurant at time *t* during evening hours.The               |
 |                       |:class:`~Sim.TimeSeries` class provides a convenient API      |
 |                       |for recording and analyzing such observations, such as        |
 |                       |finding maximum and minimum values, statistical               |
@@ -154,4 +152,4 @@ The ``Random`` library uses the Mersenne Twister algorithm for generating random
 Using SIM.JS
 =================
 
-This is a 
+Take a look at :ref:`tutorials and examples <tutorial-main>` to get a feel for writing simulation models with SIM.JS.
