@@ -64,6 +64,9 @@ cat random-$VERSION-debug.js | grep -v "ARG_CHECK" > random-$VERSION-tmp.js
 java -jar compiler.jar --js sim-$VERSION-tmp.js --js_output_file sim-$VERSION.js
 java -jar compiler.jar --js random-$VERSION-tmp.js --js_output_file random-$VERSION.js
 
+rm sim-$VERSION-tmp.js
+rm random-$VERSION-tmp.js
+
 ## regression test the release version
 run_test sim-$VERSION.js
 
