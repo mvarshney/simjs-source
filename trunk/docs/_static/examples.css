@@ -1,0 +1,14 @@
+div.form {
+	background-color: FFCC99;
+	width: 500px;
+	margin-top: 5px;
+	margin-left: 10%;
+	margin-right: auto;
+	margin-bottom: 20px;
+	border: 5px solid FF9900;
+}
+
+div.results {
+	background-color: FFCC99;
+	border: 5px solid FF9900;
+}
