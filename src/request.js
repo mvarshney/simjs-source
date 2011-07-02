@@ -49,11 +49,15 @@ Sim.Request.prototype.cancel = function () {
 };
 
 Sim.Request.prototype.done = function (callback, context, argument) {
+	ARG_CHECK(arguments, 0, 3, Function, Object);
+	
 	this.callbacks.push([callback, context, argument]);
 	return this;
 };
 
 Sim.Request.prototype.waitUntil = function (delay, callback, context, argument) {
+	ARG_CHECK(arguments, 1, 4, undefined, Function, Object);
+	
 	var ro = this._addRequest(this.scheduledAt + delay, callback, context, argument);
 	this.entity.sim.queue.insert(ro);
 	return this;
@@ -61,6 +65,8 @@ Sim.Request.prototype.waitUntil = function (delay, callback, context, argument) 
 
 
 Sim.Request.prototype.unlessEvent = function (event, callback, context, argument) {
+	ARG_CHECK(arguments, 1, 4, undefined, Function, Object);
+	
 	if (event instanceof Sim.Event) {
 		var ro = this._addRequest(0, callback, context, argument);
 		ro.msg = event;

@@ -52,10 +52,10 @@
 
 var Random = function(seed) {
 	seed = (seed === undefined) ? (new Date()).getTime() : seed;
-	if (typeof(seed) !== 'number'                             // ARG CHECK
-		|| Math.ceil(seed) != Math.floor(seed)) {             // ARG CHECK
-		throw new TypeError("seed value must be an integer"); // ARG CHECK
-	}
+	if (typeof(seed) !== 'number'                             // ARG_CHECK
+		|| Math.ceil(seed) != Math.floor(seed)) {             // ARG_CHECK
+		throw new TypeError("seed value must be an integer"); // ARG_CHECK
+	}                                                         // ARG_CHECK
 	
 	
 	/* Period parameters */  
@@ -198,20 +198,20 @@ Random.prototype.LOG4 = Math.log(4.0);
 Random.prototype.SG_MAGICCONST = 1.0 + Math.log(4.5);
 
 Random.prototype.exponential = function (lambda) {
-	if (arguments.length != 1) {                         // ARG CHECK                     
-		throw new SyntaxError("exponential() must "     // ARG CHECK
-				+ " be called with 'lambda' parameter"); // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 1) {                         // ARG_CHECK                     
+		throw new SyntaxError("exponential() must "     // ARG_CHECK
+				+ " be called with 'lambda' parameter"); // ARG_CHECK
+	}                                                   // ARG_CHECK
 	
 	var r = this.random();
 	return -Math.log(r) / lambda;
 };
 
 Random.prototype.gamma = function (alpha, beta) {
-	if (arguments.length != 2) {                         // ARG CHECK                     
-		throw new SyntaxError("gamma() must be called"  // ARG CHECK
-				+ " with alpha and beta parameters"); // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 2) {                         // ARG_CHECK                     
+		throw new SyntaxError("gamma() must be called"  // ARG_CHECK
+				+ " with alpha and beta parameters"); // ARG_CHECK
+	}                                                   // ARG_CHECK
 	
 	/* Based on Python 2.6 source code of random.py.
 	 */
@@ -266,10 +266,10 @@ Random.prototype.gamma = function (alpha, beta) {
 };
 
 Random.prototype.normal = function (mu, sigma) {
-	if (arguments.length != 2) {                          // ARG CHECK                     
-		throw new SyntaxError("normal() must be called"  // ARG CHECK
-				+ " with mu and sigma parameters");      // ARG CHECK
-	}                                                    // ARG CHECK
+	if (arguments.length != 2) {                          // ARG_CHECK                     
+		throw new SyntaxError("normal() must be called"  // ARG_CHECK
+				+ " with mu and sigma parameters");      // ARG_CHECK
+	}                                                    // ARG_CHECK
 	
 	var z = this.lastNormal;
 	this.lastNormal = NaN;
@@ -283,10 +283,10 @@ Random.prototype.normal = function (mu, sigma) {
 };
 
 Random.prototype.pareto = function (alpha) {
-	if (arguments.length != 1) {                         // ARG CHECK                     
-		throw new SyntaxError("pareto() must be called" // ARG CHECK
-				+ " with alpha parameter");             // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 1) {                         // ARG_CHECK                     
+		throw new SyntaxError("pareto() must be called" // ARG_CHECK
+				+ " with alpha parameter");             // ARG_CHECK
+	}                                                   // ARG_CHECK
 	
 	var u = this.random();
 	return 1.0 / Math.pow((1 - u), 1.0 / alpha);
@@ -294,10 +294,10 @@ Random.prototype.pareto = function (alpha) {
 
 Random.prototype.triangular = function (lower, upper, mode) {
 	// http://en.wikipedia.org/wiki/Triangular_distribution
-	if (arguments.length != 3) {                         // ARG CHECK                     
-		throw new SyntaxError("triangular() must be called" // ARG CHECK
-		+ " with lower, upper and mode parameters");    // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 3) {                         // ARG_CHECK                     
+		throw new SyntaxError("triangular() must be called" // ARG_CHECK
+		+ " with lower, upper and mode parameters");    // ARG_CHECK
+	}                                                   // ARG_CHECK
 	
 	var c = (mode - lower) / (upper - lower);
 	var u = this.random();
@@ -310,18 +310,18 @@ Random.prototype.triangular = function (lower, upper, mode) {
 };
 
 Random.prototype.uniform = function (lower, upper) {
-	if (arguments.length != 2) {                         // ARG CHECK                     
-		throw new SyntaxError("uniform() must be called" // ARG CHECK
-		+ " with lower and upper parameters");    // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 2) {                         // ARG_CHECK                     
+		throw new SyntaxError("uniform() must be called" // ARG_CHECK
+		+ " with lower and upper parameters");    // ARG_CHECK
+	}                                                   // ARG_CHECK
 	return lower + this.random() * (upper - lower);
 };
 
 Random.prototype.weibull = function (alpha, beta) {
-	if (arguments.length != 2) {                         // ARG CHECK                     
-		throw new SyntaxError("weibull() must be called" // ARG CHECK
-		+ " with alpha and beta parameters");    // ARG CHECK
-	}                                                   // ARG CHECK
+	if (arguments.length != 2) {                         // ARG_CHECK                     
+		throw new SyntaxError("weibull() must be called" // ARG_CHECK
+		+ " with alpha and beta parameters");    // ARG_CHECK
+	}                                                   // ARG_CHECK
 	var u = 1.0 - this.random();
 	return alpha * Math.pow(-Math.log(u), 1.0 / beta);
 };

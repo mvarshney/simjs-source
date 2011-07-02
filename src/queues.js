@@ -22,6 +22,7 @@ Sim.Queue.prototype.back = function () {
 };
 
 Sim.Queue.prototype.push = function (value, timestamp) {
+	ARG_CHECK(arguments, 2, 2);
 	this.data.push(value);
 	this.timestamp.push(timestamp);
 	
@@ -29,6 +30,7 @@ Sim.Queue.prototype.push = function (value, timestamp) {
 };
 
 Sim.Queue.prototype.unshift = function (value, timestamp) {
+	ARG_CHECK(arguments, 2, 2);
 	this.data.unshift(value);
 	this.timestamp.unshift(timestamp);
 	
@@ -36,6 +38,8 @@ Sim.Queue.prototype.unshift = function (value, timestamp) {
 };
 
 Sim.Queue.prototype.shift = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	var value = this.data.shift();
 	var enqueuedAt = this.timestamp.shift();
 
@@ -44,6 +48,8 @@ Sim.Queue.prototype.shift = function (timestamp) {
 };
 
 Sim.Queue.prototype.pop = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	var value = this.data.pop();
 	var enqueuedAt = this.timestamp.pop();
 
@@ -52,11 +58,15 @@ Sim.Queue.prototype.pop = function (timestamp) {
 };
 
 Sim.Queue.prototype.passby = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.stats.enter(timestamp);
 	this.stats.leave(timestamp, timestamp);
 };
 
 Sim.Queue.prototype.finalize = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.stats.finalize(timestamp);
 };
 
@@ -100,6 +110,8 @@ Sim.PQueue = function () {
  */
 
 Sim.PQueue.prototype.insert = function (ro) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	var index = this.data.length;
 	this.data.push(ro);
 
