@@ -54,7 +54,7 @@ function testRequestZeroDelayEventWait() {
 		start: function () {
 			event.fire(true);
 			
-			this.waitEvent(event, 10)
+			this.waitEvent(event)
 			.done(function() {
 				this.string += "-second";
 			});
@@ -81,7 +81,7 @@ function testRequestZeroDelayEventQueue() {
 		start: function () {
 			event.fire(true);
 			
-			this.queueEvent(event, 10)
+			this.queueEvent(event)
 			.done(function() {
 				this.string += "-second";
 			});
