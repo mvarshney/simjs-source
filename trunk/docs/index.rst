@@ -21,6 +21,7 @@ SIM.JS
 		simulator
 		random
 		download
+		contact
 
 
 SIM.JS is a library for modeling discrete time event systems: 

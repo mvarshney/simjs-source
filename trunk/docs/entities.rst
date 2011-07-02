@@ -32,6 +32,14 @@ API Reference
 
     Starts the simulation. ``duration`` is the time until which the simulation runs.
 
+.. js:function:: Sim.setLogger(loggerFn)
+
+    Assigns a function that will be called by the simulator when logging messages.
+
+.. js:function:: Sim.log(message)
+	
+    Logs a message using a logger function defined in :func:`~Sim.setLogger`.
+
 .. _entity-entity:
 
 Entity

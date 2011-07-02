@@ -39,7 +39,7 @@ Except for :func:`~Sim.Request.cancel`, all other functions return the ``Request
     .waitUntil(10, fnCouldNotAllocIn10Sec)
     .unlessEvent(event1, fnEvent1Happened)
     .unlessEvent(event2, fnEvent2Happened)
-    .setData('give me this data when any callback function is called');
+    .setData('give me this data when ANY callback function is called');
 
 The following table summarizes the various outcomes of a request and which callback functions are called in each case:
 
