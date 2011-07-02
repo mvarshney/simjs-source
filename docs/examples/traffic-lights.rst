@@ -1,3 +1,5 @@
+.. _example-traffic-lights:
+
 ================================
 Traffic Lights at Intersection
 ================================
@@ -172,6 +174,8 @@ And finally, we start simulation:
     // simulate for SIMTIME time
     sim.simulate(SIMTIME); 
 
+`View the complete source code <traffic_lights.js>`_.
+
 Running Simulation
 ======================
 This javascript code can be executed where ever javascript can run. This includes:
@@ -310,3 +314,8 @@ The output for our rather contrived input values is as follows::
 
     Number of vehicles at intersection (average) = 4.264 (+/- 2.069)
     Time spent at the intersection (average) = 1.361 (+/- 1.830)
+
+Traffic Lights in Action
+=============================
+
+You can `play with this simulation model <traffic_lights.html>`_. Try out different values of input parameters and compare the output statistics of model.

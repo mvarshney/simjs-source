@@ -66,4 +66,3 @@ Finally we create the simulation and entity objects, and start the simulation.
     
     // statistics
     buffer.report();
-
