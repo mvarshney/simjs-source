@@ -40,6 +40,7 @@ clean:
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@cd _build/html; mv index.html index-orig.html; awk '{sub(/default.css/, "cloud.css"); print}' index-orig.html > index.html; rm -f index-orig.html
+	@cp ../release/sim-0.1.js _build/html/examples
 	@cp ../examples/buffet_restaurant.html _build/html/examples
 	@cp ../examples/buffet_restaurant.js _build/html/examples
 	@cp ../examples/traffic_lights.html _build/html/examples
