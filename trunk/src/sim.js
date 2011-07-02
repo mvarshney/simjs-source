@@ -45,6 +45,7 @@ Sim.prototype.sendMessage = function () {
 };
 
 Sim.prototype.addEntity = function (proto) {
+	ARG_CHECK(arguments, 1, 1, Object);
 	// Verify that prototype has start function
 	if (!proto.start) {  // ARG CHECK
 		throw new Error("Entity prototype must have start() function defined"); // ARG CHECK
@@ -56,6 +57,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.setTimer = function (duration) {
+			ARG_CHECK(arguments, 1, 1);
+			
 			var ro = new Sim.Request(
 					this, 
 					this.sim.time(), 
@@ -66,6 +69,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.waitEvent = function (event) {
+			ARG_CHECK(arguments, 1, 1, Sim.Event);
+			
 			var ro = new Sim.Request(this, this.sim.time(), 0);
 			
 			ro.source = event;
@@ -74,6 +79,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.queueEvent = function (event) {
+			ARG_CHECK(arguments, 1, 1, Sim.Event);
+			
 			var ro = new Sim.Request(this, this.sim.time(), 0);
 			
 			ro.source = event;
@@ -82,6 +89,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.useFacility = function (facility, duration) {
+			ARG_CHECK(arguments, 2, 2, Sim.Facility);
+			
 			var ro = new Sim.Request(this, this.sim.time(), 0);
 			ro.source = facility;
 			facility.use(duration, ro);
@@ -89,6 +98,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.putBuffer = function (buffer, amount) {
+			ARG_CHECK(arguments, 2, 2, Sim.Buffer);
+			
 			var ro = new Sim.Request(this, this.sim.time(), 0);
 			ro.source = buffer;
 			buffer.put(amount, ro);
@@ -96,6 +107,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.getBuffer = function (buffer, amount) {
+			ARG_CHECK(arguments, 2, 2, Sim.Buffer);
+			
 			var ro = new Sim.Request(this, this.sim.time(), 0);
 			ro.source = buffer;
 			buffer.get(amount, ro);
@@ -103,6 +116,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.send = function (message, delay, entities) {
+			ARG_CHECK(arguments, 2, 3);
+			
 			var ro = new Sim.Request(this.sim, this.time(), this.time() + delay);
 			ro.source = this;
 			ro.msg = message;
@@ -113,6 +128,8 @@ Sim.prototype.addEntity = function (proto) {
 		};
 		
 		proto.log = function (message) {
+			ARG_CHECK(arguments, 1, 1);
+			
 			this.sim.log(message);
 		};
 	}
@@ -139,6 +156,8 @@ Sim.prototype.addEntity = function (proto) {
 
 
 Sim.prototype.simulate = function (endTime, flags) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.endTime = endTime;
 	for (var i = 0; i < this.entities.length; i++) {
 		this.entities[i].start();
@@ -179,10 +198,13 @@ Sim.prototype.finalize = function () {
 };
 
 Sim.prototype.setLogger = function (logger) {
+	ARG_CHECK(arguments, 1, 1, Function);
 	this.logger = logger;
 };
 
 Sim.prototype.log = function (message, entity) {
+	ARG_CHECK(arguments, 1, 2);
+	
 	if (!this.logger) return;
 	var entityMsg = "";
 	if (entity !== undefined) entityMsg = " [" + entity.id + "] ";
@@ -209,6 +231,8 @@ Sim.prototype.log = function (message, entity) {
  */
 
 Sim.Facility = function (name, discipline, servers) {
+	ARG_CHECK(arguments, 1, 3);
+	
 	this.free = servers ? servers : 1;
 	this.servers = servers ? servers : 1;
 	switch (discipline) {
@@ -252,11 +276,15 @@ Sim.Facility.prototype.usage = function () {
 };
 
 Sim.Facility.prototype.finalize = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.stats.finalize(timestamp);
 	this.queue.stats.finalize(timestamp);
 };
 
 Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	while (this.free > 0 && !this.queue.empty()) {
 		var ro = this.queue.shift(timestamp); // TODO
 		if (ro.cancelled) {
@@ -285,6 +313,8 @@ Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
 };
 
 Sim.Facility.prototype.useFCFS = function (duration, ro) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	ro.duration = duration;
 	this.stats.enter(ro.entity.time());
 	this.queue.push(ro, ro.entity.time());
@@ -310,6 +340,8 @@ Sim.Facility.prototype.useFCFSCallback = function () {
 };
 
 Sim.Facility.prototype.useLCFS = function (duration, ro) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	// if there was a running request..
 	if (this.currentRO) {
 		this.busyDuration += (this.currentRO.entity.time() - this.currentRO.lastIssued);
@@ -365,6 +397,8 @@ Sim.Facility.prototype.useLCFSCallback = function () {
  * 
  */
 Sim.Buffer = function (name, capacity, initial) {
+	ARG_CHECK(arguments, 2, 3);
+	
 	this.name = name;
 	this.capacity = capacity;
 	this.available = (initial === undefined) ? 0 : initial;
@@ -381,6 +415,8 @@ Sim.Buffer.prototype.size = function () {
 };
 
 Sim.Buffer.prototype.get = function (amount, ro) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	if (this.getQueue.empty()
 			&& amount <= this.available) {
 		this.available -= amount;
@@ -395,10 +431,12 @@ Sim.Buffer.prototype.get = function (amount, ro) {
 		return;
 	}
 	ro.amount = amount;
-	this.getQueue.push(ro);
+	this.getQueue.push(ro, ro.entity.time());
 };
 
 Sim.Buffer.prototype.put = function (amount, ro) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	if (this.putQueue.empty()
 			&& (amount + this.available) <= this.capacity) {
 		this.available += amount;
@@ -414,7 +452,7 @@ Sim.Buffer.prototype.put = function (amount, ro) {
 	}
 	
 	ro.amount = amount;
-	this.putQueue.push(ro);
+	this.putQueue.push(ro, ro.entity.time());
 };
 
 Sim.Buffer.prototype.progressGetQueue = function () {
@@ -475,6 +513,8 @@ Sim.Buffer.prototype.getStats = function () {
  * 
  */
 Sim.Event = function (name) {
+	ARG_CHECK(arguments, 0, 1);
+	
 	this.name = name;
 	this.waitList = [];
 	this.queue = [];
@@ -482,6 +522,8 @@ Sim.Event = function (name) {
 };
 
 Sim.Event.prototype.addWaitList = function(ro) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	if (this.isFired) {
 		ro.deliverAt = ro.entity.time();
 		ro.entity.sim.queue.insert(ro);
@@ -491,6 +533,8 @@ Sim.Event.prototype.addWaitList = function(ro) {
 };
 
 Sim.Event.prototype.addQueue = function(ro) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	if (this.isFired) {
 		ro.deliverAt = ro.entity.time();
 		ro.entity.sim.queue.insert(ro);
@@ -500,6 +544,8 @@ Sim.Event.prototype.addQueue = function(ro) {
 };
 
 Sim.Event.prototype.fire = function(keepFired) {
+	ARG_CHECK(arguments, 0, 1);
+	
 	if (keepFired) {
 		this.isFired = true;
 	}
@@ -520,3 +566,26 @@ Sim.Event.prototype.fire = function(keepFired) {
 Sim.Event.prototype.clear = function() {
 	this.isFired = false;
 };
+
+
+function ARG_CHECK(found, expMin, expMax) {
+	if (found.length < expMin || found.length > expMax) {   // ARG_CHECK
+		throw new Error("Incorrect number of arguments");   // ARG_CHECK
+	}   // ARG_CHECK
+	
+	
+	for (var i = 0; i < found.length; i++) {   // ARG_CHECK
+		if (!arguments[i + 3] || !found[i]) continue;   // ARG_CHECK
+		
+//		print("TEST " + found[i] + " " + arguments[i + 3]   // ARG_CHECK
+//		+ " " + (found[i] instanceof Sim.Event)   // ARG_CHECK
+//		+ " " + (found[i] instanceof arguments[i + 3])   // ARG_CHECK
+//		+ "\n");   // ARG CHECK
+		
+		
+		if (! (found[i] instanceof arguments[i + 3])) {   // ARG_CHECK
+			throw new Error("parameter " + (i + 1) + " is of incorrect type.");   // ARG_CHECK
+		}   // ARG_CHECK
+	}   // ARG_CHECK
+}   // ARG_CHECK
+

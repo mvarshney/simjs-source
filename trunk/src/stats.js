@@ -30,6 +30,8 @@ Sim.DataSeries.prototype.reset = function () {
 };
 
 Sim.DataSeries.prototype.setHistogram = function (lower, upper, nbuckets) {
+	ARG_CHECK(arguments, 3, 3);
+	
 	this.hLower = lower;
 	this.hUpper = upper;
 	this.hBucketSize = (upper - lower) / nbuckets;
@@ -44,6 +46,7 @@ Sim.DataSeries.prototype.getHistogram = function () {
 };
 
 Sim.DataSeries.prototype.record = function (value, weight) {
+	ARG_CHECK(arguments, 1, 2);
 	
 	var w = (weight === undefined) ? 1 : weight;
 	//document.write("Data series recording " + value + " (weight = " + w + ")\n");
@@ -131,6 +134,7 @@ Sim.TimeSeries.prototype.reset = function () {
 };
 
 Sim.TimeSeries.prototype.setHistogram = function (lower, upper, nbuckets) {
+	ARG_CHECK(arguments, 3, 3);
 	this.dataSeries.setHistogram(lower, upper, nbucket);
 };
 
@@ -139,6 +143,8 @@ Sim.TimeSeries.prototype.getHistogram = function () {
 };
 
 Sim.TimeSeries.prototype.record = function (value, timestamp) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	if (!isNaN(this.lastTimestamp)) {
 		this.dataSeries.record(this.lastValue, timestamp - this.lastTimestamp);
 	}
@@ -148,6 +154,8 @@ Sim.TimeSeries.prototype.record = function (value, timestamp) {
 };
 
 Sim.TimeSeries.prototype.finalize = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.record(NaN, timestamp);
 };
 
@@ -201,11 +209,15 @@ Sim.Population.prototype.reset = function () {
 };
 
 Sim.Population.prototype.enter = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
 	this.population ++;
 	this.sizeSeries.record(this.population, timestamp);
 };
 
 Sim.Population.prototype.leave = function (arrivalAt, leftAt) {
+	ARG_CHECK(arguments, 2, 2);
+	
 	this.population --;
 	this.sizeSeries.record(this.population, leftAt);
 	this.durationSeries.record(leftAt - arrivalAt);
