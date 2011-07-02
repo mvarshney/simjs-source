@@ -1,0 +1,65 @@
+<html>
+	<head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../release/sim-0.1.js"></script>
+	<script type="text/javascript" src="traffic_lights.js"></script>
+	<link rel="stylesheet" href="examples.css" type="text/css" />
+	
+	<script type="text/javascript">
+	$(function () {
+		$("#run_simulation").click(function () {
+			
+			var green_time = parseFloat($('[name="GREEN_TIME"]').val());
+			var mean_arrival = parseFloat($('[name="MEAN_ARRIVAL"]').val());
+			var seed = parseFloat($('[name="SEED"]').val());
+			var simtime = parseFloat($('[name="SIMTIME"]').val());
+			
+			var results = trafficLightSimulation(green_time, mean_arrival, seed, simtime);
+			var msg = "Simulation Results for ["
+								+ "Green Time = " + green_time
+								+ ", Mean Arrival = " + mean_arrival
+								+ ", Seed = " + seed
+								+ ", Simulation time = " + simtime
+								+ "]<br>"
+								+ "Average time waiting at intersection (min) = " 
+								+ results[0].toFixed(4)
+								+ "<br>Average number of vehicles waiting at intersection = " 
+								+ results[2].toFixed(4)
+								+ "<hr>";
+			$(".results").append(msg);
+		});
+		
+		$("#clear_result").click(function () {
+			$(".results").html('<a href="" id="clear_results">Clear</a><hr>');
+		});
+		
+	});
+	</script>
+		
+	</head>
+	<body>
+		<div class="header">
+			<a href="">Back to documentation</a> | <a href="">View Source</a>
+		</div>
+		
+		<div class="form">
+		<table>
+			<tr><td>Time that the traffic light is green (min): 
+				<td><input type="text" name="GREEN_TIME" value="3.0"/> </tr>
+			<tr><td>Mean interval between vehicle arrivals (min):
+				<td><input type="text" name="MEAN_ARRIVAL" value="0.5"/> </tr>
+			<tr><td>Random number generator seed:
+				<td><input type="text" name="SEED" value="1234" /> </tr>
+			<tr><td>Simulation time (min):
+				<td><input type="text" name="SIMTIME" value="240.0"/> </tr>
+		</table>
+		<input type="button" value="Run Simulation" id="run_simulation"/>
+		</div>
+		
+		<div class="results">
+			<a href="" id="clear_results">Clear</a><hr>
+		</div>
+	</body>
+</html>
+	
+	
