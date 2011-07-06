@@ -1,23 +1,19 @@
-====================
-Download SIM.JS
-====================
+.. _download:
+
+=============================
+Download SIM.JS, random.js
+=============================
 
 The current version of SIM.JS is |version|.
 
-The library is available in two forms:
+The **sim.js** file contains the simulator kernel and includes the **random.js** library. You can also download the **random.js** library separately from the links below.
 
-* :download:`Debug version <../release/sim-0.1-debug.js>`.
-* :download:`Release version <../release/sim-0.1.js>`.
+Both libraries are available as debug and release versions. The release version has stripped out code to check and validate arguments, and is minified (with Google's `Closure Compiler <http://code.google.com/closure/compiler/>`_).
 
-The Release version:
+Download links (right-click and save):
 
-* Has stripped out code to check and validate arguments.
-* Is minified (with Google's `Closure Compiler <http://code.google.com/closure/compiler/>`_).
-
-
-You can also download the Random library separately:
-:download:`Debug version <../release/random-0.1-debug.js>` or
-:download:`Release version <../release/random-0.1.js>`.
+* **sim.js** [:download:`Debug version <../release/sim-0.1-debug.js>`] [:download:`Release version <../release/sim-0.1.js>`] (includes random.js)
+* **random.js** [:download:`Debug version <../release/random-0.1-debug.js>`] [:download:`Release version <../release/random-0.1.js>`]
 
 
 Source Code Access

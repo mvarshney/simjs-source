@@ -23,7 +23,7 @@ The ``Request`` object can then be used to modify the request in the following w
 
 * :func:`~Sim.Request.done`: Assign functions that must be called when the request is satisfied.
 * :func:`~Sim.Request.waitUntil`: Set a timeout value to the request. If the request is not satisfied within the timeout value, it will be terminated and the entity will be notified.
-* :func:`~Sim.Request.unlessEvent`: Put the request in the wait queue of one or more :ref:`events-events`. If any of those events are fired, the request will be terminated and the entity will be notified.
+* :func:`~Sim.Request.unlessEvent`: Put the request in the wait queue of one or more :ref:`events-events`. If any one of those events is fired, the request will be terminated and the entity will be notified.
 * :func:`~Sim.Request.setData`: Assign some user data for this request, which will be returned back when the simulator notifies the entity about the request.
 * :func:`~Sim.Request.cancel`: Cancel the request.
 
@@ -73,13 +73,13 @@ API Reference
 
     ``callback`` is a function (named or anonymous) that must be called when the request is satisfied. 
     
-    ``context`` is the object in whose context the function will be called. The behavior is therefore equivalent to: ``callback.call(context)``. If ``context`` argument is not provided or is set to value that evaluates to *false*, it is assumed to be the calling entity object.
+    ``context`` is the object in whose context the function will be called. The behavior is therefore equivalent to: ``callback.call(context)``. If ``context`` argument is not provided or is set to a value that evaluates to *false*, it is assumed to be the calling entity object.
     
     ``argument`` are the optional arguments that are passed to the callback function. If ``argument`` is an array then the simulator will execute ``callback.apply(context, argument)``, otherwise the simulator will execute ``callback.call(context, argument)``.
     
-    This function can be called multiple times for the same request object, in which case all the callback functions will be called. The simulator guarantees that the the ordering of callback functions will be same as the order in which they were added.
+    **Note 1:** This function can be called multiple times for the same request object, in which case all the callback functions will be called. The simulator guarantees that the the ordering of callback functions will be same as the order in which they were added.
     
-    If this function is not applied for a request object, then the simulator will still schedule this request and handle it appropriately. Other callback functions defined in :func:`~!Sim.Request.waitUntil` or :func:`~!Sim.Request.unlessEvent` may still be called. This is useful when the application is interested in error conditions only, for example:
+    **Note 2:** If this function is not applied for a request object, then the simulator will still schedule this request and handle it appropriately. Other callback functions defined in :func:`~!Sim.Request.waitUntil` or :func:`~!Sim.Request.unlessEvent` may still be called. This is useful when the application is interested in error conditions only, for example:
     
     .. code-block:: js
         
@@ -90,7 +90,7 @@ API Reference
         .unlessEvent(event, handleEvent)
         .waitUntil(event, handleTimeout);
 
-    Even if the request is immediately satisfied (for example, buffer has enough free space for the *put* request), the callback function will still be called *after* the function scope that made this request has finished. That is:
+    **Note 3:** Even if the request is immediately satisfied (for example, buffer has enough free space for the *put* request), the callback function will still be called *after* the function scope that made this request has finished. That is:
 
     .. code-block:: js
     
@@ -112,7 +112,7 @@ API Reference
     
     As noted in the table above, if the timeout occurs then no other callback function (for example, in :func:`~!Sim.Request.done` or :func:`~!Sim.Request.unlessEvent`) will be called.
     
-    The API does not prevent calling this function multiple times, however, note that only one callback function (the one with smallest timeout value) is effectively useful.
+    **Note:** The API does not prevent calling this function multiple times, however, note that only one callback function (the one with smallest timeout value) is effectively useful.
 
 .. js:function:: Sim.Request.unlessEvent(event, callback[, context[, argument]])
 
@@ -129,7 +129,7 @@ API Reference
     
     As noted in the table above, if the timeout occurs then no other callback function (for example, in :func:`~!Sim.Request.done` or :func:`~!Sim.Request.waitUntil`) be called.
     
-    This function can be called multiple times for the same request object. Note that if one event appears in more than one :func:`~!Sim.Request.waitUntil` function, even then only one callback functions will be called. The simulator will non-deterministically select which callback function to call. The following table summarizes the semantics of the callback behavior of this function. Assume *ev1* and *ev2* are two events, and *request* is the Request object.
+    **Note:** This function can be called multiple times for the same request object. Note that if one event appears in more than one :func:`~!Sim.Request.waitUntil` function, even then only one callback functions will be called. The simulator will non-deterministically select which callback function to call. The following table summarizes the semantics of the callback behavior of this function. Assume *ev1* and *ev2* are two events, and *request* is the Request object.
     
     +-------------------------------------------------------+---------------+--------------------+
     |              Code                                     |    ev1 fired  |     ev2 fired      |
@@ -185,7 +185,7 @@ API Reference
 
     Special case with facilities.
     
-    In case of facilities with FIFO queuing discipline, the requesting entities go through two stages: (1) wait for the facility to become free (this may be zero duration if the facility is already free), and (2) use the facility for specified duration. The :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions are application in the first stage only. In order words, if an entity has started using the facility, then it cannot be dislodged and these function calls will have no effect.
+    In case of facilities with FIFO queuing discipline, the requesting entities go through two stages: (1) wait for the facility to become free (this may be zero duration if the facility is already free), and (2) use the facility for specified duration. The :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions are applicable in the first stage only. In order words, if an entity has started using the facility, then it cannot be dislodged and these function calls will have no effect.
     
     In case of facilities with LIFO queuing discipline, the requesting entities obtain an immediate access to the facility resource. Therefore, :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions will have no effect for these facilities.
 

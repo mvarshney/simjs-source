@@ -12,7 +12,7 @@ Facility
 
 The timeline of interactions between entities and facility is as follows:
 
-1. An entity requests the simulator to use a facility for *duration* time (with :func:`useFacility` ``Entity Prototype`` API).
+1. An entity requests the simulator to use a facility for *duration* time (with :func:`useFacility` ``Extended Entity Prototype`` API).
 2. If the facility is busy, the entity is placed in facility's queue. It waits there until other entities in front of it are done using the facility (also see the *Scheduling Disciplines* below).
 3. If the facility is free or when the entity is done waiting in the queue, the entity is given access to the facility. This is modeled as:
     * The facility is marked as busy.

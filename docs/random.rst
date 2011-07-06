@@ -15,6 +15,11 @@ The JavaScript's native ``Math.random()`` function is not suited for Discrete Ev
 
 The ``Random`` Library
 -----------------------
+
+.. sidebar:: Download random.js
+
+	You can download the Random library separately at the :ref:`download page <download>`.
+
 The ``Random`` library uses the Mersenne Twister algorithm for generating random number stream, and is based on the JavaScript implementation by Makoto Matsumoto and Takuji Nishimura (`code <www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/VERSIONS/JAVASCRIPT/java-script.html>`_).
 
 The original code is wrapped around as a javascript class and there can be multiple objects each representing different random number streams. For example,
