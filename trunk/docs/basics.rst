@@ -8,11 +8,11 @@ Discrete Event Simulation
 ===========================
 
 
-There is a lot to be said on Discrete Event Simulations that can be covered here. We refer to the excellent article at `Wikipedia <http://en.wikipedia.org/wiki/Discrete_event_simulation>`_ and the references therein as an entry point to this interesting field of Computer Science.
+There is a lot to be said on Discrete Event Simulations that can be covered here. We refer the readers to the excellent article at `Wikipedia <http://en.wikipedia.org/wiki/Discrete_event_simulation>`_ and the references therein as an entry point to this interesting field of Computer Science.
 
-Briefly speaking, Discrete Event Simulation (DES) is a technique to *model* a complex system in order to study its behavior. The system is modeled as collection of *states* that change over time. Within DES, the time advances in discrete steps.
+Briefly speaking, Discrete Event Simulation (DES) is a technique to *model* a complex system in order to study its behavior. The system is modeled as a collection of *states* that change over time. Within DES, the time advances in discrete steps.
 
-A typical model of a system includes (a) *entities*, which are the active actors in the system and encapsulate the state and logic of the system operations, (b) *resources*, which are consumed by the entities, (c) *communication* primitives, to coordinate actions between entities across time, and of course, (d) *statistics*, which is the output of a simulation run.
+A typical model of a system includes (a) *entities*, which are the active actors in the system and encapsulate the state and logic of the system components, (b) *resources*, which are consumed by the entities, (c) *communication* primitives, to coordinate actions between entities across time, and of course, (d) *statistics*, which is the output of a simulation run.
 
 As we will see shortly, the SIM.JS library provides support for entities, resources (of two types: Facility and Buffer), communication (via Timers, Events and Messages) and statistics (with Data Series, Time Series and Population statistics).
 
@@ -30,18 +30,18 @@ The most common design pattern that appears in DES models is as follows:
     3.  resource = request_some_shared_resource
     4.  do_more_local_computation
 
-The request for the resource may not be satisfied immediately if the said resource in not available currently. In this case, the entity is "blocked" from further execution.
+It is possible that the said resource is not available currently, in which case the request cannot be immediately satisfied and the entity must, therefore, "block" from further execution.
 
-This is only one example where entities must wait for an action to happen (in this case, the resource to become free). There are other cases as well, for example, wait for a timer to expire, wait to receive message from other entities, wait for a predicate condition to become true, and so on.
+Waiting for resources is only one examples where entities may need to wait. There are other cases as well, for example, wait for a timer to expire, wait to receive message from other entities, wait for a predicate condition to become true, and so on.
 
 There are two broad categories for implementing this "blocking" behavior:
 
-1. Process-based Simulation.
-2. Event-based Simulation.
+1. Process-based simulation.
+2. Event-based simulation.
 
 In process-based simulation, the entities behave very much like regular operating system processes. Each entity runs on a separate thread, and when an entity executes a command for which it must block, the entire thread is suspended. When the waiting condition is satisfied, the thread is resumed. In the example given above, the entity thread will block at line 3 until the resource is free, and then will resume to line 4.
 
-In event-based simulation, the entities all run in a single thread. At the time of making a request, the entities provide a callback function that must be invoked when the waiting condition is over. This style of programming is widely used in Graphical User Interface designs where preconfigured callback functions are called by system when any event of interest occurs (e.g. mouse click). However, it also means that the code must be restructured a little. The above example must be written as:
+In event-based simulation, the entities all run in a single thread. At the time of making a request, the entities provide a callback function that must be invoked when the waiting condition is over. This style of programming is widely used in Graphical User Interface designs where preconfigured callback functions are called by the system when any event of interest occurs (e.g. mouse click). However, it also means that the code must be restructured a little. The above example must be written as:
 
 .. code-block:: python
 

@@ -147,21 +147,21 @@ These functions and attributes are added when :func:`Sim.addEntity` function is 
 
 .. js:function:: setTimer(delay)
 
-    Sets an internal timer that expires after ``delay`` duration. This function returns a :ref:`request-main` object.
+    Sets an internal timer that expires after ``delay`` duration. This function returns a :ref:`Request <request-main>` object.
     
     .. seealso:: :ref:`events-timers`.
 
 .. js:function:: waitEvent(event)
 
-    Waits on the ``event`` :ref:`events-events`. This function returns a :ref:`Request <request-main>` object.
+    Waits on the ``event`` :ref:`Event <events-events>`. This function returns a :ref:`Request <request-main>` object.
     
-    The difference between :func:`waitEvent` and :func:`queueEvent` is that when the event triggers (or fires), *all* waiting entities are notified, and only one (the one at the head of the queue) is notified.
+    The difference between :func:`waitEvent` and :func:`queueEvent` is that when the event triggers (or fires), *all* waiting entities are notified, and only one queued entity (the one at the head of the queue) is notified.
     
     .. seealso:: :ref:`events-events`.
     
 .. js:function:: queueEvent(event)
 
-    Queue for the ``event`` :ref:`events-events`. The function returns a :ref:`Request <request-main>` object.
+    Queue for the ``event`` :ref:`Event <events-events>`. The function returns a :ref:`Request <request-main>` object.
     
     The difference between :func:`waitEvent` and :func:`queueEvent` is that when the event triggers (or fires), *all* waiting entities are notified, and only one (the one at the head of the queue) is notified.
     
