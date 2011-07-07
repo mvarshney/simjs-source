@@ -1,3 +1,11 @@
+/** SIM.JS Library.
+ * 
+ * Discrete Event Simulation in JavaScript.
+ * 
+ * Author: Maneesh Varshney (mvarshney@gmail.com)
+ * License: LGPL
+ */
+
 /** Simulator Object
  * 
  */

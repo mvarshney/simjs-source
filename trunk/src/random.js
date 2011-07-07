@@ -1,10 +1,7 @@
 
-/*
-  I've wrapped Makoto Matsumoto and Takuji Nishimura's code in a namespace
-  so it's better encapsulated. Now you can have multiple random number generators
-  and they won't stomp all over eachother's state.
-
-  - Sean McCullough (banksean@gmail.com)
+/** Random.js library.
+ * 
+ * The code is licensed as LGPL.
 */
 
 /* 
