@@ -26,6 +26,7 @@ if (this.load) {
 	load('../src/stats.js');
 	load('../src/request.js');
 	load('tester.js');
+	load('store-tests.js');
 	load('pqueue-tests.js');
 	load('sim-tests.js');
 	load('message-tests.js');
