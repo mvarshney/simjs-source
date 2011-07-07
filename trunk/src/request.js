@@ -31,10 +31,11 @@ Sim.Request.prototype.cancel = function () {
 	}
 
 	if (this.source) {
-		if (this.source instanceof Sim.Buffer) {
+		if ((this.source instanceof Sim.Buffer)
+				|| (this.source instanceof Sim.Store)) {
 			this.source.progressPutQueue.call(this.source);
 			this.source.progressGetQueue.call(this.source);
-		}
+		} 
 	}
 	
 	if (!this.group) {
