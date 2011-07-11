@@ -407,3 +407,422 @@ function testFacilityLCFSImmuneToRenege() {
 	sim.simulate(100);
 	entities = 1;
 }
+
+function testFacilityPSOne() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(fac, 10)
+			.done(function () {
+				assertEquals(this.time(), 10);
+				this.count ++;
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 10);
+			assertEquals(this.count, 1);
+			assertEquals(fac.usage(), 10);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTwoIdentical() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(fac, 10)
+			.done(function () {
+				assertEquals(this.time(), 20);
+				this.count ++;
+			});
+			this.useFacility(fac, 10)
+			.done(function () {
+				assertEquals(this.time(), 20);
+				this.count ++;
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 20);
+			assertEquals(this.count, 2);
+			assertEquals(fac.usage(), 20);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTwoIdenticalLater() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.setTimer(10).done(function () {
+				this.useFacility(fac, 10)
+				.done(function () {
+					assertEquals(this.time(), 30);
+					this.count ++;
+				});
+			});
+
+			this.setTimer(10).done(function () {
+				this.useFacility(fac, 10)
+				.done(function () {
+					assertEquals(this.time(), 30);
+					this.count ++;
+				});
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 30);
+			assertEquals(this.count, 2);
+			assertEquals(fac.usage(), 20);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTwoOverlapPartial() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.setTimer(10).done(function () {
+				this.useFacility(fac, 10)
+				.done(function () {
+					assertEquals(this.time(), 25);
+					this.count ++;
+				});
+			});
+
+			this.setTimer(15).done(function () {
+				this.useFacility(fac, 10)
+				.done(function () {
+					assertEquals(this.time(), 30);
+					this.count ++;
+				});
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 35);
+			assertEquals(this.count, 2);
+			assertEquals(fac.usage(), 20);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTwoOverlapFull() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.setTimer(10).done(function () {
+				this.useFacility(fac, 20)
+				.done(function () {
+					assertEquals(this.time(), 35);
+					this.count ++;
+				});
+			});
+
+			this.setTimer(15).done(function () {
+				this.useFacility(fac, 5)
+				.done(function () {
+					assertEquals(this.time(), 25);
+					this.count ++;
+				});
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 45);
+			assertEquals(this.count, 2);
+			assertEquals(fac.usage(), 25);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTwoNoOverlap() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+
+			this.setTimer(0).done(function () {
+				this.useFacility(fac, 1)
+				.done(function () {
+					assertEquals(this.time(), 1);
+					this.count ++;
+				});
+			});
+			this.setTimer(1).done(function () {
+				this.useFacility(fac, 1)
+				.done(function () {
+					assertEquals(this.time(), 2);
+					this.count ++;
+				});
+			});
+
+												
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 3);
+			assertEquals(this.count, 2);
+			assertEquals(fac.usage(), 2);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTenNoOverlap() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			for (var i = 0; i < 10; i ++) {
+				this.setTimer(i).done(function () {
+					
+					this.useFacility(fac, 1)
+					.done(function (j) {
+						assertEquals(this.time(), j);
+						this.count ++;
+					}, null, this.callbackData);
+				}).setData(i + 1);
+			}
+												
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 11);
+			assertEquals(this.count, 10);
+			assertEquals(fac.usage(), 10);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTenSmall() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(fac, 10)
+			.done(function () {
+				assertEquals(this.time(), 20);
+				this.count ++;
+			});
+			
+			
+			for (var i = 0; i < 10; i ++) {
+				this.setTimer(2*i).done(function () {
+					
+					this.useFacility(fac, 1)
+					.done(function (j) {
+						assertEquals(this.time(), j);
+						this.count ++;
+					}, null, this.callbackData);
+				}).setData(2*i + 2);
+			}
+												
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.count, 11);
+			assertEquals(fac.usage(), 20);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSTen() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			
+			for (var i = 0; i < 10; i ++) {
+				this.useFacility(fac, 1)
+				.done(function () {
+					assertEquals(this.time(), 10);
+					this.count ++;
+				});
+		}
+												
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.count, 10);
+			assertEquals(fac.usage(), 10);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSRampUpDown() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			
+			this.setTimer(0).done(function () {
+				this.useFacility(fac, 4)
+				.done(function () {
+					assertEquals(this.time(), 7);
+					this.count ++;
+				});
+			});
+			
+			this.setTimer(1).done(function () {
+				this.useFacility(fac, 2)
+				.done(function () {
+					assertEquals(this.time(), 6);
+					this.count ++;
+				});
+			});
+			
+			this.setTimer(2).done(function () {
+				this.useFacility(fac, 1)
+				.done(function () {
+					assertEquals(this.time(), 5);
+					this.count ++;
+				});
+			});
+												
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.count, 3);
+			assertEquals(fac.usage(), 7);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSImmuneToRenege() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	var event = new Sim.Event('a');
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.ro = this.useFacility(fac, 10)
+			.done(function () {
+				assertEquals(this.time(), 10);
+				this.count ++;
+			})
+			.waitUntil(1, assertFail)
+			.unlessEvent(event, assertFail);
+			
+			event.fire(true);
+		
+			this.setTimer(4).done(function () {
+				this.ro.cancel();
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 10);
+			assertEquals(this.count, 1);
+			assertEquals(fac.usage(), 10);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSCancelDuringUsage() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('simple', Sim.Facility.ProcessorSharing);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.ro = this.useFacility(fac, 10).done(function () {
+				assertEquals(this.time(), 10);
+				this.count ++;
+			});
+				
+			this.setTimer(4).done(function () {
+				this.ro.cancel();
+			});
+									
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 10);
+			assertEquals(this.count, 1);
+			assertEquals(fac.usage(), 10);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
