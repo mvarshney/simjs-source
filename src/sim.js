@@ -265,23 +265,30 @@ Sim.Facility = function (name, discipline, servers) {
 
 	case Sim.Facility.LCFS:
 		this.use = this.useLCFS;
+		this.queue = new Sim.Queue();
+		break;
+	case Sim.Facility.ProcessorSharing:
+		this.use = this.useProcessorSharing;
+		this.queue = [];
 		break;
 	case Sim.Facility.FCFS:
 	default:
 		this.use = this.useFCFS;
 		this.freeServers = new Array(this.servers);
+		this.queue = new Sim.Queue();
 		for (var i = 0; i < this.freeServers.length; i++) {
 			this.freeServers[i] = true;
 		}
 	}
-	this.queue = new Sim.Queue();
+	
 	this.stats = new Sim.Population();
 	this.busyDuration = 0;
 };
 
 Sim.Facility.FCFS = 1;
 Sim.Facility.LCFS = 2;
-Sim.Facility.NumDisciplines = 3;
+Sim.Facility.ProcessorSharing = 3;
+Sim.Facility.NumDisciplines = 4;
 
 Sim.Facility.prototype.reset = function () {
 	this.queue.reset();
@@ -417,6 +424,68 @@ Sim.Facility.prototype.useLCFSCallback = function () {
 		var obj = facility.queue.pop(ro.entity.time());
 		facility.useLCFS(obj.remaining, obj);
 	}
+};
+
+Sim.Facility.prototype.useProcessorSharing = function (duration, ro) {
+	ARG_CHECK(arguments, 2, 2, null, Sim.Request);
+	ro.duration = duration;
+	ro.cancelRenegeClauses();
+	this.stats.enter(ro.entity.time());
+	this.useProcessorSharingSchedule(ro, true);
+};
+
+Sim.Facility.prototype.useProcessorSharingSchedule = function(ro, isAdded) {
+	var current = ro.entity.time();
+	var size = this.queue.length;
+	var multiplier = isAdded ? ((size + 1.0) / size) : ((size - 1.0) / size);
+	var newQueue = [];
+	
+	if (this.queue.length === 0) {
+		this.lastIssued = current;
+	}
+	
+	for (var i = 0; i < size; i++) {
+		var ev = this.queue[i];
+		if (ev.ro === ro) {
+			continue;
+		}
+		var newev = new Sim.Request(this, current, current + (ev.deliverAt - current) * multiplier);
+		newev.ro = ev.ro;
+		newev.source = this;
+		newev.deliver = this.useProcessorSharingCallback;
+		newQueue.push(newev);
+		
+		ev.cancel();
+		ro.entity.sim.queue.insert(newev);
+	}
+	
+	// add this new request
+	if (isAdded) {
+		var newev = new Sim.Request(this, current, current + ro.duration * (size + 1));
+		newev.ro = ro;
+		newev.source = this;
+		newev.deliver = this.useProcessorSharingCallback;
+		newQueue.push(newev);
+		
+		ro.entity.sim.queue.insert(newev);
+	}
+	
+	this.queue = newQueue;
+	
+	// usage statistics
+	if (this.queue.length == 0) {
+		this.busyDuration += (current - this.lastIssued);
+	} 
+};
+
+Sim.Facility.prototype.useProcessorSharingCallback = function () {
+	var ev = this;
+	var fac = ev.source;
+	
+	if (ev.cancelled) return;
+	fac.stats.leave(ev.ro.scheduledAt, ev.ro.entity.time());
+	ev.ro.deliver();
+	fac.useProcessorSharingSchedule(ev.ro, false);
 };
 
 /** Buffer
