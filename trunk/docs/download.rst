@@ -12,8 +12,8 @@ Both libraries are available as debug and release versions. The release version 
 
 Download links (right-click and save):
 
-* **sim.js** [:download:`Debug version <../release/sim-0.1-debug.js>`] [:download:`Release version <../release/sim-0.1.js>`] (includes random.js)
-* **random.js** [:download:`Debug version <../release/random-0.1-debug.js>`] [:download:`Release version <../release/random-0.1.js>`]
+* **sim.js** [:download:`Debug version <../release/sim-0.2-debug.js>`] [:download:`Release version <../release/sim-0.2.js>`] (includes random.js)
+* **random.js** [:download:`Debug version <../release/random-0.2-debug.js>`] [:download:`Release version <../release/random-0.2.js>`]
 
 
 Source Code Access

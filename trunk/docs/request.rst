@@ -16,6 +16,8 @@ The ``Request`` object is returned when an entity makes any of the following req
 * To use a facility, via :func:`useFacility`.
 * To put tokens in a buffer, via :func:`putBuffer`.
 * To get tokens from buffer, via :func:`getBuffer`.
+* To store objects in a store, via :func:`putStore`.
+* To retrieve object from a store, via :func:`getStore`.
 * To wait on an event, via :func:`waitEvent`.
 * To queue on an event, via :func:`queueEvent`.
 
@@ -202,9 +204,12 @@ Request class has three functions that accept callback functions: :func:`~Sim.Re
     * for :attr:`useFacility(fac)`, :attr:`this.callbackSource` is equal to *fac*.
     * for :attr:`putBuffer(buf)`, :attr:`this.callbackSource` is equal to *buf*.
     * for :attr:`getBuffer(buf)`, :attr:`this.callbackSource` is equal to *buf*.
+    * for :attr:`putStore(store)`, :attr:`this.callbackSource` is equal to *store*.
+    * for :attr:`getStore(store)`, :attr:`this.callbackSource` is equal to *store*.
     * for :attr:`waitEvent(event)`, :attr:`this.callbackSource` is equal to *event*.
     * for :attr:`queueEvent(event)`, :attr:`this.callbackSource` is equal to *event*.
 * :attr:`this.callbackMessage`. Provides additional information. Currently, this attribute is set in following cases only:
 	* If the request had a :func:`~!Sim.Request.unlessEvent` clause and the corresponding callback function is called. This attribute points to the event that led to this callback function.
 	* For :attr:`useFacility(fac)`, the callback in :func:`~Sim.Request.done` reports the server id that was allocated to this request.
+	* For :attr:`getStore(store)`, the callback in :func:`~Sim.Request.done` points to the object that is returned by the store.
 * :attr:`this.callbackData`. User defined data through :func:`~Sim.Request.setData`.
