@@ -267,7 +267,7 @@ Sim.Facility = function (name, discipline, servers) {
 		this.use = this.useLCFS;
 		this.queue = new Sim.Queue();
 		break;
-	case Sim.Facility.ProcessorSharing:
+	case Sim.Facility.PS:
 		this.use = this.useProcessorSharing;
 		this.queue = [];
 		break;
@@ -287,7 +287,7 @@ Sim.Facility = function (name, discipline, servers) {
 
 Sim.Facility.FCFS = 1;
 Sim.Facility.LCFS = 2;
-Sim.Facility.ProcessorSharing = 3;
+Sim.Facility.PS = 3;
 Sim.Facility.NumDisciplines = 4;
 
 Sim.Facility.prototype.reset = function () {
