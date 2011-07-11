@@ -196,3 +196,15 @@ These functions and attributes are added when :func:`Sim.addEntity` function is 
     Request to retrieve ``amount`` quantity of tokens from the ``buffer``. This function returns a :ref:`Request <request-main>` object.
     
     .. seealso:: :ref:`resources-buffer`.
+
+.. js:function:: putStore(store, object)
+
+	Request to store ``object`` in the ``store``. ``object`` can be any JavaScript value (numbers, strings, functions, objects, arrays etc). This function returns a :ref:`Request <request-main>` object.
+	
+	.. seealso:: :ref:`resources-store`.
+
+.. js:function:: getStore(store[, filter])
+
+	Request to retrieve object from the ``store``. If the filter function is supplied then the first object (in FIFO order) that matches the filter is retrieved; otherwise the first object in FIFO order is retrieved. The retrieved object can be accessed via the :attr:`this.callbackMessage` attribute in the callback function. This returns a :ref:`Request <request-main>` object.
+
+	.. seealso:: :ref:`resources-store`.	

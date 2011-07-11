@@ -1,6 +1,6 @@
-=========================================
-Resources: Facilities and Buffers
-=========================================
+==========================================
+Resources: Facilities, Buffers and Stores
+==========================================
 
 
 .. _resources-facility:
@@ -124,7 +124,11 @@ Buffer
 *Buffer* is a resource that can store a finite number of tokens. Any entity can store tokens in the buffer if there is free space, or retrieve existing tokens from the buffer if some are available. Queueing happens when:
 
 * an entity wishes to store tokens, but the buffer does not have sufficient free space to store them. The entity will be queued until some other entity (or entities) remove tokens from the buffer to create enough free space.
-* an entity wishes to retrieve tokens, but the buffer does not have sufficient number of available tokens. The entity will be queued until some other entity (or entities) put enough number tokens into the buffer.
+* an entity wishes to retrieve tokens, but the buffer does not have sufficient number of available tokens. The entity will be queued until some other entity (or entities) put enough number of tokens into the buffer.
+
+.. note:: Buffer vs. Store
+    
+    Buffers are resources that store "homogeneous" quantities. The buffers do not actually store any object, rather they keep a counter for the current usage, which is increment by *putBuffer* operation and decremented after *getBuffer* operation. If you wish to store real objects, consider using :ref:`resources-store`.
 
 *Buffers* support two basic operations: :func:`~Sim.Buffer.put` to store tokens in the buffer, and :func:`~Sim.Buffer.get` to retrieve tokens from the buffers. The *Buffer* object has two queues: *putQueue* where the entities wait if their :func:`~!Sim.Buffer.put` request cannot be immediately satisfied, and *getQueue* where the entities wait if their :func:`~!Sim.Buffer.get` request cannot be immediately satisfied.
 
@@ -147,6 +151,14 @@ API Reference
 .. js:function:: Sim.Buffer.current()
     
     The number of available tokens in the buffer.
+
+.. js:attribute:: Sim.Buffer.putQueue.stats
+    
+    :ref:`statistics-population` for the put queue.
+
+.. js:attribute:: Sim.Buffer.getQueue.stats
+
+    :ref:`statistics-population` for the get queue.
     
 The :class:`~!Sim.Buffer` class does not directly provide any *put()* or *get()* API. Instead, entities must use their ``Entity Prototype`` functions (:func:`putBuffer` and :func:`getBuffer`) to access buffers.
 
@@ -154,3 +166,90 @@ Example: Producers-Consumers
 -----------------------------
 
 .. include:: examples/producers-consumers.rst
+
+.. _resources-store:
+
+Store
+========
+
+*Store* is a resource that can store a finite number of JavaScript objects (actually any datatype: number, string, function, array, object etc). Any entity can store objects in the store if there is free space, or retrieve existing objects from the store if some are available. Queueing happens when:
+
+* an entity wishes to store objects, but the store does not have sufficient free space to store them. The entity will be queued until some other entity (or entities) remove objects from the store to create enough free space.
+* an entity wishes to retrieve objects, but the store does not have sufficient number of available object. The entity will be queued until some other entity (or entities) put enough number of objects into the buffer.
+
+.. note:: Store vs. Buffer
+    
+    Stores are resources that store distinct JavaScript objects. If you do not wish to store actual objects, consider using :ref:`resources-buffer`.
+
+*Stores* support two basic operations: :func:`~Sim.Store.put` to store objects in the store, and :func:`~Sim.Store.get` to retrieve objects from the stores. The *Store* object has two queues: *putQueue* where the entities wait if their :func:`~!Sim.Store.put` request cannot be immediately satisfied, and *getQueue* where the entities wait if their :func:`~!Sim.Store.get` request cannot be immediately satisfied.
+
+Entities can retrieve objects from stores in two ways:
+
+* Retrieve objects from store in FIFO order.
+* Supply a "filter" function and retrieve object that matches the filter.
+
+Entities access the stores through their ``Entity Prototype`` API:
+
+* :attr:`putStore(store, object)`. Attempt to store *object* in *store*. This returns a :ref:`Request <request-main>` object.
+* :attr:`getStore(store[, filter])`. Attempt to retrieve object from *buffer*. If the filter function is supplied then the first object (in FIFO order) that matches the filter is retrieved; otherwise the first object in FIFO order is retrieved. This returns a :ref:`Request <request-main>` object.
+
+The retrieved object can be accessed via the :attr:`this.callbackMessage` attribute in the callback function (see example below).
+
+API Reference
+---------------
+
+.. js:class:: Sim.Store(name, maxCapacity)
+
+    Creates a new store. ``name`` (string) is used for identifying the statistics in a report. The store has ``maxCapacity`` capacity. The store will be created empty.
+    
+.. js:function:: Sim.Store.size()
+
+    The maximum capacity of the store.
+
+.. js:function:: Sim.Store.current()
+    
+    The number of available objects in the store.
+
+.. js:attribute:: Sim.Store.putQueue.stats
+
+    :ref:`statistics-population` for the put queue.
+
+.. js:attribute:: Sim.Store.getQueue.stats
+
+    :ref:`statistics-population` for the get queue.
+    
+The :class:`~!Sim.Store` class does not directly provide any *put()* or *get()* API. Instead, entities must use their ``Entity Prototype`` functions (:func:`putStore` and :func:`getStore`) to access stores.
+
+Example
+----------
+
+.. code-block:: js
+
+    // Create a store
+    var store = new Sim.Store("Example Store", 10);
+    
+    var Entity = {
+        start: function () {
+            // Put an object
+            this.putStore(store, {myfield: "myvalue"});
+            // Put another object
+            this.putStore(store, {myfield: "othervalue"});
+            // arrays, numbers, strings etc can also be stored
+            this.putStore(store, "stored string");
+            
+            // Retrieve object from store.
+            // Note 1: If filter function is not supplied, objects are returned in FIFO order
+            // Note 2: The object can be accessed via this.callbackMessage
+            this.getStore(store).done(function () {
+                assert(this.callbackMessage.myfield === "myvalue");
+            });
+            
+            // Retrieve object from store using filter function
+            this.getStore(store, function (obj) {
+                return (obj === 'stored string');
+            })
+            .done(function () {
+                assert(this.callbackMessage === "stored string");
+            });
+        }
+    }

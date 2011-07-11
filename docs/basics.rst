@@ -14,7 +14,7 @@ Briefly speaking, Discrete Event Simulation (DES) is a technique to *model* a co
 
 A typical model of a system includes (a) *entities*, which are the active actors in the system and encapsulate the state and logic of the system components, (b) *resources*, which are consumed by the entities, (c) *communication* primitives, to coordinate actions between entities across time, and of course, (d) *statistics*, which is the output of a simulation run.
 
-As we will see shortly, the SIM.JS library provides support for entities, resources (of two types: Facility and Buffer), communication (via Timers, Events and Messages) and statistics (with Data Series, Time Series and Population statistics).
+As we will see shortly, the SIM.JS library provides support for entities, resources (Facility, Buffers and Stores), communication (via Timers, Events and Messages) and statistics (with Data Series, Time Series and Population statistics).
 
 .. _basics-design:
 
@@ -71,7 +71,8 @@ The ``Sim`` namespace further provides following classes:
 .. 
     * :class:`Sim` class. The simulator kernel.
     * :class:`Sim.Facility` class. :ref:`resources-facility` is a resource that is used by entities for a finite duration. There is a limit on the number of entities that can use the facility at a given time. As an example, consider a barbershop (the facility) with *m* barbers (capacity of facility). The customers arrive at shop and wish to 'use' the resource (barber); if all barbers are busy, the customers wait until one barber is available.
-    * :class:`Sim.Buffer` class. :ref:`resources-buffer` is a resource that can store a finite number of tokens. Any entity can store tokens in the buffer if there is free space, or retrieve existing tokens from the buffer if some are available.
+    * :class:`Sim.Buffer` class. :ref:`resources-buffer` is a resource that can store a finite number of *homogeneous* tokens. Any entity can store tokens in the buffer if there is free space, or retrieve existing tokens from the buffer if some are available.
+	* :class:`Sim.Store` class. :ref:`resources-store` is a resource that can store a finite number of JavaScript objects. Any entity can store objects in the store if there is free space, or retrieve existing objects from the store if some are available.
     * :class:`Sim.Event` class. :ref:`events-events` are external objects that start out in *passive* state, and at some point in time will be *activated* or *fired*. Entities 'attach' themselves to events and wait until the event is fired.
     * :class:`Sim.Request` class. When an entity makes a request to the simulation -- such as set a timer, use a facility, etc -- the simulator returns back a :ref:`Request object <request-main>`. The entity can use this Request object to further modify the original request.
     * :class:`Sim.DataSeries` class. :ref:`Data Series <statistics-data-series>` is a collection of discrete, time-independent observations, for example, grades of each student in a class, length of rivers in United States. The :class:`~Sim.DataSeries` class provides a convenient API for recording and analyzing such observations, such as finding maximum and minimum values, statistical properties like average and standard deviation and so on.
@@ -97,6 +98,13 @@ The ``Sim`` namespace further provides following classes:
 |                       |finite number of tokens. Any entity can store tokens in       |
 |                       |the buffer if there is free space, or retrieve existing       |
 |                       |tokens from the buffer if some are available.                 |
++-----------------------+--------------------------------------------------------------+
+|:class:`Sim.Store`     |:ref:`resources-store` is a resource that can store a finite  | 
+|                       |number of                                                     |
+|                       |JavaScript objects (actually any datatype: number, string,    |
+|                       |function, array, object etc). Any entity can store objects    |
+|                       |in the store if there is free space, or retrieve existing     |
+|                       |objects from the store if some are available.                 |
 +-----------------------+--------------------------------------------------------------+
 |:class:`Sim.Event`     |:ref:`events-events` are external objects that start out      |
 |                       |in *passive* state, and at some point in time will be         |
