@@ -189,7 +189,7 @@ API Reference
     
     In case of facilities with FIFO queuing discipline, the requesting entities go through two stages: (1) wait for the facility to become free (this may be zero duration if the facility is already free), and (2) use the facility for specified duration. The :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions are applicable in the first stage only. In order words, if an entity has started using the facility, then it cannot be dislodged and these function calls will have no effect.
     
-    In case of facilities with LIFO queuing discipline, the requesting entities obtain an immediate access to the facility resource. Therefore, :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions will have no effect for these facilities.
+    In case of facilities with LIFO and Processor Sharing disciplines, the requesting entities obtain an immediate access to the facility resource. Therefore, :func:`~!Sim.Request.waitUntil`, :func:`~!Sim.Request.unlessEvent` and :func:`~!Sim.Request.cancel` functions will have no effect for these facilities.
 
 
 .. _request-callbacks:
