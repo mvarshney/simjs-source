@@ -37,13 +37,14 @@ Scheduling Discipline is the policy on how the entities wait in the queue and us
 *Last Come First Served (LCFS)*
     The last entity arriving at facility will preempt any current entity. When this entity is finished, the earlier entities will resume.
 
-*Round Robin (RR)*
-    All entities take turn to use the facility for some time quanta duration each.
 
 *Processor Sharing (PS)*
     There is no queue in the system. All entities simultaneously use the facility, however their usage duration increases proportionally to the number of active entities.
+
+*Round Robin (RR)* (not supported)
+    All entities take turn to use the facility for some time quanta duration each.
     
-In the version |version| only FCFS and LCFS scheduling disciplines are supported. The other disciplines are planned for future releases.
+In the version |version| only FCFS, LCFS and Processor Sharing scheduling disciplines are supported. The other disciplines are planned for future releases.
 
 Entities access the buffers through their ``Entity Prototype`` API:
 
@@ -58,6 +59,7 @@ API Reference
     
     * Sim.Facility.FCFS (first come first served) [Default value]
     * Sim.Facility.LCFS (last come first served)
+    * Sim.Facility.PS (processor sharing; resources are "shared", see :ref:`resource-processor-sharing`)
     
     ``numServers`` is the number of servers available in the facility. By default, only one server is available per facility. Currently, only Sim.Facility.FCFS uses this parameter.
 
@@ -115,6 +117,42 @@ Finally we create the simulation and entity objects, and start the simulation.
     sim.simulate(SIMTIME);       // start simulation
     server.report();             // statistics
 
+
+.. _resource-processor-sharing:
+
+Example: Processor Sharing
+------------------------------
+
+In the processor sharing service disciplines, all requesting entities get immediate access to the resource, however, their service time increases proportionally to the number of other entities already in the system.
+
+As an example, consider CPU modeled as facility with Processor Sharing discipline. A single request to use CPU for 1 second will complete in 1 second. Two simultaneous requests to use CPU for 1 second each will finish in 2 seconds each (since the CPU is "shared" between the two requests). 
+
+Another example would be network connection link (e.g. Ethernet) with a given data rate. Entities request to use the resource, which in this case means sending data. If multiple overlapping requests are made then the network link is "shared" between all requests. Say, request one is initiated at time 0 to send data for 10 seconds. A second request is also made at time 5 seconds to send data for 1 second. In this case, the first request will finish at 11 seconds (0 - 5 sec at full capacity, 5 - 7 seconds at half capacity, and 7 - 11 sec at full capacity again), while the second request will finish at 7 seconds . We validate this as follows:
+
+.. code-block:: js
+
+    // create the facility
+    var network = new Sim.Facility("Network Cable", Sim.Facility.PS);
+    
+    var Entity = {
+        start: function () {
+            // make request at time 0, to use network for 10 sec
+            this.useFacility(network, 10).done(function () {
+                assert(this.time(), 11);
+            });
+            
+            // make request at time 5, to use the network for 1 sec
+            this.setTimer(5).done(function () {
+                this.useFacility(network, 1).done(function () {
+                    assert(this.time(), 7);
+                });
+            });
+        }
+    };
+    
+    var sim = new Sim();
+    sim.addEntity(Entity);
+    sim.simulate(100);
 
 .. _resources-buffer:
 
