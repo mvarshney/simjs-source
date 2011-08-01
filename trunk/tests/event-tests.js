@@ -113,7 +113,7 @@ function testEventWaitQueue () {
 	var wcount = 0;
 	var qcount = 0;
 	var Entity = {
-	    start: function () {
+	    start: function (master) {
 	        this.waitEvent(barrier).done(function () {
 	            wcount++;
 	        });
@@ -122,7 +122,7 @@ function testEventWaitQueue () {
 	            qcount++;
 	        });
 
-	        if (this.master) {
+	        if (master) {
 	            this.setTimer(10)
 	            .done(barrier.fire, barrier)
 	            .done(funnel.fire, funnel);
@@ -136,9 +136,8 @@ function testEventWaitQueue () {
 	var sim = new Sim();
 	var e = [];
 	for (var i = 0; i < 100; i++) {
-	    e.push(sim.addEntity(Entity));
+	    e.push(sim.addEntity(Entity, i == 0));
 	}
-	e[0].master = true;
 	sim.simulate(100);
 	entities = 100;
 	assertEquals(wcount, 100);

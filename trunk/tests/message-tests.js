@@ -4,6 +4,9 @@ function testMessageSendOne() {
 	
 	var Entity = {
 		start: function () {
+			
+		},
+		init: function () {
 			if (this.master) {
 				this.send("message", 10, this.other);
 			}
@@ -21,11 +24,13 @@ function testMessageSendOne() {
 		}
 	};
 
-	var o1 = sim.addEntity(Entity);
-	var o2 = sim.addEntity(Entity);
+	var o1 = sim.addEntity(Entity, true, null);
+	var o2 = sim.addEntity(Entity, false, o1);
 	o1.master = true;
 	o1.other = o2;
 	o2.other = o1;
+	o1.init();
+	o2.init();
 	sim.simulate(100);
 	entities = 2;
 	assertEquals(count, 1);
@@ -36,7 +41,8 @@ function testMessageSendAll() {
 	var count = 0;
 	
 	var Entity = {
-		start: function () {
+		start: function () {},
+		init: function () {
 			if (this.master) {
 				this.send("message", 10);
 			}
@@ -60,6 +66,7 @@ function testMessageSendAll() {
 	o1.master = true;
 	o2.other = o1;
 	o3.other = o1;
+	o1.init(); o2.init();
 	
 	sim.simulate(100);
 	entities = 3;
@@ -71,7 +78,8 @@ function testMessageSendArray() {
 	var count = 0;
 	
 	var Entity = {
-		start: function () {
+		start: function () {},
+		init: function () {
 			if (this.master) {
 				this.send("message", 10, this.array);
 			}
@@ -96,6 +104,7 @@ function testMessageSendArray() {
 	o1.array = [o2, o3, o1];
 	o2.other = o1;
 	o3.other = o1;
+	o1.init(); o2.init(); o3.init();
 	
 	sim.simulate(100);
 	entities = 3;
@@ -107,7 +116,8 @@ function testMessageNoCallback() {
 	var count = 0;
 	
 	var Entity = {
-		start: function () {
+		start: function (){},
+		init: function () {
 			if (this.master) {
 				this.send("message", 10, this.other);
 			}
@@ -123,6 +133,7 @@ function testMessageNoCallback() {
 	o1.master = true;
 	o1.other = o2;
 	o2.other = o1;
+	o1.init(); o2.init();
 	sim.simulate(100);
 	entities = 2;
 	assertEquals(sim.time(), 10);
@@ -133,7 +144,8 @@ function testMessageDelayedSendOne() {
 	var count = 0;
 	
 	var Entity = {
-		start: function () {
+		start: function () {},
+		init: function () {
 			if (this.master) {
 				this.setTimer(10).done(this.send, this, ["message", 10, this.other]);
 			}
@@ -156,6 +168,7 @@ function testMessageDelayedSendOne() {
 	o1.master = true;
 	o1.other = o2;
 	o2.other = o1;
+	o1.init(); o2.init();
 	sim.simulate(100);
 	entities = 2;
 	assertEquals(count, 1);
@@ -166,7 +179,8 @@ function testMessageZeroDelay() {
 	var count = 0;
 	
 	var Entity = {
-		start: function () {
+		start: function () {},
+		init: function () {
 			if (this.master) {
 				this.setTimer(10).done(this.send, this, ["message", 0, this.other]);
 			}
@@ -189,6 +203,7 @@ function testMessageZeroDelay() {
 	o1.master = true;
 	o1.other = o2;
 	o2.other = o1;
+	o1.init(); o2.init();
 	sim.simulate(100);
 	entities = 2;
 	assertEquals(count, 1);
