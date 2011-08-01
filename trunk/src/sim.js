@@ -14,13 +14,8 @@ function Sim() {
 	this.entities = [];
 	this.queue = new Sim.PQueue();
 	this.endTime = 0;
+	this.entityId = 1;
 }
-
-Sim.prototype.counter = (function () {
-	var value = 1;
-	return function () { return value ++; };
-}());
-
 
 Sim.prototype.time = function () {
 	return this.simTime;
@@ -53,7 +48,7 @@ Sim.prototype.sendMessage = function () {
 };
 
 Sim.prototype.addEntity = function (proto) {
-	ARG_CHECK(arguments, 1, 1, Object);
+	//ARG_CHECK(arguments, 1, 1, Object);
 	// Verify that prototype has start function
 	if (!proto.start) {  // ARG CHECK
 		throw new Error("Entity prototype must have start() function defined"); // ARG CHECK
@@ -156,7 +151,7 @@ Sim.prototype.addEntity = function (proto) {
 		proto.log = function (message) {
 			ARG_CHECK(arguments, 1, 1);
 			
-			this.sim.log(message);
+			this.sim.log(message, this);
 		};
 	}
 	
@@ -173,9 +168,20 @@ Sim.prototype.addEntity = function (proto) {
 	}(proto));
 	
 	obj.sim = this;
-	obj.id = this.counter();
-	
+	obj.id = this.entityId ++;
 	this.entities.push(obj);
+	
+	if (arguments.length > 1) {
+		var args = [];
+		for (var i = 1; i < arguments.length; i ++) {
+			args.push(arguments[i]);
+		}
+		obj.start.apply(obj, args);
+	}
+	else {
+		obj.start();
+	}
+	
 	
 	return obj;
 };
@@ -185,9 +191,17 @@ Sim.prototype.simulate = function (endTime, flags) {
 	ARG_CHECK(arguments, 1, 1);
 	
 	this.endTime = endTime;
+	/*
 	for (var i = 0; i < this.entities.length; i++) {
-		this.entities[i].start();
+		var entity = this.entities[i];
+		if (entity.arguments) {
+			entity.start.apply(entity, entity.arguments);
+			entity.arguments = null;
+		} else {
+			entity.start();
+		}
 	}
+	*/
 	
 	this.runLoop();
 };
@@ -233,12 +247,17 @@ Sim.prototype.log = function (message, entity) {
 	
 	if (!this.logger) return;
 	var entityMsg = "";
-	if (entity !== undefined) entityMsg = " [" + entity.id + "] ";
+	if (entity !== undefined) {
+		if (entity.name) {
+			entityMsg = " [" + entity.name + "]";
+		} else {
+			entityMsg = " [" + entity.id + "] ";
+		}
+	}
 	this.logger(this.simTime.toFixed(6)
 			+ entityMsg
 			+ "   " 
-			+ message 
-			+ "\n");
+			+ message);
 };
 
 /** Facility
@@ -484,8 +503,9 @@ Sim.Facility.prototype.useProcessorSharingCallback = function () {
 	
 	if (ev.cancelled) return;
 	fac.stats.leave(ev.ro.scheduledAt, ev.ro.entity.time());
-	ev.ro.deliver();
+
 	fac.useProcessorSharingSchedule(ev.ro, false);
+	ev.ro.deliver();
 };
 
 /** Buffer
