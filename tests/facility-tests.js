@@ -62,14 +62,14 @@ function testFacilityFCFSOOneServerTwoEntities() {
 	
 	var Entity = {
 		count: 0,
-		start: function () {
+		start: function (first) {
 			// entity 1, at time 0: [0, 10]
 			// entity 2, at time 0: [10, 20]
 			// entity 1, at time 4: [20, 30]
 			// entity 2, at time 4: [30, 40]
 			// entity 1, at time 50: [50, 60]
 			// entity 2, at time 70: [70, 80]
-			if (this.first) {
+			if (first) {
 				this.useFacility(fac, 10).done(function () {
 					assertEquals(this.time(), 10);
 					this.count ++;
@@ -116,8 +116,8 @@ function testFacilityFCFSOOneServerTwoEntities() {
 		}
 	};
 
-	sim.addEntity(Entity).first = true;
-	sim.addEntity(Entity).first = false;
+	sim.addEntity(Entity, true);
+	sim.addEntity(Entity, false);
 	sim.simulate(100);
 	entities = 2;
 }
@@ -853,6 +853,35 @@ function testFacilityPSDocExample() {
 			assertEquals(this.time(), 15);
 			assertEquals(this.count, 2);
 			assertEquals(network.usage(), 11);
+		}
+	};
+	    
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityPSNested() {
+	var sim = new Sim();
+	var network = new Sim.Facility("abcd", Sim.Facility.PS);
+	    
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(network, 1).done(function () {
+				this.count ++;
+				assertEquals(this.time(), 1);
+				this.useFacility(network, 1).done(function () {
+					this.count++;
+					assertEquals(this.time(), 2);
+				});
+			});
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.count, 2);
+			assertEquals(this.time(), 2);
 		}
 	};
 	    

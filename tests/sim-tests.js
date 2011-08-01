@@ -11,3 +11,17 @@ function testSimExtendedPrototype() {
 	assertEquals(obj.time instanceof Function, true);
 
 }
+
+function testStartArguments () {
+	var sim = new Sim();
+	
+	var Entity = {
+		start: function (a, b) {
+			assertEquals(a, 10),
+			assertEquals(b.a, 20);
+		}
+	};
+	
+	sim.addEntity(Entity, 10, {a: 20});
+	sim.simulate(100);
+}
