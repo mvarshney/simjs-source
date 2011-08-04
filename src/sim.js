@@ -832,10 +832,11 @@ Sim.Event.prototype.fire = function(keepFired) {
 	}
 	
 	// Dispatch all waiting entities
-	for (var i = 0; i < this.waitList.length; i ++) {
-		this.waitList[i].deliver();
-	}
+	var tmpList = this.waitList;
 	this.waitList = [];
+	for (var i = 0; i < tmpList.length; i ++) {
+		tmpList[i].deliver();
+	}
 	
 	// Dispatch one queued entity
 	var lucky = this.queue.shift();
