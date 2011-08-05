@@ -334,6 +334,61 @@ Sim.Facility.prototype.finalize = function (timestamp) {
 	this.queue.stats.finalize(timestamp);
 };
 
+Sim.Facility.prototype.useFCFS = function (duration, ro) {
+	ARG_CHECK(arguments, 2, 2);
+	
+	ro.duration = duration;
+	var now = ro.entity.time();
+	this.stats.enter(now);
+	this.queue.push(ro, now);
+	this.useFCFSSchedule(now);
+};
+
+Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
+	ARG_CHECK(arguments, 1, 1);
+	
+	while (this.free > 0 && !this.queue.empty()) {
+		var ro = this.queue.shift(timestamp); // TODO
+		if (ro.cancelled) {
+			continue;
+		}
+		for (var i = 0; i < this.freeServers.length; i++) {
+			if (this.freeServers[i]) {
+				this.freeServers[i] = false;
+				ro.msg = i;
+				break;
+			};
+		}
+
+		this.free --;
+		this.busyDuration += ro.duration;
+		
+		// cancel all other reneging requests
+		ro.cancelRenegeClauses();
+		
+		var newro = new Sim.Request(this, timestamp, timestamp + ro.duration);
+		newro.done(this.useFCFSCallback, this, ro);
+
+		ro.entity.sim.queue.insert(newro);
+	}
+};
+
+Sim.Facility.prototype.useFCFSCallback = function (ro) {
+	// We have one more free server
+	this.free ++;
+	this.freeServers[ro.msg] = true;
+
+	this.stats.leave(ro.scheduledAt, ro.deliverAt);
+	
+	// if there is someone waiting, schedule it now
+	this.useFCFSSchedule(ro.entity.time());
+	
+	// restore the deliver function, and deliver
+	ro.deliver();
+	
+}
+
+/***** TO BE REMOVED 
 Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
 	ARG_CHECK(arguments, 1, 1);
 	
@@ -390,6 +445,7 @@ Sim.Facility.prototype.useFCFSCallback = function () {
 	// if there is someone waiting, schedule it now
 	facility.useFCFSSchedule(ro.entity.time());
 };
+****/
 
 Sim.Facility.prototype.useLCFS = function (duration, ro) {
 	ARG_CHECK(arguments, 2, 2);
