@@ -19,6 +19,7 @@ Sim.Request.prototype.cancel = function () {
 	}
 	
 	// --> this is main request
+	if (this.noRenege) return this;
 	
 	// if already cancelled, do nothing
 	if (this.cancelled) return;
@@ -58,6 +59,7 @@ Sim.Request.prototype.done = function (callback, context, argument) {
 
 Sim.Request.prototype.waitUntil = function (delay, callback, context, argument) {
 	ARG_CHECK(arguments, 1, 4, undefined, Function, Object);
+	if (this.noRenege) return this;
 	
 	var ro = this._addRequest(this.scheduledAt + delay, callback, context, argument);
 	this.entity.sim.queue.insert(ro);
@@ -67,6 +69,7 @@ Sim.Request.prototype.waitUntil = function (delay, callback, context, argument) 
 
 Sim.Request.prototype.unlessEvent = function (event, callback, context, argument) {
 	ARG_CHECK(arguments, 1, 4, undefined, Function, Object);
+	if (this.noRenege) return this;
 	
 	if (event instanceof Sim.Event) {
 		var ro = this._addRequest(0, callback, context, argument);
@@ -108,9 +111,10 @@ Sim.Request.prototype.deliver = function () {
 };
 
 Sim.Request.prototype.cancelRenegeClauses = function () {
-	this.cancel = this.Null;
-	this.waitUntil = this.Null;
-	this.unlessEvent = this.Null;
+	//this.cancel = this.Null;
+	//this.waitUntil = this.Null;
+	//this.unlessEvent = this.Null;
+	this.noRenege = true;
 	
 	if (!this.group || this.group[0] != this) {
 		return;
@@ -168,8 +172,8 @@ Sim.Request.prototype._doCallback = function (source, msg, data) {
 			callback.call(context, argument);
 		}
 		
-		delete context.callbackSource;
-		delete context.callbackMessage;
-		delete context.callbackData;
+		context.callbackSource = null;
+		context.callbackMessage = null;
+		context.callbackData = null;
 	}
 };
