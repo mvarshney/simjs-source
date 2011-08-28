@@ -1,0 +1,172 @@
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>test</title>
+		<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../src/queues.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" charset="utf-8">
+
+		var start;
+		
+		function getsim() {
+			var sim = new Sim();
+			var Entity = {
+				count: 0,
+				start: function () {
+					if (!this.startedAt) {
+						this.startedAt = new Date().getTime();
+					}
+					this.setTimer(10).done(this.start);
+					this.count ++;
+				},
+				finalize: function () {
+					var end = new Date().getTime();
+					$('#log').append("Simulation completed in " + (end - this.startedAt)
+						+ " simtime = " + this.time() + "<br>");
+				}
+			};
+			
+			sim.addEntity(Entity);
+			return sim;
+		}
+		
+		function recorder() {
+			now = new Date().getTime();
+			$('#log').append(" Time now is " + (now - start) + " ");
+		}
+		
+		var paused = false;
+		function RunEngine(sim, type, until) {
+			switch (type)
+			{
+				case RunEngine.Complete:
+					return function () {
+						sim.simulate(until);
+					}
+					break;
+				case RunEngine.Responsive:
+					return function runResponsive() {
+			
+
+						var start = new Date().getTime();
+						var completed = sim.simulate(until, RunEngine.Events);
+						var end = new Date().getTime();
+						
+					/*	$('#log').append("events is " + RunEngine.Events 
+						+ " diff=" + (end - start)
+						+ "<br>");*/
+						
+						if (end - start < 0.8 * RunEngine.Interval) {
+							RunEngine.Events += 1e3;
+						} else if (end - start > 1.2 * RunEngine.Interval) {
+							RunEngine.Events -= 1e3;
+						}
+						
+						if (!completed && !paused) {
+							setTimeout(runResponsive, RunEngine.Interval);
+						}
+					}
+					break;
+				case RunEngine.SlowMotion:
+					return function slowmotion () {
+						var completed = sim.simulate(until, RunEngine.Events);
+						if (!completed && !paused) {
+							setTimeout(slowmotion, RunEngine.Interval);
+						}
+					}
+					break;
+				case RunEngine.Responsive:
+				
+					break;
+			}
+		}
+		RunEngine.Complete = 0;
+		RunEngine.Responsive = 1;
+		RunEngine.SlowMotion = 2;
+		RunEngine.RealTime = 3;
+		
+		RunEngine.Interval = 30; // ms
+		RunEngine.Events = 100; // number of events per interval
+		RunEngine.TimerAt = 0;
+	
+	/*	
+		RunEngineTimerAt = new Date().getTime();
+		
+		function runResponsive() {
+			var now = new Date().getTime();
+			if (now > RunEngineTimerAt) {
+				// we were delayed
+				RunEngineEvents /= 2;
+			} else {
+				RunEngineEvents *= 2;
+			}
+			
+			RunEngineTimerAt = now + RunEngineInterval;
+			sim.simulate(until, RunEngineEvents);
+			setTimeout(runSlowMotion, RunEngineInterval);
+		}
+		*/
+		
+		var runner, sim;
+		$(function () {
+			$('#slow').click(function () {
+				sim = getsim();
+				runner = RunEngine(sim, RunEngine.SlowMotion, 5e6);
+				runner();
+			});
+			$('#complete').click(function () {
+				sim = getsim();
+				runner = RunEngine(sim, RunEngine.Complete, 5e6);
+				runner();
+			});
+			$('#responsive').click(function () {
+				sim = getsim();
+				runner = RunEngine(sim, RunEngine.Responsive, 5e6);
+				runner();
+			});
+			$('#some_name').click(function () {
+				if (paused) {
+					paused = false;
+					runner();
+				} else {
+					paused = true;
+					$('#log').append("Pause sim = " + sim.time() + "<br>");
+				}
+			});
+		});
+
+		</script>
+	</head>
+	<body id="test" onload="">
+		<input type="button" name="slow" value="Slow Simulation" id="slow">
+		<input type="button" name="complete" value="Fastest Simulation" id="complete">
+		<input type="button" name="responsive" value="Responsive Simulation" id="responsive">
+		<input type="button" name="some_name" value="Another button" id="some_name">
+		<div id="status"></div>
+		<div id="log"></div>
+
+		
+	</body>
+	
+</html>
+
+
+<!--
+	Modes of operations:
+	- Run to completion mode (can still terminate)
+	- Responsive mode (receives commands, gives output; runs as fast as possible)
+	- Animation mode (runs slower than what is possible)
+	- Real time mode
+	
+	With and Without workers
+	
+	
+	
+	
+	
+	-->
