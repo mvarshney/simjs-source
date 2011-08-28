@@ -1,4 +1,11 @@
 var SimPanel = {
+	PLAY: 1,
+	PAUSE: 2,
+	RESUME: 3,
+	STOP: 4,
+	TICK: 5,
+	COMPLETE: 6,
+	
 	IntervalLow: 40,
 	Interval: 50,
 	IntervalHigh: 60,
@@ -7,7 +14,7 @@ var SimPanel = {
 	
 	/** Public APIs 
 	 */
-	load: function (divname) {
+	load: function (divname, cb) {
 		divname = '#' + divname;
 		
 		// Add gui elements
@@ -15,8 +22,8 @@ var SimPanel = {
 			<input type="button" name="simpanel_play" value="Start Simulation" id="simpanel_play"> \
 			<input type="button" name="simpanel_stop" value="Stop Simulation" id="simpanel_stop"> \
 			<input type="text" value="5e6" id="simpanel_sim_until"> \
-			Simulation Time: <span id="simpanel_sim_time">0</span> \
-			Events/Sec: <span id="simpanel_events_per_sec">0</span> \
+			<span id="simpanel_sim_time">0</span> \
+			<span id="simpanel_events_per_sec">0</span> \
 		');
 		
 		this.playButton = $(divname + ">#simpanel_play");
@@ -38,15 +45,8 @@ var SimPanel = {
 		this.playing = false;
 		this.paused = false;
 		
+		this.callback = cb;
 		return this;
-	},
-	
-	onPlay: function (cb) {
-		this.onPlayCallback = cb;
-	},
-	
-	onPause: function (cb) {
-		this.onPauseCallback = cb;
 	},
 	
 	/** Programmatic APIs.
@@ -63,8 +63,8 @@ var SimPanel = {
 			return sp.pause();
 		}
 		
-		if (sp.onPlayCallback) {
-			if (!sp.onPlayCallback()) return;
+		if (sp.callback) {
+			if (!sp.callback(sp.PLAY)) return;
 		}
 		
 		if (!sp.sim) {
@@ -86,12 +86,15 @@ var SimPanel = {
 	},
 	
 	pause: function () {
+		var sp = SimPanel;
+		
 		SimPanel.playButton.val("Resume Simulation");		
 		SimPanel.paused = true;
 	},
 	
 	resume: function () {
 		var sp = SimPanel;
+		if (sp.callback) sp.callback(sp.RESUME);
 		sp.playButton.val("Pause Simulation");
 		sp.paused = false;
 		sp.run();
@@ -141,14 +144,18 @@ var SimPanel = {
 		}
 		
 		if (completed) {
+			if (sp.callback) sp.callback(sp.COMPLETE);
+			sp.stop();
 			return;
 		}
 		
 		if (!sp.playing) {
+			if (sp.callback) sp.callback(sp.STOP);
 			return;
 		}
 		
 		if (sp.paused) {
+			if (sp.callback) sp.callback(sp.PAUSE);
 			return;
 		}
 		

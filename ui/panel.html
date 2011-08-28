@@ -18,6 +18,7 @@
 	
 	
 	<script type="text/javascript" charset="utf-8">
+	var obj;
 		function createSim() {
 			var sim = new Sim();
 			var done = false;
@@ -32,17 +33,34 @@
 				}
 			};
 
-			sim.addEntity(Entity);
+			obj = sim.addEntity(Entity);
 			return sim;
 		}
 		
 		$(function () {
-			SimPanel.load('simpanel');
-			SimPanel.onPlay(function () {
-				SimPanel.sim = createSim();
-				return true;
+			SimPanel.load('simpanel', function (event) {
+				switch (event) {
+					case SimPanel.PLAY:
+						SimPanel.sim = createSim();
+						$('#log').append("Simulation started<br>");
+						return true;
+					case SimPanel.PAUSE:
+						$('#log').append("Simulation paused<br>");
+						break;
+					case SimPanel.RESUME:
+						$('#log').append("Simulation resumed<br>");
+						break;
+					case SimPanel.STOP:
+						$('#log').append("Simulation stopped<br>");
+						break;
+					case SimPanel.TICK:
+						$('#log').append("Simulation tick<br>");
+						break;
+					case SimPanel.COMPLETE:
+						$('#log').append("Simulation finished!! " + obj.count + "<br>");
+						break;
+				}
 			});
-			
 		});
 		
 	</script>
@@ -50,6 +68,9 @@
 
 <body>
 	<div id="simpanel"></div>
+	<div id="log">
+		
+	</div>
 </body>
 
 
