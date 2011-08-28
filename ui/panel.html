@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Sim Panel test</title>
+	<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/queues.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script src="simpanel.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="panel.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	
+	<script type="text/javascript" charset="utf-8">
+		function createSim() {
+			var sim = new Sim();
+			var done = false;
+			var Entity = {
+				count: 0,
+				start: function () {
+					if (done) {
+						print("Done computation " + this.count);
+					}
+					this.setTimer(10).done(this.start);
+					this.count++;
+				}
+			};
+
+			sim.addEntity(Entity);
+			return sim;
+		}
+		
+		$(function () {
+			SimPanel.load('simpanel');
+			SimPanel.onPlay(function () {
+				SimPanel.sim = createSim();
+				return true;
+			});
+			
+		});
+		
+	</script>
+</head>
+
+<body>
+	<div id="simpanel"></div>
+</body>
+
+
+
+</html>
