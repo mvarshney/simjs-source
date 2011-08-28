@@ -187,23 +187,36 @@ Sim.prototype.addEntity = function (proto) {
 };
 
 
-Sim.prototype.simulate = function (endTime, flags) {
-	ARG_CHECK(arguments, 1, 1);
+Sim.prototype.simulate = function (endTime, maxEvents) {
+	//ARG_CHECK(arguments, 1, 2);
+	if (!maxEvents) {maxEvents = Math.Infinity; }
+	var events = 0;
 	
-	this.endTime = endTime;
-	/*
-	for (var i = 0; i < this.entities.length; i++) {
-		var entity = this.entities[i];
-		if (entity.arguments) {
-			entity.start.apply(entity, entity.arguments);
-			entity.arguments = null;
-		} else {
-			entity.start();
-		}
+	while (true) {
+		events ++;
+		if (events > maxEvents) return false;
+		
+		// Get the earliest event
+		var ro = this.queue.remove();
+		
+		// If there are no more events, we are done with simulation here.
+		if (ro == undefined) break;
+
+
+		// Uh oh.. we are out of time now
+		if (ro.deliverAt > endTime) break;
+		
+		// Advance simulation time
+		this.simTime =  ro.deliverAt;
+		
+		// If this event is already cancelled, ignore
+		if (ro.cancelled) continue;
+
+		ro.deliver();
 	}
-	*/
 	
-	this.runLoop();
+	this.finalize();
+	return true;
 };
 
 Sim.prototype.runLoop = function () {
