@@ -21,7 +21,7 @@ var SimPanel = {
 		$(divname).html(' \
 			<input type="button" name="simpanel_play" value="Start Simulation" id="simpanel_play"> \
 			<input type="button" name="simpanel_stop" value="Stop Simulation" id="simpanel_stop"> \
-			<input type="text" value="5e6" id="simpanel_sim_until"> \
+			<input type="text" value="5000" id="simpanel_sim_until"> \
 			<span id="simpanel_sim_time">0</span> \
 			<span id="simpanel_events_per_sec">0</span> \
 		');
