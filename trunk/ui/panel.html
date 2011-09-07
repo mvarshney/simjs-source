@@ -11,65 +11,27 @@
 	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/queues.js" type="text/javascript" charset="utf-8"></script>
 	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>	
-	<script src="jquery.drawinglibrary.js" type="text/javascript" charset="utf-8"></script>
-	<script src="jquery.svg.js" type="text/javascript" charset="utf-8"></script>
-	<script src="raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 	
 	
 	<script src="simpanel.js" type="text/javascript" charset="utf-8"></script>
 	<script src="queue.js" type="text/javascript" charset="utf-8"></script>
 	
 	<link rel="stylesheet" href="panel.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	
+	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<style>
+		#toolbar {
+			padding: 10px 4px;
+		}
+
+		</style>
 	
 	<script type="text/javascript" charset="utf-8">
-		var mm1 = {l: 1.1, m: 0.5, service: null};
-
-		function createSim() {
-			var sim = new Sim();
-			var random = new Random(1234);
-			var service = new Sim.Facility('mm1');
-			mm1.service = service;
-			var lambda = mm1.l;
-			var mu = mm1.m;
-			
-			var Entity = {
-				start: function () {
-					var arrival = random.exponential(1.0 / lambda);
-					this.setTimer(arrival).done(function () {
-						var usage = random.exponential(1.0 / mu);
-						this.useFacility(service, usage);
-						this.start();
-					});
-				}
-			};
-			
-			sim.addEntity(Entity);
-			return sim;
-		}
-	
-		function createSimpleSim() {
-			var sim = new Sim();
-			var done = false;
-			var Entity = {
-				count: 0,
-				start: function () {
-					if (done) {
-						print("Done computation " + this.count);
-					}
-					this.setTimer(10).done(this.start);
-					this.count++;
-				}
-			};
-
-			sim.addEntity(Entity);
-			return sim;
-		}
 
 		$(function () {
-			
+			/*
 			SimPanel.load('simpanel', function (event) {
 				switch (event) {
 					case SimPanel.PLAY:
@@ -103,85 +65,59 @@
 						break;
 				}
 			});
+			*/
 			
-			
-			$("#add-server").click(function () {
-				var server = new Server(paper, 50, 50);
-			});
-			
-
-			
-			$("#connections").click(function () {
-				var len = paper.objects.length;
-				for (var i = len - 1; i >= 0; i--) {
-					paper.objects[i].showConnectionPoints();
-				}
-			});
-			
-
-			
-			var paper = Raphael("canvas", 600, 400);
-			paper.objects = [];
-			
-			var rect = paper.rect(0, 0, 600, 400);
-			rect.attr('fill', '#faa');	
-			var s1 = new Server(paper, 100, 20);
-			var s2 = new Server(paper, 300, 20);
-			s1.showConnectionPoints();
-			s2.showConnectionPoints();
-
-		
-			
-			(function (paper) {
-				return;
-				var c1 = paper.circle(100, 20, 10);
-				var c2 = paper.circle(100, 10, 10);
-				var conn = paper.connection(c1, c2, "#000");
-				c2.attr({fill: "#fff"});
-				c2.drag(
-					function (dx, dy) {
-						paper.connection(conn);
-						this.attr({cx: this.ox + dx, cy: this.oy + dy});
-					},
-					function () {
-						this.ox = this.attr("cx");
-						this.oy = this.attr("cy");
-					},
-					function () {
-						
-					});
-			}(paper));
-			
+			QueueApp.init();
+			QueueApp.reset();
+	
 		});
+		
 	</script>
 </head>
 
 <body>
-	<div id="simpanel"></div>
-	<div id="log">
-		
-	</div>
-	<div id="canvas-menu">
-		<input type="button" name="add-server" value="Add Server" id="add-server">
-		<input type="button" name="add-source" value="Add Source" id="add-source">
-		<input type="button" name="delete-server" value="Delete Server" id="delete-server">
-		<input type="button" name="connections" value="Make Connections" id="connections">
-		<input type="button" name="config-server" value="Config Server" id="config-server">
-	</div>
-	<div id="message">
-		message
-	</div>
-	<div id="canvas">
 
+	<div id="toolbar_div">
+		<span id="toolbar" class="ui-widget-header ui-corner-all">
+			<span id="file_ops">
+				<button id="new_file">New Canvas</button>
+				<button id="load_file">Load a file</button>
+				<button id="save_file">Save to file</button>
+			</span>
+			
+			<span id="new_ops">
+				<button id="new_server">Queue</button>
+				<button id="new_source">Source</button>
+				<button id="new_splitter">Splitter</button>
+				<button id="new_monitor">Monitor</button>
+				<input type="checkbox" id="connect" /><label for="connect">Connect</label>
+			</span>
+			
+			<span id="sim_ops">
+				<button id="play_sim">Start Simulation</button>
+				<button id="stop_sim">Stop Simulation</button>
+
+				<button id="config_sim">5000 sec</button>
+			</span>
+			
+			<!--button id="connect">Create Connections</button>
+			<button id="stop">stop</button>
+			<button id="forward">fast forward</button>
+			<button id="end">go to end</button>
+
+			<input type="checkbox" id="shuffle" /><label for="shuffle">Shuffle</label>
+
+			<span id="repeat">
+				<input type="radio" id="repeat0" name="repeat" checked="checked" /><label for="repeat0">No Repeat</label>
+				<input type="radio" id="repeat1" name="repeat" /><label for="repeat1">Once</label>
+				<input type="radio" id="repeatall" name="repeat" /><label for="repeatall">All</label>
+			</span-->
+		</span>
 	</div>
-	
-		<ul id="service-properties-form">
-			<li>Delete Server</ul>
-		<ul>
-	
-	
+
+
+	<div id="canvas">	
+	</div>
 </body>
-
-
 
 </html>
