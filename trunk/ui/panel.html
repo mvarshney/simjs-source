@@ -21,12 +21,6 @@
 	
 	<link rel="stylesheet" href="panel.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	<style>
-		#toolbar {
-			padding: 10px 4px;
-		}
-
-		</style>
 	
 	<script type="text/javascript" charset="utf-8">
 
@@ -69,13 +63,44 @@
 			
 			QueueApp.init();
 			QueueApp.reset();
-	
+			/*
+			QueueApp.load('[\
+			    {\
+			        "x": 22,\
+			        "y": 197,\
+			        "type": "source",\
+			        "name": "source_1",\
+			        "out": "queue_1"\
+			    },\
+			    {\
+			        "x": 281,\
+			        "y": 161,\
+			        "type": "queue",\
+			        "name": "queue_2"\
+			    },\
+			    {\
+			        "x": 50,\
+			        "y": 50,\
+			        "type": "queue",\
+			        "name": "queue_1",\
+			        "out": "queue_2"\
+			    }\
+			]');
 		});
+		*/
+		QueueApp.load('[{"x":22,"y":197,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":1}},{"x":281,"y":161,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":0.5,"infinite":true,"maxqlen":0}},{"x":135,"y":47,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":0.5,"infinite":true,"maxqlen":0}}]');
+		
+	});
 		
 	</script>
 </head>
 
 <body>
+
+
+	<div id="sim_progress">
+
+	</div>
 
 	<div id="toolbar_div">
 		<span id="toolbar" class="ui-widget-header ui-corner-all">
@@ -92,11 +117,14 @@
 				<button id="new_monitor">Monitor</button>
 				<input type="checkbox" id="connect" /><label for="connect">Connect</label>
 			</span>
-			
-			<span id="sim_ops">
-				<button id="play_sim">Start Simulation</button>
-				<button id="stop_sim">Stop Simulation</button>
 
+			<span id="sim_play_ops">
+							<div id="progressbar"></div>
+				<button id="pause_sim">Pause</button>
+				<button id="stop_sim">Stop</button>
+			</span>
+			<span id="sim_ops">
+				<button id="play_sim">Simulate</button>
 				<button id="config_sim">5000 sec</button>
 			</span>
 			
@@ -118,6 +146,19 @@
 
 	<div id="canvas">	
 	</div>
+	
+	<div id="server_form" title="Server Properties">
+		<form>
+		<fieldset>
+			<label for="server_form_name">Name</label>
+			<input type="text" name="server_form_name" id="server_form_name" class="text ui-widget-content ui-corner-all" />
+			<label for="email">Average Service Duration [1 / mu] (sec)</label>
+			<input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" />
+		</fieldset>
+		</form>
+	</div>
+
+	
 </body>
 
 </html>
