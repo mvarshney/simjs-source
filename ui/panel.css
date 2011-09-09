@@ -1,84 +1,15 @@
-#toolbar {
+body {
 	font-size: 62.5%;
 }
 
-#simpanel {
-	border: 1px solid black;
-	font-weight: bold;
-	padding: 1em;
+#toolbar {
+	padding: 10px 4px;
 }
 
-#canvas {
-	width: 600px;
-	height: 400px;
-	border: 1px solid black;
-	max-height: 400px;
+#progressbar {
+	width: 400px;
+	float: left;
 }
 
-#canvas-menu {
-	background-color: teal;
-	padding: 4px;
-}
-
-.canvas-menu-button {
-	font-color: white;
-	margin: 10px;
-	background-color: yellow;
-	padding: 0px 4px;
-}
-
-.source {
-	border: 2px solid blue;
-	border-radius: 60px;
-	width: 50px;
-	height: 50px;
-	background-color: blue;
-}
-
-.service {
-	padding: 10px;
-	margin: 10px;
-	height: 50px;
-	width: 170px;
-}
-
-.fill {
-	background-color: red;
-}
-.queue {
-	border: 1px solid black;
-	border-left: none;
-	display: inline-block;
-	height: 50%;
-	width: 10px;
-	position: relative;
-	top: -10px;
-	margin: -1px;
-}
-
-.queue-length {
-	position: relative;
-	top: -40px;
-	left: 60px;
-}
-
-.server {
-	border: 2px solid green;
-	border-radius: 60px;
-	display: inline-block;
-	height: 100%;
-	width: 50px;
-	background-color: gray;
-}
-
-.service-properties {
-	position:relative;
-	top: -50px;
-	left: 150px;
-	background-color: gray;
-}
-
-#service-properties-form {
-	display: none;
-	border: 1px solid blue;
-}
+input.text { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:5px; }
