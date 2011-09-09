@@ -21,7 +21,9 @@ var QueueApp = {
 		$("#new_source").button({icons: {primary: "ui-icon-plus"}}).click(function () {
 			QueueApp.newSource();
 		});
-		$("#new_splitter").button({icons: {primary: "ui-icon-plus"}});
+		$("#new_splitter").button({icons: {primary: "ui-icon-plus"}}).click(function () {
+			QueueApp.newSplitter();
+		});
 		$("#new_monitor").button({icons: {primary: "ui-icon-plus"}});
 		$("#connect").button({icons: {primary: "ui-icon-arrowthick-2-se-nw"}})
 		.click(function () {
@@ -96,12 +98,19 @@ var QueueApp = {
 		this.monitor_id = 0;
 		
 		this.canvas.clear();
-		var rect = this.canvas.rect(0, 0, 600, 400);
-		rect.attr('fill', '#FFE87C');
 		this.posx = 50;
 		this.posy = 50;
 		this.views = [];
 		this.models = [];
+		
+		var a = [];
+		var b = [];
+		for (var i = 0; i <= 600; i+= 50) {
+			a.push("M" + i + " 0L" + i + " 400");
+			a.push("M0 " + i + "L600 " + i);
+		}
+		var l1 = this.canvas.path(a.join(""));
+		l1.attr({'stroke-width': 0.5, 'stroke': 'pink'});
 	},
 	
 	updateDrop: function () {
@@ -114,7 +123,7 @@ var QueueApp = {
 	},
 	
 	newView: function (ViewFn, ModelFn, type, name, hasIn, hasOut) {
-		var obj = new ViewFn(this.canvas, type, name, this.posx, this.posy, true, true);
+		var obj = new ViewFn(this.canvas, type, name, this.posx, this.posy, hasIn, hasOut);
 		if (this.showConn) obj.showDots(true);
 		this.views.push(obj);
 		this.updateDrop();
@@ -136,7 +145,9 @@ var QueueApp = {
 	},
 	
 	newSplitter: function () {
-		
+		this.splitter_id ++;
+		return this.newView(SplitterView, SplitterModel, 
+					'splitter', 'splitter_' + this.splitter_id, true, true);
 	},
 	
 	newMonitor: function () {
@@ -169,6 +180,8 @@ var QueueApp = {
 				obj = this.newServer();
 			} else if (conf.type === 'source') {
 				obj = this.newSource();
+			} else if (conf.type === 'splitter') {
+				obj = this.newSplitter();
 			}
 			
 			obj.moveto(conf.x, conf.y);
@@ -180,9 +193,18 @@ var QueueApp = {
 			var conf = json[i];
 			if (conf.out) {
 				var from = dict[conf.name];
-				var to = dict[conf.out];
+				if (!from) continue;
 				
-				from.connect(to);
+				if (conf.out instanceof Array) {
+					for (var j = conf.out.length - 1; j >= 0; j--) {
+						var to = dict[conf.out[j]];
+						if (to) from.connect(to, j);
+					}
+				} else {
+					var to = dict[conf.out];
+					if (to) from.connect(to);
+					
+				}
 			}
 		}
 	},
@@ -220,7 +242,7 @@ var QueueApp = {
 		
 		this.playing = true;
 		this.paused = false;
-		this.until = 50000;
+		this.until = 25000;
 		this.startedAt = new Date().getTime();
 		this.run();
 	},
@@ -255,6 +277,22 @@ var QueueApp = {
 		
 		if (completed) {
 			console.log("completed " + app.sim.time());
+			var sim = QueueApp.sim;
+			for (var i = 0; i < QueueApp.models.length; i++) {
+				var model = QueueApp.models[i];
+				var service = model.entity.facility;
+				if (!service) continue;
+					var msg = "<pre>Queue = " + model.view.name
+					+ "\nSimulation Time = " + sim.time()
+					+ "\nArrivals = " + model.entity.arrival
+					+ "\nUsage = " + (service.usage() / sim.time())
+					+ "\nService mean time = " + service.systemStats().durationSeries.average()
+					+ "\nService mean customer = " + service.systemStats().sizeSeries.average()
+					+ "\nQueue mean time = " + service.queueStats().durationSeries.average()
+					+ "\nQueue mean customer = " + service.queueStats().sizeSeries.average()
+					+ "</pre>";
+					$('#log').append(msg);
+			}
 			return;
 		}
 		
@@ -373,12 +411,13 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 					var obj = views[i];
 					if (obj.acceptDrop(x, y)) {
 						this.hide();
-						this.view.connect(to);
+						this.view.connect(obj);
 						return;
 					}
 				}
 
 				var view = this.view;
+				this.attr({cx: view.x + view.width + 2, cy: view.y + view.height / 2});
 			});
 		this.outdot = out;
 	}
@@ -491,11 +530,204 @@ ImageView.prototype.jsonify = function () {
 };
 
 /***************************************************/
+var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
+	this.canvas = canvas;
+	this.type = type;
+	this.name = name;
+
+	this.hidden = [canvas.rect(x, y, 10, 10), canvas.rect(x, y, 10, 10)];
+	this.image = canvas.image('images/splitter.png', x, y, 41, 48);
+	this.width = 41;
+	this.height = 48;
+
+	this.x = x;
+	this.y = y;
+
+	this.hidden[0].attr({'stroke-width': '0'});
+	this.hidden[1].attr({'stroke-width': '0'});
+	this.image.attr({cursor: 'move'});	
+	this.image.view = this;
+	this.image.animate({scale: "1.2 1.2"}, 200, function () {
+		this.animate({scale: "1 1"}, 200);		
+	});
+	
+	this.indot = null;
+	this.outdots = [null, null];
+	
+	this.indot = canvas.circle(x, y, 4);
+	this.indot.attr({fill: "#b33"});
+	this.indot.view = this;
+	this.indot.hide();
+
+	
+	for (var i = 0; i < 2; i++) {
+		var out = canvas.circle(x, y, 4);
+		out.attr({fill: "#3b3"});
+		out.view = this;
+		out.id = i;
+		out.hide();
+		out.drag(
+			function (dx, dy) {
+				this.attr({cx: this.ox + dx, cy: this.oy + dy});
+				this.paper.connection(this.conn);
+			}, 
+			function () {
+				var from = this.view.hidden[this.id];
+				this.conn = this.paper.connection(from, this, "#000");
+				this.ox = this.attr("cx");
+				this.oy = this.attr("cy");
+			},
+			function () {
+				this.conn.line.remove();
+				this.conn = null;
+				
+				var views = QueueApp.views;
+				var len = views.length;
+				var x = this.attr('cx'),
+				var y = this.attr('cy');
+				
+				for (var i = len - 1; i >= 0; i--) {
+					var obj = views[i];
+					if (obj.acceptDrop(x, y)) {
+						this.hide();
+						this.view.connect(obj, this.id);
+						return;
+					}
+				}
+
+				var view = this.view;
+				if (this.id === 0) {
+					this.attr({cx: view.x + view.width + 2, cy: view.y + 10});
+				} else {
+					this.attr({cx: view.x + view.width + 2, cy: view.y + view.height - 10});
+				}
+			
+			});
+		this.outdots[i] = out;
+	}
+
+	
+	// move
+	this.moveto(x, y);
+
+	// Set up event listeners	
+	this.image.drag(
+		function (dx, dy) {
+			var view = this.view;
+			view.moveto(view.ox + dx, view.oy + dy);
+		},
+		function () {
+			var view = this.view;
+			view.ox = view.x;
+			view.oy = view.y;
+		}, 
+		function () {
+
+		});
+}
+
+SplitterView.prototype.moveto = function (x, y) {
+	var len, i, dot;
+	
+	if (x > 600 - this.width || y > 400 - this.height || x < 0 || y < 0) {
+		return;
+	}
+	
+	this.x = x;
+	this.y = y;
+	
+	this.image.attr({x: x, y: y});
+	
+	this.hidden[0].attr({x: this.x + this.width - 20,
+					   y: this.y + 5});
+	this.hidden[1].attr({x: this.x + this.width - 20,
+					   y: this.y + this.height - 15});
+
+	this.indot.attr({cx: this.x - 5, cy: this.y + this.height / 2});
+
+	var len = QueueApp.views.length;
+	for (var i = len - 1; i >= 0; i--) {
+		QueueApp.views[i].moveConnection(this);
+	}
+
+	var dot = this.outdots[0];
+	dot.attr({cx: this.x + this.width + 2, cy: this.y + 10});
+	if (dot.conn) { this.canvas.connection(dot.conn);}
+
+	var dot = this.outdots[1];
+	dot.attr({cx: this.x + this.width + 2, cy: this.y + this.height - 10});
+	if (dot.conn) { this.canvas.connection(dot.conn);}	
+};
+
+SplitterView.prototype.showDots = function (show) {
+	var dot;
+	if (show) this.indot.show(); else this.indot.hide();
+	dot = this.outdots[0];
+	if (show && !dot.conn) dot.show(); else dot.hide();
+	dot = this.outdots[1];
+	if (show && !dot.conn) dot.show(); else dot.hide();
+};
+
+SplitterView.prototype.connect = function (to, channel) {
+	var conn = this.canvas.connection(this.hidden[channel], to.dropObject(), "#000");
+	conn.line.attr({'stroke-width': 3});
+	conn.fromView = this;
+	conn.toView = to;
+	this.outdots[channel].conn = conn;
+	this.model.dest[channel] = to.model;
+};
+
+SplitterView.prototype.dropObject = function () {
+	return this.image;
+};
+
+SplitterView.prototype.acceptDrop = function (x, y) {
+	var cx = this.x - 2;
+	var cy = this.y + this.height / 2;
+	
+	return ((cx - x) * (cx - x) + (cy - y) * (cy - y) < 16);
+};
+
+SplitterView.prototype.moveConnection = function (dest) {
+	for (var i = 0; i < 2; i ++) {
+		var dot = this.outdots[i];
+		if (dot && dot.conn && dot.conn.toView === dest) {
+			this.canvas.connection(dot.conn);
+		}
+	}
+};
+
+SplitterView.prototype.deleteConnection = function (peer) {
+	
+};
+
+SplitterView.prototype.jsonify = function () {
+	var json = {
+		x: this.x, 
+		y: this.y,
+		type: this.type,
+		name: this.name,
+		out: [null, null]};
+	
+	
+	for (var i = 0; i < 2; i ++) {
+		var dot = this.outdots[i];
+		if (dot.conn) json.out[i] = dot.conn.toView.name;
+	}
+
+	if (this.model) {
+		json.model = this.model.jsonify();
+	}
+	
+	return json;
+};
+
+/***************************************************/
 
 function ServerModel(view) {
 	this.view = view;
 	this.nservers = 1;
-	this.mu = 0.5;
+	this.mu = 1;
 	this.infinite = true;
 	this.maxqlen = 0;
 	
@@ -523,9 +755,10 @@ ServerModel.prototype.connect = function () {
 	}
 };
 
+/*-------------------------*/
 function SourceModel(view) {
 	this.view = view;
-	this.lambda = 1.0;
+	this.lambda = 0.5;
 	this.dest = null;
 }
 
@@ -545,15 +778,42 @@ SourceModel.prototype.connect = function () {
 	}
 };
 
+/*-------------------------*/
+function SplitterModel(view) {
+	this.view = view;
+	this.prob = 0.5;
+	this.dest = [null, null];
+}
+
+SplitterModel.prototype.jsonify = function () {
+	return {prob: this.prob};
+};
+
+SplitterModel.prototype.start = function () {
+	this.entity = QueueApp.sim.addEntity(SplitterEntity, this.prob);
+};
+
+SplitterModel.prototype.connect = function () {
+	if (this.dest[0]) {
+		this.entity.dest1 = this.dest[0].entity;
+	}
+	
+	if (this.dest[1]) {
+		this.entity.dest2 = this.dest[1].entity;
+	}
+};
+
 /***************************************************/
 
 var ServerEntity = {
 	start: function (nservers, mu) {
 		this.mu = mu;
 		this.facility = new Sim.Facility('queue');
+		this.arrival = 0;
 	},
 
 	arrive: function (from) {
+		this.arrival ++;
 		var duration = QueueApp.random.exponential(this.mu);
 		var ro = this.useFacility(this.facility, duration);
 		if (this.dest) {
@@ -562,6 +822,7 @@ var ServerEntity = {
 	}
 };
 
+/*-------------------------*/
 var SourceEntity = {
 	start: function (lambda) {
 		this.lambda = lambda;
@@ -576,5 +837,21 @@ var SourceEntity = {
 		this.setTimer(duration)
 		.done(this.dest.arrive, this.dest, this)
 		.done(this.traffic);
+	}
+};
+
+/*-------------------------*/
+var SplitterEntity = {
+	start: function (prob) {
+		this.prob = prob;
+	},
+	
+	arrive: function () {
+		var r = QueueApp.random.uniform(0.0, 1.0);
+		if (r < this.prob) {
+			if (this.dest1) this.dest1.arrive();
+		} else {
+			if (this.dest2) this.dest2.arrive();
+		}
 	}
 };
