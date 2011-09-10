@@ -15,21 +15,14 @@ var QueueApp = {
 		$("#file_ops").buttonset();
 		
 		// Add elements menu
-		$("#new_server").button({icons: {primary: "ui-icon-plus"}}).click(function () {
-			QueueApp.newServer();
-		});
-		$("#new_source").button({icons: {primary: "ui-icon-plus"}}).click(function () {
-			QueueApp.newSource();
-		});
-		$("#new_splitter").button({icons: {primary: "ui-icon-plus"}}).click(function () {
-			QueueApp.newSplitter();
-		});
-		$("#new_monitor").button({icons: {primary: "ui-icon-plus"}});
+	
 		$("#connect").button({icons: {primary: "ui-icon-arrowthick-2-se-nw"}})
 		.click(function () {
 			QueueApp.toggleConnections();
 		});
-		$("#new_ops").buttonset();
+		$("#properties").button({icons: {primary: "ui-icon-wrench"}});
+		$("#delete").button({icons: {primary: "ui-icon-scissors"}});
+		$("#new_ops").buttonset().hide();
 		
 		// Simulation menu
 		$("#play_sim").button({icons: {primary: "ui-icon-play"}}).click(function () {
@@ -90,6 +83,16 @@ var QueueApp = {
 	},
 	
 	reset: function () {
+		// Delete data from old run, if present
+		var len, i;
+		
+		if (this.models) {
+			len = this.models.length;
+			for (i = len - 1; i >= 0; i --) {
+				if (this.models[i].unlink) this.models[i].unlink();
+			}
+		}
+		
 		this.sim = null;
 		this.showConn = false;
 		this.server_id = 0;
@@ -104,13 +107,62 @@ var QueueApp = {
 		this.models = [];
 		
 		var a = [];
-		var b = [];
 		for (var i = 0; i <= 600; i+= 50) {
 			a.push("M" + i + " 0L" + i + " 400");
 			a.push("M0 " + i + "L600 " + i);
 		}
 		var l1 = this.canvas.path(a.join(""));
 		l1.attr({'stroke-width': 0.5, 'stroke': 'pink'});
+		this.canvas.path("M0 0L0 400L600 400L600 0L0 0")
+		.attr({'stroke-width': 4, 'stroke': 'pink'});
+		
+
+		for (var i = 0; i < 4; i ++) {
+			this.canvas.rect(10, 10 + 50 * i, 50, 50)
+			.attr({fill: '#FAF6AA', 'fill-opacity': '50', stroke: 'F7D68A'});
+		}
+
+		var q = this.canvas.image("images/server.png", 12, 25, 46.4, 22);
+		var s = this.canvas.image("images/customers.png", 15, 70, 34, 34);
+		var sp = this.canvas.image("images/splitter.png", 15, 115, 41*0.9, 48*0.9);
+		
+		function setDragger(obj, origx, origy, fn) {
+			obj.drag(	
+				function (dx, dy) {
+					this.attr({x: this.ox + dx, y: this.oy + dy});
+				},
+				function () {
+					this.ox = this.attr('x');
+					this.oy = this.attr('y');
+				},
+				function () {
+					var x = this.attr('x');
+					var y = this.attr('y');
+					this.attr({x: origx, y: origy});
+					fn.call(QueueApp, x, y);
+				});
+		}
+		
+		setDragger(q, 12, 25, QueueApp.newServer);
+		setDragger(s, 15, 70, QueueApp.newSource);
+		setDragger(sp, 15, 115, QueueApp.newSplitter);
+/*		
+		q.drag(
+			function (dx, dy) {
+				this.attr({x: this.ox + dx, y: this.oy + dy});
+			},
+			function () {
+				this.ox = this.attr('x');
+				this.oy = this.attr('y');
+			},
+			function () {
+				var x = this.attr('x');
+				var y = this.attr('y');
+				this.attr({x: 10, y: 25});
+				QueueApp.newServer(x, y);
+			}
+		);
+	*/
 	},
 	
 	updateDrop: function () {
@@ -122,11 +174,15 @@ var QueueApp = {
 		}
 	},
 	
-	newView: function (ViewFn, ModelFn, type, name, hasIn, hasOut) {
-		var obj = new ViewFn(this.canvas, type, name, this.posx, this.posy, hasIn, hasOut);
+	newView: function (ViewFn, ModelFn, type, name, hasIn, hasOut, x, y) {
+		if (!x) {
+			x = this.posx;
+			y = this.posy;
+			this.updateDrop();
+		}
+		var obj = new ViewFn(this.canvas, type, name, x, y, hasIn, hasOut);
 		if (this.showConn) obj.showDots(true);
 		this.views.push(obj);
-		this.updateDrop();
 		
 		var model = new ModelFn(obj);
 		obj.model = model;
@@ -134,20 +190,22 @@ var QueueApp = {
 		return obj;
 	},
 	
-	newServer: function () {
+	newServer: function (x, y) {
 		this.server_id++;
-		return this.newView(ImageView, ServerModel, 'queue', 'queue_' + this.server_id, true, true);
+		return this.newView(ImageView, ServerModel, 'queue', 
+			'queue_' + this.server_id, true, true, x, y);
 	},
 	
-	newSource: function () {
+	newSource: function (x, y) {
 		this.source_id++;
-		return this.newView(ImageView, SourceModel, 'source', 'source_' + this.source_id, false, true);		
+		return this.newView(ImageView, SourceModel, 
+			'source', 'source_' + this.source_id, false, true, x, y);		
 	},
 	
-	newSplitter: function () {
+	newSplitter: function (x, y) {
 		this.splitter_id ++;
 		return this.newView(SplitterView, SplitterModel, 
-					'splitter', 'splitter_' + this.splitter_id, true, true);
+					'splitter', 'splitter_' + this.splitter_id, true, true, x, y);
 	},
 	
 	newMonitor: function () {
@@ -276,23 +334,7 @@ var QueueApp = {
 		app.progress.progressbar({value: app.sim.time() * 100 / app.until});
 		
 		if (completed) {
-			console.log("completed " + app.sim.time());
-			var sim = QueueApp.sim;
-			for (var i = 0; i < QueueApp.models.length; i++) {
-				var model = QueueApp.models[i];
-				var service = model.entity.facility;
-				if (!service) continue;
-					var msg = "<pre>Queue = " + model.view.name
-					+ "\nSimulation Time = " + sim.time()
-					+ "\nArrivals = " + model.entity.arrival
-					+ "\nUsage = " + (service.usage() / sim.time())
-					+ "\nService mean time = " + service.systemStats().durationSeries.average()
-					+ "\nService mean customer = " + service.systemStats().sizeSeries.average()
-					+ "\nQueue mean time = " + service.queueStats().durationSeries.average()
-					+ "\nQueue mean customer = " + service.queueStats().sizeSeries.average()
-					+ "</pre>";
-					$('#log').append(msg);
-			}
+			QueueApp.complete();
 			return;
 		}
 		
@@ -307,6 +349,28 @@ var QueueApp = {
 		}
 		
 		setTimeout(app.run, app.IntervalPause);
+	},
+	
+	complete: function () {
+		console.log("completed " + this.sim.time());
+		var sim = this.sim;
+		for (var i = 0; i < QueueApp.models.length; i++) {
+			var model = QueueApp.models[i];
+			if (model.stat) model.showStats();
+
+			/*
+				var msg = "<pre>Queue = " + model.view.name
+				+ "\nSimulation Time = " + sim.time()
+				+ "\nArrivals = " + service.queueStats().durationSeries.count()
+				+ "\nUsage = " + (service.usage() / sim.time())
+				+ "\nService mean time = " + service.systemStats().durationSeries.average()
+				+ "\nService mean customer = " + service.systemStats().sizeSeries.average()
+				+ "\nQueue mean time = " + service.queueStats().durationSeries.average()
+				+ "\nQueue mean customer = " + service.queueStats().sizeSeries.average()
+				+ "</pre>";
+				$('#log').append(msg);
+				*/
+		}
 	}
 	
 };
@@ -353,6 +417,8 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.canvas = canvas;
 	this.type = type;
 	this.name = name;
+
+	
 	if (type === 'queue') {
 		this.image = canvas.image('images/server.png', x, y, 116, 55);
 		this.width = 116;
@@ -366,6 +432,13 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	}
 	this.x = x;
 	this.y = y;
+	this.hasIn = hasIn;
+	this.hasOut = hasOut;
+	
+
+	this.settings = canvas.image("images/settings.gif", x, y, 12, 12);
+	
+	this.text = canvas.text(x, y, this.name);
 
 	this.image.attr({cursor: 'move'});	
 	this.image.view = this;
@@ -373,40 +446,28 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		this.animate({scale: "1 1"}, 200);		
 	});
 	
-	this.indot = null;
-	this.outdot = null;
-	
-	if (hasIn) {
-		this.indot = canvas.circle(x, y, 4);
-		this.indot.attr({fill: "#b33"});
-		this.indot.view = this;
-		this.indot.hide();
-	}
-	
-	if (hasOut) {
-		var out = canvas.circle(x, y, 4);
-		out.attr({fill: "#3b3"});
-		out.view = this;
-		out.hide();
-		out.drag(
+	if (this.hasOut) {
+		this.arrow = canvas.image("images/orange-arrow.gif", x, y, 12, 12);
+		this.arrow.view = this;
+		this.arrow.drag(
 			function (dx, dy) {
-				this.attr({cx: this.ox + dx, cy: this.oy + dy});
+				this.attr({x: this.ox + dx, y: this.oy + dy});
 				this.paper.connection(this.conn);
 			}, 
 			function () {
 				this.conn = this.paper.connection(this.view.image, this, "#000");
-				this.ox = this.attr("cx");
-				this.oy = this.attr("cy");
+				this.ox = this.attr("x");
+				this.oy = this.attr("y");
 			},
 			function () {
 				this.conn.line.remove();
 				this.conn = null;
-				
+			
 				var views = QueueApp.views;
 				var len = views.length;
-				var x = this.attr('cx'),
-				var y = this.attr('cy');
-				
+				var x = this.attr('x'),
+				var y = this.attr('y');
+			
 				for (var i = len - 1; i >= 0; i--) {
 					var obj = views[i];
 					if (obj.acceptDrop(x, y)) {
@@ -417,11 +478,9 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 				}
 
 				var view = this.view;
-				this.attr({cx: view.x + view.width + 2, cy: view.y + view.height / 2});
+				this.attr({x: view.x + view.width + 2, y: view.y + view.height / 2 - 6});
 			});
-		this.outdot = out;
 	}
-
 	
 	// move
 	this.moveto(x, y);
@@ -442,6 +501,7 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		});
 }
 
+
 ImageView.prototype.moveto = function (x, y) {
 	var len, i, dot;
 	
@@ -453,40 +513,29 @@ ImageView.prototype.moveto = function (x, y) {
 	this.y = y;
 	
 	this.image.attr({x: x, y: y});
-	if (this.indot) {
-		this.indot.attr({cx: this.x - 2, cy: this.y + this.height / 2});
-		
+	this.text.attr({x: this.x + this.width / 2, y: this.y + this.height + 5});
+	this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
+	this.settings.attr({x: this.x - 4, y: this.y - 12});
+	
+	if (this.hasIn) {
 		var len = QueueApp.views.length;
 		for (var i = len - 1; i >= 0; i--) {
 			QueueApp.views[i].moveConnection(this);
 		}
 	}
 	
-	if (this.outdot) {
-		this.outdot.attr({cx: this.x + this.width + 2, cy: this.y + this.height / 2});
-		
-		if (this.outdot.conn) {
-			this.canvas.connection(this.outdot.conn);
-		}
+	if (this.arrow && this.arrow.conn) {
+		this.canvas.connection(this.arrow.conn);
 	}
 };
 
-ImageView.prototype.showDots = function (show) {
-	if (this.indot) {
-		if (show) this.indot.show(); else this.indot.hide();
-	}
-	
-	if (this.outdot) {
-		if (show && !this.outdot.conn) this.outdot.show(); else this.outdot.hide();
-	}
-};
 
 ImageView.prototype.connect = function (to) {
 	var conn = this.canvas.connection(this.image, to.dropObject(), "#000");
-	conn.line.attr({'stroke-width': 3});
+	conn.line.attr({'stroke-width': 3, 'stroke': '#F7D68A'});
 	conn.fromView = this;
 	conn.toView = to;
-	this.outdot.conn = conn;
+	this.arrow.conn = conn;
 	this.model.dest = to.model;
 };
 
@@ -495,15 +544,13 @@ ImageView.prototype.dropObject = function () {
 };
 
 ImageView.prototype.acceptDrop = function (x, y) {
-	var cx = this.x - 2;
-	var cy = this.y + this.height / 2;
-	
-	return ((cx - x) * (cx - x) + (cy - y) * (cy - y) < 16);
+	return (x > this.x && x < this.x + this.width
+			&& y > this.y && y < this.y + this.height);
 };
 
 ImageView.prototype.moveConnection = function (dest) {
-	if (this.outdot && this.outdot.conn && this.outdot.conn.toView === dest) {
-		this.canvas.connection(this.outdot.conn);
+	if (this.arrow && this.arrow.conn && this.arrow.conn.toView === dest) {
+		this.canvas.connection(this.arrow.conn);
 	}
 };
 
@@ -518,8 +565,8 @@ ImageView.prototype.jsonify = function () {
 		type: this.type,
 		name: this.name};
 	
-	if (this.outdot && this.outdot.conn) {
-		json.out = this.outdot.conn.toView.name;
+	if (this.arrow && this.arrow.conn) {
+		json.out = this.arrow.conn.toView.name;
 	}
 	
 	if (this.model) {
@@ -733,6 +780,22 @@ function ServerModel(view) {
 	
 	this.entity = null;
 	this.dest = null;
+	this.statTable = $('#server_stats').clone().attr('id', view.name);
+	this.statTable.find('h2').text(view.name);
+	
+	$("#results").append(this.statTable);
+	this.stat = [
+		this.statTable.find('#arrival'),
+		this.statTable.find('#sutil'),
+		this.statTable.find('#qtime'),
+		this.statTable.find('#stime'),
+		this.statTable.find('#qsize'),
+		this.statTable.find('#ssize'),
+		this.statTable.find('#qtimed'),
+		this.statTable.find('#stimed'),
+		this.statTable.find('#qsized'),
+		this.statTable.find('#ssized')
+	];
 }
 
 ServerModel.prototype.jsonify = function () {
@@ -755,10 +818,33 @@ ServerModel.prototype.connect = function () {
 	}
 };
 
+ServerModel.prototype.showStats = function () {
+	var service = this.entity.facility;
+	var qd = service.queueStats().durationSeries;
+	var qs = service.queueStats().sizeSeries;
+	var sd = service.systemStats().durationSeries;
+	var ss = service.systemStats().sizeSeries;
+	var usage = service.usage() / QueueApp.sim.time() * 100;
+	this.stat[0].text(qd.count());
+	this.stat[1].text(usage.toFixed(1) + "%");
+	this.stat[2].text(qd.average().toFixed(3));
+	this.stat[3].text(sd.average().toFixed(3));
+	this.stat[4].text(qs.average().toFixed(3));
+	this.stat[5].text(ss.average().toFixed(3));
+	this.stat[6].text(qd.deviation().toFixed(3));
+	this.stat[7].text(sd.deviation().toFixed(3));
+	this.stat[8].text(qs.deviation().toFixed(3));
+	this.stat[9].text(ss.deviation().toFixed(3));
+};
+
+ServerModel.prototype.unlink = function () {
+	this.statTable.remove();
+}
+
 /*-------------------------*/
 function SourceModel(view) {
 	this.view = view;
-	this.lambda = 0.5;
+	this.lambda = 0.25;
 	this.dest = null;
 }
 
@@ -809,11 +895,9 @@ var ServerEntity = {
 	start: function (nservers, mu) {
 		this.mu = mu;
 		this.facility = new Sim.Facility('queue');
-		this.arrival = 0;
 	},
 
 	arrive: function (from) {
-		this.arrival ++;
 		var duration = QueueApp.random.exponential(this.mu);
 		var ro = this.useFacility(this.facility, duration);
 		if (this.dest) {

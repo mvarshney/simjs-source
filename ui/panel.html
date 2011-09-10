@@ -14,6 +14,8 @@
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/g.raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/g.bar-min.js" type="text/javascript" charset="utf-8"></script>
 	
 	
 	<script src="simpanel.js" type="text/javascript" charset="utf-8"></script>
@@ -25,72 +27,13 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			/*
-			SimPanel.load('simpanel', function (event) {
-				switch (event) {
-					case SimPanel.PLAY:
-						SimPanel.sim = createSim();
-						$('#log').append("Simulation started<br>");
-						return true;
-					case SimPanel.PAUSE:
-						$('#log').append("Simulation paused<br>");
-						break;
-					case SimPanel.RESUME:
-						$('#log').append("Simulation resumed<br>");
-						break;
-					case SimPanel.STOP:
-						$('#log').append("Simulation stopped<br>");
-						break;
-					case SimPanel.TICK:
-						$('#log').append("Simulation tick<br>");
-						break;
-					case SimPanel.COMPLETE:
-					var sim = SimPanel.sim;
-						$('#log').append("Simulation finished!!<br>");
-						var service = mm1.service;
-						var msg = "<pre>Simulation Time = " + sim.time()
-												+ "\nUsage = " + (service.usage() / sim.time())
-												+ "\nService mean time = " + service.systemStats().durationSeries.average()
-												+ "\nService mean customer = " + service.systemStats().sizeSeries.average()
-												+ "\nQueue mean time = " + service.queueStats().durationSeries.average()
-												+ "\nQueue mean customer = " + service.queueStats().sizeSeries.average()
-												+ "</pre>";
-						$('#log').append(msg);
-						break;
-				}
-			});
-			*/
 			
 			QueueApp.init();
 			QueueApp.reset();
-			/*
-			QueueApp.load('[\
-			    {\
-			        "x": 22,\
-			        "y": 197,\
-			        "type": "source",\
-			        "name": "source_1",\
-			        "out": "queue_1"\
-			    },\
-			    {\
-			        "x": 281,\
-			        "y": 161,\
-			        "type": "queue",\
-			        "name": "queue_2"\
-			    },\
-			    {\
-			        "x": 50,\
-			        "y": 50,\
-			        "type": "queue",\
-			        "name": "queue_1",\
-			        "out": "queue_2"\
-			    }\
-			]');
-		});
-		*/
-QueueApp.load('[{"x":46,"y":164,"type":"source","name":"source_1","out":"splitter_1","model":{"lambda":0.5}},{"x":433,"y":250,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":390,"y":33,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":234,"y":147,"type":"splitter","name":"splitter_1","out":["queue_1","queue_2"],"model":{"prob":0.5}}]');
+	
+QueueApp.load('[{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":209,"y":104,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 
-	//QueueApp.load('[{"x":237,"y":184,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":132,"y":203,"type":"source","name":"source_3","out":"queue_3","model":{"lambda":0.5}},{"x":109,"y":71,"type":"source","name":"source_2","out":"queue_1","model":{"lambda":0.5}},{"x":109,"y":24,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.5}},{"x":332,"y":281,"type":"queue","name":"queue_3","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":462,"y":104,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":200,"y":49,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
+	//QueueApp.load('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 		
 	});
 		
@@ -98,12 +41,6 @@ QueueApp.load('[{"x":46,"y":164,"type":"source","name":"source_1","out":"splitte
 </head>
 
 <body>
-
-
-	<div id="sim_progress">
-
-	</div>
-
 	<div id="toolbar_div">
 		<span id="toolbar" class="ui-widget-header ui-corner-all">
 			<span id="file_ops">
@@ -113,15 +50,13 @@ QueueApp.load('[{"x":46,"y":164,"type":"source","name":"source_1","out":"splitte
 			</span>
 			
 			<span id="new_ops">
-				<button id="new_server">Queue</button>
-				<button id="new_source">Source</button>
-				<button id="new_splitter">Splitter</button>
-				<button id="new_monitor">Monitor</button>
 				<input type="checkbox" id="connect" /><label for="connect">Connect</label>
+				<input type="checkbox" id="properties" /><label for="properties">Properties</label>
+				<input type="checkbox" id="delete" /><label for="delete">Delete</label>
 			</span>
 
 			<span id="sim_play_ops">
-							<div id="progressbar"></div>
+				<div id="progressbar"></div>
 				<button id="pause_sim">Pause</button>
 				<button id="stop_sim">Stop</button>
 			</span>
@@ -149,6 +84,22 @@ QueueApp.load('[{"x":46,"y":164,"type":"source","name":"source_1","out":"splitte
 	<div id="canvas">	
 	</div>
 	
+	<div id="results">
+		<div id="server_stats" class="stats">
+			<h2>Server 1</h2>
+			<table class="stats_table" border="1">
+				<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
+				<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
+				<tr><td>Server Utilization</td><td id="sutil">-</td><td>-</td></tr>
+				<tr><td>Time spent in queue</td><td id="qtime">-</td><td id="qtimed">-</td></tr>
+				<tr><td>Time spent in system</td><td id="stime">-</td><td id="stimed">-</td></tr>
+				<tr><td>Size of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
+				<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
+			</table>
+		</div>
+	</div>
+	
+	More here.
 	<div id="server_form" title="Server Properties">
 		<form>
 		<fieldset>
