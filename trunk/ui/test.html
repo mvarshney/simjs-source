@@ -1,68 +1,15 @@
-<html>
-	<head>
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title>test</title>
+New Button
+- check if there is existing scenario
+- pop up dialog confirming to "Discard", "save", "cancel"
 
-		<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
-		<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
-		<style>
-			#toolbar {
-				padding: 10px 4px;
-			}
-			.ui-button { width: 16px; height: 16px}
-			</style>
+Load
+- GUI to input string
 
-		
-		<script>
-			$(function () {
-					$( "#beginning" ).button({
-						text: false,
-						icons: {
-							primary: "ui-icon-seek-start"
-						}
-					});
-			});
-			
-		</script>
-	</head>
-	<body>
-		<div class="demo">
-			<span id="toolbar" class="ui-widget-header ui-corner-all">
-				<button id="beginning">go to beginning</button>
-				<button id="rewind">rewind</button>
-				<button id="play">play</button>
-				<button id="stop">stop</button>
-				<button id="forward">fast forward</button>
-				<button id="end">go to end</button>
+Save
+- GUI to show the text string
 
-				<input type="checkbox" id="shuffle" /><label for="shuffle">Shuffle</label>
+Adding object
+- tooltip to say names
+- make sure that objects are not dropped in the palette
 
-				<span id="repeat">
-					<input type="radio" id="repeat0" name="repeat" checked="checked" /><label for="repeat0">No Repeat</label>
-					<input type="radio" id="repeat1" name="repeat" /><label for="repeat1">Once</label>
-					<input type="radio" id="repeatall" name="repeat" /><label for="repeatall">All</label>
-				</span>
-			</span>
-		</div>
-		
-		
-	</body>
-	
-</html>
-
-
-<!--
-	Modes of operations:
-	- Run to completion mode (can still terminate)
-	- Responsive mode (receives commands, gives output; runs as fast as possible)
-	- Animation mode (runs slower than what is possible)
-	- Real time mode
-	
-	With and Without workers
-	
-	
-	
-	
-	
-	-->
+Monitor

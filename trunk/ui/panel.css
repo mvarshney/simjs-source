@@ -41,7 +41,7 @@ pre {
 	background-color: #FAF6AA;
 }
 
-#server_stats {
+#server_stats, #monitor_stats {
 	display: none;
 }
 

@@ -31,7 +31,7 @@
 			QueueApp.init();
 			QueueApp.reset();
 	
-QueueApp.load('[{"x":157,"y":76,"type":"splitter","name":"splitter_1","out":["queue_1","queue_2"],"model":{"prob":0.5}},{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":140,"y":324,"type":"queue","name":"queue_1","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
+QueueApp.load('[{"x":384,"y":73,"type":"monitor","name":"monitor_1","model":null},{"x":156,"y":92,"type":"source","name":"source_1","out":"monitor_1","model":{"lambda":0.25}}]');
 
 	//QueueApp.load('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 		
@@ -47,12 +47,6 @@ QueueApp.load('[{"x":157,"y":76,"type":"splitter","name":"splitter_1","out":["qu
 				<button id="new_file">New Canvas</button>
 				<button id="load_file">Load a file</button>
 				<button id="save_file">Save to file</button>
-			</span>
-			
-			<span id="new_ops">
-				<input type="checkbox" id="connect" /><label for="connect">Connect</label>
-				<input type="checkbox" id="properties" /><label for="properties">Properties</label>
-				<input type="checkbox" id="delete" /><label for="delete">Delete</label>
 			</span>
 
 			<span id="sim_play_ops">
@@ -85,6 +79,14 @@ QueueApp.load('[{"x":157,"y":76,"type":"splitter","name":"splitter_1","out":["qu
 				<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
 			</table>
 		</div>
+		<div id="monitor_stats" class="stats">
+			<h2>Monitor</h2>
+			<table border="1" class="stats_table">
+				<tr><th>Metric</th><th>Mean</th><th>Std Dev</th></tr>
+				<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
+				<tr><td>Inter-arrival (sec)</td><td id="inter">-</td><td id="interd">-</td></tr>
+			</table>
+		</div>
 	</div>
 	
 	More here.
@@ -113,6 +115,10 @@ QueueApp.load('[{"x":157,"y":76,"type":"splitter","name":"splitter_1","out":["qu
 			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
 		</fieldset>
 		</form>
+	</div>
+	
+	<div id="monitor_form" title="Splitter Properties">
+
 	</div>
 
 	<div id="log">
