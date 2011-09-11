@@ -14,16 +14,6 @@ var QueueApp = {
 		});
 		$("#file_ops").buttonset();
 		
-		// Add elements menu
-	
-		$("#connect").button({icons: {primary: "ui-icon-arrowthick-2-se-nw"}})
-		.click(function () {
-			QueueApp.toggleConnections();
-		});
-		$("#properties").button({icons: {primary: "ui-icon-wrench"}});
-		$("#delete").button({icons: {primary: "ui-icon-scissors"}});
-		$("#new_ops").buttonset().hide();
-		
 		// Simulation menu
 		$("#play_sim").button({icons: {primary: "ui-icon-play"}}).click(function () {
 			$("#progressbar").toggle();
@@ -92,6 +82,30 @@ var QueueApp = {
 		$("#server_form").dialog(dialogOption);
 		$("#source_form").dialog(dialogOption);
 		$("#splitter_form").dialog(dialogOption);
+		$("#monitor_form").dialog({
+			autoOpen: false,
+			height: 50,
+			width: 230,
+			modal: false,
+			resizable: false,
+			buttons: {
+				'Delete': function () {
+					QueueApp.form_view.unlink();
+					$(this).dialog('close');
+				},
+				'Disconnect': function () {
+					QueueApp.form_view.disconnect();
+					$(this).dialog('close');
+				}
+			},
+			open: function() {
+				var $buttonPane = $(this).parent();
+				$buttonPane.find('button:first')
+				.css({'color': 'red'})
+				.button({icons: {primary:'ui-icon-trash'}});
+
+			}
+		});
 	},
 	
 	reset: function () {
@@ -137,10 +151,14 @@ var QueueApp = {
 		var q = this.canvas.image("images/server.png", 12, 25, 46.4, 22);
 		var s = this.canvas.image("images/customers.png", 15, 70, 34, 34);
 		var sp = this.canvas.image("images/splitter.png", 15, 115, 41*0.9, 48*0.9);
+		var m = this.canvas.image("images/odometer.png", 15, 170, 54*0.7, 54*0.7);
 		
 		function setDragger(obj, origx, origy, fn) {
 			obj.drag(	
 				function (dx, dy) {
+					var x = this.ox + dx;
+					var y = this.oy + dy;
+					if (x < 0 || x > 560 || y < 0 || y > 360) return;
 					this.attr({x: this.ox + dx, y: this.oy + dy});
 				},
 				function () {
@@ -158,23 +176,7 @@ var QueueApp = {
 		setDragger(q, 12, 25, QueueApp.newServer);
 		setDragger(s, 15, 70, QueueApp.newSource);
 		setDragger(sp, 15, 115, QueueApp.newSplitter);
-/*		
-		q.drag(
-			function (dx, dy) {
-				this.attr({x: this.ox + dx, y: this.oy + dy});
-			},
-			function () {
-				this.ox = this.attr('x');
-				this.oy = this.attr('y');
-			},
-			function () {
-				var x = this.attr('x');
-				var y = this.attr('y');
-				this.attr({x: 10, y: 25});
-				QueueApp.newServer(x, y);
-			}
-		);
-	*/
+		setDragger(m, 15, 170, QueueApp.newMonitor);
 	},
 	
 	updateDrop: function () {
@@ -220,8 +222,10 @@ var QueueApp = {
 					'splitter', 'splitter_' + this.splitter_id, true, true, x, y);
 	},
 	
-	newMonitor: function () {
-		
+	newMonitor: function (x, y) {
+		this.monitor_id++;
+		return this.newView(ImageView, MonitorModel,
+			'monitor', 'monitor_' + this.monitor_id, true, true, x, y);
 	},
 	
 	toggleConnections: function () {
@@ -252,6 +256,8 @@ var QueueApp = {
 				obj = this.newSource();
 			} else if (conf.type === 'splitter') {
 				obj = this.newSplitter();
+			} else if (conf.type === 'monitor') {
+				obj = this.newMonitor();
 			}
 			
 			obj.moveto(conf.x, conf.y);
@@ -369,19 +375,6 @@ var QueueApp = {
 		for (var i = 0; i < QueueApp.models.length; i++) {
 			var model = QueueApp.models[i];
 			if (model.stat) model.showStats();
-
-			/*
-				var msg = "<pre>Queue = " + model.view.name
-				+ "\nSimulation Time = " + sim.time()
-				+ "\nArrivals = " + service.queueStats().durationSeries.count()
-				+ "\nUsage = " + (service.usage() / sim.time())
-				+ "\nService mean time = " + service.systemStats().durationSeries.average()
-				+ "\nService mean customer = " + service.systemStats().sizeSeries.average()
-				+ "\nQueue mean time = " + service.queueStats().durationSeries.average()
-				+ "\nQueue mean customer = " + service.queueStats().sizeSeries.average()
-				+ "</pre>";
-				$('#log').append(msg);
-				*/
 		}
 	}
 	
@@ -440,7 +433,9 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		this.width = 34;
 		this.height = 34;
 	} else if (type === 'monitor') {
-		
+		this.image = canvas.image('images/odometer.png', x, y, 54, 54);
+		this.width = 54;
+		this.height = 54;
 	}
 	this.x = x;
 	this.y = y;
@@ -997,7 +992,55 @@ SplitterModel.prototype.saveSettings = function (dialog) {
 };
 
 SplitterModel.prototype.unlink = function () {
+
+};
+
+/*-------------------------*/
+function MonitorModel(view) {
+	this.view = view;
+	this.dest = null;
+	this.statTable = $('#monitor_stats').clone().attr('id', view.name);
+	this.statTable.find('h2').text(view.name);
 	
+	$("#results").append(this.statTable);
+	this.stat = [
+		this.statTable.find('#arrival'),
+		this.statTable.find('#inter'),
+		this.statTable.find('#interd')];
+}
+
+MonitorModel.prototype.jsonify = function () {
+	return null;
+};
+
+MonitorModel.prototype.start = function () {
+	this.entity = QueueApp.sim.addEntity(MonitorEntity);
+};
+
+MonitorModel.prototype.connect = function () {
+	if (this.dest) this.entity.dest = this.dest.entity;
+};
+
+MonitorModel.prototype.showStats = function () {
+	var m = this.entity.monitor;
+
+	this.stat[0].text(m.count());
+	this.stat[1].text(m.average().toFixed(3));
+	this.stat[2].text(m.deviation().toFixed(3));
+};
+
+MonitorModel.prototype.showSettings = function (x, y) {
+	var d = $('#monitor_form');
+	QueueApp.form_view = this.view;
+	d.dialog('option', {title: this.view.name, position: [x, y]})
+	.dialog('open');
+};
+
+MonitorModel.prototype.saveSettings = function (dialog) {
+};
+
+MonitorModel.prototype.unlink = function () {
+	this.statTable.remove();
 };
 
 /***************************************************/
@@ -1036,6 +1079,18 @@ var SourceEntity = {
 };
 
 /*-------------------------*/
+var MonitorEntity = {
+	start: function () {
+		this.monitor = new Sim.TimeSeries();
+	},
+	
+	arrive: function () {
+		this.monitor.record(1, this.time());
+		if (this.dest) this.dest.arrive();
+	}
+};
+
+/*-------------------------*/
 var SplitterEntity = {
 	start: function (prob) {
 		this.prob = prob;
@@ -1050,3 +1105,4 @@ var SplitterEntity = {
 		}
 	}
 };
+
