@@ -31,7 +31,7 @@
 			QueueApp.init();
 			QueueApp.reset();
 	
-QueueApp.load('[{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":209,"y":104,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
+QueueApp.load('[{"x":157,"y":76,"type":"splitter","name":"splitter_1","out":["queue_1","queue_2"],"model":{"prob":0.5}},{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":140,"y":324,"type":"queue","name":"queue_1","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 
 	//QueueApp.load('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 		
@@ -65,18 +65,6 @@ QueueApp.load('[{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nserv
 				<button id="config_sim">5000 sec</button>
 			</span>
 			
-			<!--button id="connect">Create Connections</button>
-			<button id="stop">stop</button>
-			<button id="forward">fast forward</button>
-			<button id="end">go to end</button>
-
-			<input type="checkbox" id="shuffle" /><label for="shuffle">Shuffle</label>
-
-			<span id="repeat">
-				<input type="radio" id="repeat0" name="repeat" checked="checked" /><label for="repeat0">No Repeat</label>
-				<input type="radio" id="repeat1" name="repeat" /><label for="repeat1">Once</label>
-				<input type="radio" id="repeatall" name="repeat" /><label for="repeatall">All</label>
-			</span-->
 		</span>
 	</div>
 
@@ -103,10 +91,26 @@ QueueApp.load('[{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nserv
 	<div id="server_form" title="Server Properties">
 		<form>
 		<fieldset>
-			<label for="server_form_name">Name</label>
-			<input type="text" name="server_form_name" id="server_form_name" class="text ui-widget-content ui-corner-all" />
-			<label for="email">Average Service Duration [1 / mu] (sec)</label>
+			<label for="server_form_rate">Average Service Duration [1 / mu] (sec)</label>
 			<input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" />
+		</fieldset>
+		</form>
+	</div>
+	
+	<div id="source_form" title="Source Properties">
+		<form>
+		<fieldset>
+			<label for="source_form_rate">Average Arrival Rate [1 / lambda] (sec)</label>
+			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
+		</fieldset>
+		</form>
+	</div>
+	
+	<div id="splitter_form" title="Splitter Properties">
+		<form>
+		<fieldset>
+			<label for="source_form_rate">Average Arrival Rate [1 / lambda] (sec)</label>
+			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
 		</fieldset>
 		</form>
 	</div>
@@ -114,6 +118,7 @@ QueueApp.load('[{"x":405,"y":227,"type":"queue","name":"queue_2","model":{"nserv
 	<div id="log">
 		
 	</div>
+
 	
 </body>
 

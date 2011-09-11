@@ -35,7 +35,7 @@ var QueueApp = {
 			QueueApp.startSim();
 		});
 		$("#config_sim").button({icons: {primary: "ui-icon-clock"}}).click(function () {
-			$("#server_form").dialog('open');
+			$("#form_view").dialog('open');
 		});
 		$("#sim_ops").buttonset();
 		
@@ -58,28 +58,40 @@ var QueueApp = {
 		$("#sim_play_ops").buttonset().hide();
 		this.progress = $("#progressbar");
 		this.progress.progressbar().hide();
-		
-		$("#server_form").dialog({
+
+
+		var dialogOption = {
 			autoOpen: false,
-			height: 250,
-			width: 250,
+			height: 150,
+			width: 230,
 			modal: false,
 			resizable: false,
 			buttons: {
-				'Delete this server': function () {
-					
+				'Delete': function () {
+					QueueApp.form_view.unlink();
+					$(this).dialog('close');
+				},
+				'Disconnect': function () {
+					QueueApp.form_view.disconnect();
+					$(this).dialog('close');
 				},
 				'Save': function () {
-					
+					QueueApp.form_view.model.saveSettings();
+					$(this).dialog('close');
 				}
 			},
 			open: function() {
 				var $buttonPane = $(this).parent();
 				$buttonPane.find('button:first')
-				.css({'color': 'red', 'margin-right': '55px'})
+				.css({'color': 'red'})
 				.button({icons: {primary:'ui-icon-trash'}});
+
 			}
-		});
+		};
+		
+		$("#server_form").dialog(dialogOption);
+		$("#source_form").dialog(dialogOption);
+		$("#splitter_form").dialog(dialogOption);
 	},
 	
 	reset: function () {
@@ -437,6 +449,7 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	
 
 	this.settings = canvas.image("images/settings.gif", x, y, 12, 12);
+	this.settings.view = this;
 	
 	this.text = canvas.text(x, y, this.name);
 
@@ -499,8 +512,12 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		function () {
 
 		});
+	
+	this.settings.click(
+		function () {
+			this.view.model.showSettings(this.view.x, this.view.y);
+		});
 }
-
 
 ImageView.prototype.moveto = function (x, y) {
 	var len, i, dot;
@@ -536,14 +553,39 @@ ImageView.prototype.connect = function (to) {
 	conn.fromView = this;
 	conn.toView = to;
 	this.arrow.conn = conn;
+	this.arrow.hide();
 	this.model.dest = to.model;
 };
+
+ImageView.prototype.unlink = function () {
+	if (this.model) this.model.unlink();
+	this.disconnect();
+	var len = QueueApp.views.length;
+	for (var i = len - 1; i >= 0; i--) {
+		QueueApp.views[i].disconnect(this);
+	}
+	
+	this.image.remove();
+	this.arrow.remove();
+	this.settings.remove();
+	this.text.remove();
+};
+
+ImageView.prototype.disconnect = function (dest) {
+	if (this.arrow && this.arrow.conn && (!dest || this.arrow.conn.toView === dest)) {
+		this.arrow.conn.line.remove();
+		this.arrow.conn = null;
+		this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
+		this.arrow.show();
+	}
+};	
 
 ImageView.prototype.dropObject = function () {
 	return this.image;
 };
 
 ImageView.prototype.acceptDrop = function (x, y) {
+	if (!this.hasIn) return false;
 	return (x > this.x && x < this.x + this.width
 			&& y > this.y && y < this.y + this.height);
 };
@@ -597,42 +639,38 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.image.animate({scale: "1.2 1.2"}, 200, function () {
 		this.animate({scale: "1 1"}, 200);		
 	});
-	
-	this.indot = null;
-	this.outdots = [null, null];
-	
-	this.indot = canvas.circle(x, y, 4);
-	this.indot.attr({fill: "#b33"});
-	this.indot.view = this;
-	this.indot.hide();
 
+
+
+	this.settings = canvas.image("images/settings.gif", x, y, 12, 12);
+	this.settings.view = this;
 	
-	for (var i = 0; i < 2; i++) {
-		var out = canvas.circle(x, y, 4);
-		out.attr({fill: "#3b3"});
-		out.view = this;
-		out.id = i;
-		out.hide();
-		out.drag(
+	this.arrows = [null, null];
+
+	for (var i = 0; i < 2; i ++) {
+		var arrow = canvas.image("images/orange-arrow.gif", x, y, 12, 12);
+		arrow.view = this;
+		arrow.id = i;
+		arrow.drag(
 			function (dx, dy) {
-				this.attr({cx: this.ox + dx, cy: this.oy + dy});
+				this.attr({x: this.ox + dx, y: this.oy + dy});
 				this.paper.connection(this.conn);
 			}, 
 			function () {
 				var from = this.view.hidden[this.id];
 				this.conn = this.paper.connection(from, this, "#000");
-				this.ox = this.attr("cx");
-				this.oy = this.attr("cy");
+				this.ox = this.attr("x");
+				this.oy = this.attr("y");
 			},
 			function () {
 				this.conn.line.remove();
 				this.conn = null;
-				
+			
 				var views = QueueApp.views;
 				var len = views.length;
-				var x = this.attr('cx'),
-				var y = this.attr('cy');
-				
+				var x = this.attr('x'),
+				var y = this.attr('y');
+			
 				for (var i = len - 1; i >= 0; i--) {
 					var obj = views[i];
 					if (obj.acceptDrop(x, y)) {
@@ -644,15 +682,13 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 
 				var view = this.view;
 				if (this.id === 0) {
-					this.attr({cx: view.x + view.width + 2, cy: view.y + 10});
+					this.attr({cx: view.x + view.width + 2, cy: view.y + 5});
 				} else {
-					this.attr({cx: view.x + view.width + 2, cy: view.y + view.height - 10});
+					this.attr({cx: view.x + view.width + 2, cy: view.y + view.height - 15});
 				}
-			
 			});
-		this.outdots[i] = out;
+		this.arrows[i] = arrow;
 	}
-
 	
 	// move
 	this.moveto(x, y);
@@ -670,6 +706,12 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		}, 
 		function () {
 
+		});
+	
+
+	this.settings.click(
+		function () {
+			this.view.model.showSettings(this.view.x, this.view.y);
 		});
 }
 
@@ -690,62 +732,78 @@ SplitterView.prototype.moveto = function (x, y) {
 	this.hidden[1].attr({x: this.x + this.width - 20,
 					   y: this.y + this.height - 15});
 
-	this.indot.attr({cx: this.x - 5, cy: this.y + this.height / 2});
+
+	this.arrows[0].attr({x: this.x + this.width + 2, y: this.y + 5});
+	this.arrows[1].attr({x: this.x + this.width + 2, y: this.y + this.height - 15});
+	this.settings.attr({x: this.x - 4, y: this.y - 12});
 
 	var len = QueueApp.views.length;
 	for (var i = len - 1; i >= 0; i--) {
 		QueueApp.views[i].moveConnection(this);
 	}
 
-	var dot = this.outdots[0];
-	dot.attr({cx: this.x + this.width + 2, cy: this.y + 10});
-	if (dot.conn) { this.canvas.connection(dot.conn);}
-
-	var dot = this.outdots[1];
-	dot.attr({cx: this.x + this.width + 2, cy: this.y + this.height - 10});
-	if (dot.conn) { this.canvas.connection(dot.conn);}	
+	if (this.arrows[0].conn) this.canvas.connection(this.arrows[0].conn);
+	if (this.arrows[1].conn) this.canvas.connection(this.arrows[1].conn);
 };
 
-SplitterView.prototype.showDots = function (show) {
-	var dot;
-	if (show) this.indot.show(); else this.indot.hide();
-	dot = this.outdots[0];
-	if (show && !dot.conn) dot.show(); else dot.hide();
-	dot = this.outdots[1];
-	if (show && !dot.conn) dot.show(); else dot.hide();
-};
 
 SplitterView.prototype.connect = function (to, channel) {
 	var conn = this.canvas.connection(this.hidden[channel], to.dropObject(), "#000");
-	conn.line.attr({'stroke-width': 3});
+	conn.line.attr({'stroke-width': 3, 'stroke': '#F7D68A'});
 	conn.fromView = this;
 	conn.toView = to;
-	this.outdots[channel].conn = conn;
+	this.arrows[channel].conn = conn;
+	this.arrows[channel].hide();
 	this.model.dest[channel] = to.model;
 };
+
+SplitterView.prototype.unlink = function () {
+	if (this.model) this.model.unlink();
+	this.disconnect();
+	var len = QueueApp.views.length;
+	for (var i = len - 1; i >= 0; i--) {
+		QueueApp.views[i].disconnect(this);
+	}
+	
+	this.image.remove();
+	this.arrows[0].remove();
+	this.arrows[1].remove();
+	this.settings.remove();
+};
+
+SplitterView.prototype.disconnect = function (dest) {
+	for (var i = 0; i < 2; i ++) {
+		var arrow = this.arrows[i];
+		if (arrow && arrow.conn && (!dest || arrow.conn.toView === dest)) {
+			arrow.conn.line.remove();
+			arrow.conn = null;
+
+			if (i === 0) {
+				arrow.attr({cx: this.x + this.width + 2, cy: this.y + 5});
+			} else {
+				arrow.attr({cx: this.x + this.width + 2, cy: this.y + this.height - 15});
+			}
+			arrow.show();
+		}
+	}
+};	
 
 SplitterView.prototype.dropObject = function () {
 	return this.image;
 };
 
 SplitterView.prototype.acceptDrop = function (x, y) {
-	var cx = this.x - 2;
-	var cy = this.y + this.height / 2;
-	
-	return ((cx - x) * (cx - x) + (cy - y) * (cy - y) < 16);
+	return (x > this.x && x < this.x + this.width
+			&& y > this.y && y < this.y + this.height);
 };
 
 SplitterView.prototype.moveConnection = function (dest) {
 	for (var i = 0; i < 2; i ++) {
-		var dot = this.outdots[i];
-		if (dot && dot.conn && dot.conn.toView === dest) {
-			this.canvas.connection(dot.conn);
+		var arrow = this.arrows[i];
+		if (arrow && arrow.conn && arrow.conn.toView === dest) {
+			this.canvas.connection(arrow.conn);
 		}
 	}
-};
-
-SplitterView.prototype.deleteConnection = function (peer) {
-	
 };
 
 SplitterView.prototype.jsonify = function () {
@@ -758,8 +816,8 @@ SplitterView.prototype.jsonify = function () {
 	
 	
 	for (var i = 0; i < 2; i ++) {
-		var dot = this.outdots[i];
-		if (dot.conn) json.out[i] = dot.conn.toView.name;
+		var arrow = this.arrows[i];
+		if (arrow.conn) json.out[i] = arrow.conn.toView.name;
 	}
 
 	if (this.model) {
@@ -818,6 +876,21 @@ ServerModel.prototype.connect = function () {
 	}
 };
 
+ServerModel.prototype.showSettings = function (x, y) {
+	var d = $('#server_form');
+	QueueApp.form_view = this.view;
+	d.find('#server_form_rate').val(this.mu);
+	
+	d.dialog('option', {title: this.view.name, position: [x, y]})
+	.dialog('open');
+};
+
+ServerModel.prototype.saveSettings = function (dialog) {
+	var d = $('#server_form');
+	this.mu = d.find('#server_form_rate').val();
+	$('#log').append('rate for ' + this.view.name + " is " + this.mu);
+};
+
 ServerModel.prototype.showStats = function () {
 	var service = this.entity.facility;
 	var qd = service.queueStats().durationSeries;
@@ -864,6 +937,25 @@ SourceModel.prototype.connect = function () {
 	}
 };
 
+SourceModel.prototype.showSettings = function (x, y) {
+	var d = $('#source_form');
+	QueueApp.form_view = this.view;
+	d.find('#source_form_rate').val(this.lambda);
+	
+	d.dialog('option', {title: this.view.name, position: [x, y]})
+	.dialog('open');
+};
+
+SourceModel.prototype.saveSettings = function (dialog) {
+	var d = $('#source_form');
+	this.lambda = d.find('#source_form_rate').val();
+	$('#log').append('rate for ' + this.view.name + " is " + this.lambda);
+};
+
+SourceModel.prototype.unlink = function () {
+	
+};
+
 /*-------------------------*/
 function SplitterModel(view) {
 	this.view = view;
@@ -887,6 +979,25 @@ SplitterModel.prototype.connect = function () {
 	if (this.dest[1]) {
 		this.entity.dest2 = this.dest[1].entity;
 	}
+};
+
+SplitterModel.prototype.showSettings = function (x, y) {
+	var d = $('#splitter_form');
+	QueueApp.form_view= this.view;
+	d.find('#splitter_form_perc').val(this.lambda);
+	
+	d.dialog('option', {title: this.view.name, position: [x, y]})
+	.dialog('open');
+};
+
+SplitterModel.prototype.saveSettings = function (dialog) {
+	var d = $('#splitter_form');
+	this.lambda = d.find('#splitter_form_perc').val();
+	$('#log').append('perc for ' + this.view.name + " is " + this.lambda);
+};
+
+SplitterModel.prototype.unlink = function () {
+	
 };
 
 /***************************************************/
