@@ -5,15 +5,15 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Sim Panel test</title>
-	<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	
+	<!--script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/queues.js" type="text/javascript" charset="utf-8"></script>
-	
-	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 
 	<script src="src/queue_app.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/image_view.js" type="text/javascript" charset="utf-8"></script>
@@ -21,7 +21,9 @@
 	<script src="src/source_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/monitor_model.js" type="text/javascript" charset="utf-8"></script>
-	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script-->
+		
+	<script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script>
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -31,7 +33,6 @@
 		$(function () {
 			
 			QueueApp.init();
-			QueueApp.reset();
 	
 QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":148,"y":166,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}},{"x":384,"y":165,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
 
@@ -91,7 +92,6 @@ QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":14
 		</div>
 	</div>
 	
-	More here.
 	<div id="server_form" title="Server Properties">
 		<form>
 		<fieldset>
