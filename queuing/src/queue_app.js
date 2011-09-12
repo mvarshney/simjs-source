@@ -30,13 +30,18 @@ var QueueApp = {
 		$("#pause_sim").button({text: false, icons: {primary: "ui-icon-pause"}}).click(function () {
 			if (QueueApp.paused) {
 				QueueApp.paused = false;
+				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-pause'});
 				QueueApp.run();
 			} else {
+				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-play'});
 				QueueApp.paused = true;
 			}
 		});
 		$("#stop_sim").button({text: false, icons: {primary: "ui-icon-stop"}}).click(function () {
 			QueueApp.playing = false;
+			if (QueueApp.paused) {
+				QueueApp.complete();
+			}
 		});
 		
 		$("#sim_play_ops").buttonset().hide();
@@ -400,12 +405,12 @@ var QueueApp = {
 		}
 		
 		if (!app.playing) {
-			QueueApp.completed();
+			QueueApp.complete();
 			return;
 		}
 		
 		if (app.paused) {
-			QueueApp.paused();
+			QueueApp.pauseSim();
 			return;
 		}
 		
@@ -420,14 +425,17 @@ var QueueApp = {
 		$("#sim_ops").toggle();
 		
 		
-		for (var i = 0; i < QueueApp.models.length; i++) {
+		for (var i = QueueApp.models.length - 1; i >= 0; i--){
 			var model = QueueApp.models[i];
 			if (model.showStats) model.showStats();
 		}
 	},
 	
-	paused: function () {
-		
+	pauseSim: function () {
+		for (var i = QueueApp.models.length - 1; i >= 0; i--) {
+			var model = QueueApp.models[i];
+			if (model.showStats) model.showStats();
+		}
 	}
 	
 };
