@@ -7,7 +7,10 @@ var QueueApp = {
 		.click(function () {
 			QueueApp.reset();
 		});
-		$( "#load_file" ).button({text: false, icons: {primary: "ui-icon-folder-open"}});
+		$( "#load_file" ).button({text: false, icons: {primary: "ui-icon-folder-open"}})
+		.click(function () {
+			QueueApp.load();
+		});
 		$( "#save_file" ).button({text: false,icons: {primary: "ui-icon-disk"}})
 		.click(function () {
 			QueueApp.save();
@@ -106,6 +109,31 @@ var QueueApp = {
 
 			}
 		});
+		
+		$('#save_dialog').dialog({
+			autoOpen: false,
+			width: 450,
+			modal: true,
+			resizable: false,
+		});
+		
+		$('#load_dialog').dialog({
+			autoOpen: false,
+			width: 450,
+			modal: true,
+			resizable: false,
+			buttons: {
+				'Cancel': function () {
+					$(this).dialog('close');
+				},
+				'Load': function () {
+					$(this).dialog('close');
+					QueueApp.loadtext($('#load_textarea').val());
+
+				}
+
+			}
+		});
 	},
 	
 	reset: function () {
@@ -152,6 +180,10 @@ var QueueApp = {
 		var s = this.canvas.image("images/customers.png", 15, 70, 34, 34);
 		var sp = this.canvas.image("images/splitter.png", 15, 115, 41*0.9, 48*0.9);
 		var m = this.canvas.image("images/odometer.png", 15, 170, 54*0.7, 54*0.7);
+		q.attr({title: 'Drag and drop to create a new Queue'});
+		s.attr({title: 'Drag and drop to create a new Source'});
+		sp.attr({title: 'Drag and drop to create a new Splitter'});
+		m.attr({title: 'Drag and drop to create a new Monitor'});
 		
 		function setDragger(obj, origx, origy, fn) {
 			obj.drag(	
@@ -239,11 +271,21 @@ var QueueApp = {
 	
 	save: function () {
 		var str = this.stringify();
-		console.log(str);
+		$('#save_dialog').dialog('open');
+		$('#save_textarea').text(str).focus().select();
 	},
 	
-	load: function (text) {
-		var json = JSON.parse(text);
+	load: function () {
+		$('#load_textarea').text('');
+		$('#load_dialog').dialog('open');	
+	},
+	
+	loadtext: function (text) {
+		try {
+			var json = JSON.parse(text);
+		} catch (e) {
+			
+		}
 		var len = json.length;
 		var dict = {};
 		for (var i = len - 1; i >= 0; i--) {
@@ -425,17 +467,18 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 
 	
 	if (type === 'queue') {
-		this.image = canvas.image('images/server.png', x, y, 116, 55);
-		this.width = 116;
-		this.height = 55;
+		this.width = 116 * 0.8;
+		this.height = 55 * 0.8;
+		this.image = canvas.image('images/server.png', x, y, this.width, this.height);
+
 	} else if (type === 'source') {
 		this.image = canvas.image('images/customers.png', x, y, 34, 34);
 		this.width = 34;
 		this.height = 34;
 	} else if (type === 'monitor') {
-		this.image = canvas.image('images/odometer.png', x, y, 54, 54);
-		this.width = 54;
-		this.height = 54;
+		this.width = 54 * 0.6;
+		this.height = 54 * 0.6;
+		this.image = canvas.image('images/odometer.png', x, y, this.width, this.height);
 	}
 	this.x = x;
 	this.y = y;
@@ -448,7 +491,7 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	
 	this.text = canvas.text(x, y, this.name);
 
-	this.image.attr({cursor: 'move'});	
+	this.image.attr({cursor: 'move'});
 	this.image.view = this;
 	this.image.animate({scale: "1.2 1.2"}, 200, function () {
 		this.animate({scale: "1 1"}, 200);		
@@ -490,6 +533,8 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 			});
 	}
 	
+	this.settings.hide();
+	
 	// move
 	this.moveto(x, y);
 
@@ -512,6 +557,20 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		function () {
 			this.view.model.showSettings(this.view.x, this.view.y);
 		});
+	
+	this.hideButtons = (function (view) {
+		return function () {
+			view.settings.hide();
+		}
+	}(this));
+	
+	this.timeout = null;
+	this.image.mouseover(function () {
+		var view = this.view;
+		view.settings.show();
+		if (view.timeout) clearTimeout(view.timeout);
+		view.timeout = setTimeout(view.hideButtons, 2000);
+	});
 }
 
 ImageView.prototype.moveto = function (x, y) {
@@ -708,6 +767,20 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		function () {
 			this.view.model.showSettings(this.view.x, this.view.y);
 		});
+	
+	this.hideButtons = (function (view) {
+		return function () {
+			view.settings.hide();
+		}
+	}(this));
+
+	this.timeout = null;
+	this.image.mouseover(function () {
+		var view = this.view;
+		view.settings.show();
+		if (view.timeout) clearTimeout(view.timeout);
+		view.timeout = setTimeout(view.hideButtons, 2000);
+	});
 }
 
 SplitterView.prototype.moveto = function (x, y) {
@@ -849,6 +922,8 @@ function ServerModel(view) {
 		this.statTable.find('#qsized'),
 		this.statTable.find('#ssized')
 	];
+	
+	view.image.attr({title: 'Rate = ' + 1 / this.mu});
 }
 
 ServerModel.prototype.jsonify = function () {
@@ -884,6 +959,7 @@ ServerModel.prototype.saveSettings = function (dialog) {
 	var d = $('#server_form');
 	this.mu = d.find('#server_form_rate').val();
 	$('#log').append('rate for ' + this.view.name + " is " + this.mu);
+	view.image.attr({title: 'Rate = ' + 1 / this.mu});
 };
 
 ServerModel.prototype.showStats = function () {
@@ -914,6 +990,7 @@ function SourceModel(view) {
 	this.view = view;
 	this.lambda = 0.25;
 	this.dest = null;
+	view.image.attr({title: 'Rate = ' + 1 / this.lambda});
 }
 
 SourceModel.prototype.jsonify = function () {
@@ -945,6 +1022,7 @@ SourceModel.prototype.saveSettings = function (dialog) {
 	var d = $('#source_form');
 	this.lambda = d.find('#source_form_rate').val();
 	$('#log').append('rate for ' + this.view.name + " is " + this.lambda);
+	view.image.attr({title: 'Rate = ' + 1 / this.lambda});
 };
 
 SourceModel.prototype.unlink = function () {
@@ -956,6 +1034,8 @@ function SplitterModel(view) {
 	this.view = view;
 	this.prob = 0.5;
 	this.dest = [null, null];
+	var tooltip = ['Splitting', this.prob*100, '% / ', 100 - (this.prob * 100), '%'].join(' ');
+	view.image.attr({title: tooltip});
 }
 
 SplitterModel.prototype.jsonify = function () {

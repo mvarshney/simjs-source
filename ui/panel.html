@@ -31,9 +31,9 @@
 			QueueApp.init();
 			QueueApp.reset();
 	
-QueueApp.load('[{"x":384,"y":73,"type":"monitor","name":"monitor_1","model":null},{"x":156,"y":92,"type":"source","name":"source_1","out":"monitor_1","model":{"lambda":0.25}}]');
+QueueApp.loadtext('[{"x":384,"y":73,"type":"monitor","name":"monitor_1","model":null},{"x":156,"y":92,"type":"source","name":"source_1","out":"monitor_1","model":{"lambda":0.25}}]');
 
-	//QueueApp.load('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
+//QueueApp.loadtext('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 		
 	});
 		
@@ -119,6 +119,15 @@ QueueApp.load('[{"x":384,"y":73,"type":"monitor","name":"monitor_1","model":null
 	
 	<div id="monitor_form" title="Splitter Properties">
 
+	</div>
+	
+	<div id="save_dialog" title="Save">
+		<p>Save the following to a text file. </p>
+		<textarea id="save_textarea" name="save_textarea" rows="20" cols="80"></textarea>
+	</div>
+	<div id="load_dialog" title="Load">
+		<p>Copy the text below</p>
+		<textarea id="load_textarea" name="load_textarea" rows="20" cols="80"></textarea>
 	</div>
 
 	<div id="log">
