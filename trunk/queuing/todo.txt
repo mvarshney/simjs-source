@@ -1,0 +1,36 @@
+New Button
+- check if there is existing scenario
+- pop up dialog confirming to "Discard", "save", "cancel"
+
+Load
++ GUI to input string
+
+Save
++ GUI to show the text string
+
+Adding object
++ tooltip to say names
+- make sure that objects are not dropped in the palette
+
+Delete object
+- remove objects from QueueApp.models, QueueApp.views
+
+Running Simulation
+- pause and play button icon
+- show stats after paused and stop
+- show simulation and real time
+- revert to original toolbar after stop
+
+Queue
+- number of servers?
+- queue discipline?
+- bounded queue?
+
+Monitor
+- Remove!
+
+Splitter
+- dialog form
+
+Sim
+- check standard deviation
