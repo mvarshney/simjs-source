@@ -9,7 +9,7 @@
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 	
-	<!--script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
@@ -21,9 +21,9 @@
 	<script src="src/source_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/monitor_model.js" type="text/javascript" charset="utf-8"></script>
-	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script-->
+	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
 		
-	<script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script>
+	<!--script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script-->
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -34,7 +34,7 @@
 			
 			QueueApp.init();
 	
-QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":148,"y":166,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}},{"x":384,"y":165,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
+QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":342,"y":300,"type":"queue","name":"queue_2","out":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":148,"y":166,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}},{"x":333,"y":187,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
 
 //QueueApp.loadtext('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
 		
