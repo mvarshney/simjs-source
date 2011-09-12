@@ -148,6 +148,8 @@ var QueueApp = {
 		}
 		
 		this.sim = null;
+		this.until = 25000;
+		this.seed = 1234;
 		this.showConn = false;
 		this.server_id = 0;
 		this.source_id = 0;
@@ -286,10 +288,13 @@ var QueueApp = {
 		} catch (e) {
 			
 		}
-		var len = json.length;
+		if (json.seed) this.seed = json.seed;
+		if (json.until) this.until = json.until;
+		
+		var len = json.objects.length;
 		var dict = {};
 		for (var i = len - 1; i >= 0; i--) {
-			var conf = json[i];
+			var conf = json.objects[i];
 			var obj = null;
 
 			if (conf.type === 'queue') {
@@ -308,7 +313,7 @@ var QueueApp = {
 		}
 		
 		for (var i = len - 1; i >= 0; i--) {
-			var conf = json[i];
+			var conf = json.objects[i];
 			if (conf.out) {
 				var from = dict[conf.name];
 				if (!from) continue;
@@ -328,16 +333,17 @@ var QueueApp = {
 	},
 	
 	stringify: function () {
-		var str = [];
+		var json = {
+			until: this.until,
+			seed: this.seed,
+			version: '1.0',
+			objects: []
+		};
 		var len = this.views.length;
 		for (var i = len - 1; i >= 0; i--) {
-			str.push(this.views[i].jsonify());
+			json.objects.push(this.views[i].jsonify());
 		}
-		return JSON.stringify(str);
-	},
-	
-	parse: function (json) {
-		
+		return JSON.stringify(json);
 	},
 
 	startSim: function () {
