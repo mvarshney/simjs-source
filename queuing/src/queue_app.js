@@ -105,7 +105,7 @@ var QueueApp = {
 			autoOpen: false,
 			width: 450,
 			modal: true,
-			resizable: false,
+			resizable: false
 		});
 		
 		$('#load_dialog').dialog({
@@ -125,6 +125,8 @@ var QueueApp = {
 
 			}
 		});
+		
+		this.reset();
 	},
 	
 	reset: function () {

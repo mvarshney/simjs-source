@@ -56,7 +56,7 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 			
 				var views = QueueApp.views;
 				var len = views.length;
-				var x = this.attr('x'),
+				var x = this.attr('x');
 				var y = this.attr('y');
 			
 				for (var i = len - 1; i >= 0; i--) {
