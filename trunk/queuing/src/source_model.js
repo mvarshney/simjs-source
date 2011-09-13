@@ -19,13 +19,16 @@ SourceModel.prototype.connect = function () {
 	this.entity.dest = this.dest ? this.dest.entity : null;
 };
 
-SourceModel.prototype.showSettings = function (x, y) {
+SourceModel.prototype.showSettings = function () {
 	var d = $('#source_form');
 	QueueApp.form_view = this.view;
-	d.find('#source_form_rate').val(this.lambda);
+	d.find('#source_form_rate').val(1 / this.lambda);
 	
-	d.dialog('option', {title: this.view.name, position: [x, y]})
-	.dialog('open');
+	d.show().position({
+		of: $(this.view.settings.node),
+		at: 'right bottom',
+		my: 'left top'
+	});
 };
 
 SourceModel.prototype.saveSettings = function (dialog) {

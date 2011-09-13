@@ -48,10 +48,12 @@ ServerModel.prototype.connect = function () {
 ServerModel.prototype.showSettings = function (x, y) {
 	var d = $('#server_form');
 	QueueApp.form_view = this.view;
-	d.find('#server_form_rate').val(this.mu);
-	
-	d.dialog('option', {title: this.view.name, position: [x, y]})
-	.dialog('open');
+	d.find('#server_form_rate').val(1 / this.mu);
+	d.show().position({
+		of: $(this.view.settings.node),
+		at: 'right bottom',
+		my: 'left top'
+	});
 };
 
 ServerModel.prototype.saveSettings = function (dialog) {
