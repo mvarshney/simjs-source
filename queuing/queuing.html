@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-	<title>Sim Panel test</title>
+	<title>Online Queuing Network Simulator</title>
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
@@ -31,17 +31,49 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
+			$('#accordion').accordion({autoHeight: false});
 			
 			QueueApp.init();
 	
 QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":323,"y":50,"type":"queue","name":"queue_2","out":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":155,"y":98,"type":"source","name":"source_1","out":"queue_2","model":{"lambda":0.25}},{"x":314,"y":146,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
-		
+
 	});
 		
 	</script>
 </head>
 
 <body>
+
+	
+	<div id="banner">
+		<h1>Online Queuing Network Simulator</h1>
+		<h2>Powered by Sim.JS</h2>
+	</div>
+	
+	<div id="content">
+	
+	<div id="accordion">
+		<h3><a href='#'>Instructions</a></h3>
+		<div>
+			<p><b>Adding objects.</b> Drag and drop Queues, Sources or Splitters from the left panel into the canvas.
+			<p><b>Making Connection.</b> Drag the circle at the right side of the object and drop into another object.
+			<p><b>Properties and Delete.</b> Hover mouse over the object. Click the button at the top left corner.
+			<p><b>Clear canvas.</b> Click the first button in the toolbar.
+
+		</div>
+
+		<h3><a href='#'>Sample Models</a></h3>
+		<div>
+			asdf
+		</div>
+		
+		<h3><a href='#'>Contact us</a></h3>
+		<div>
+			<p>Contact us at contact.simjs@gmail.com
+		</div>
+	</div>
+	
+	
 	<div id="toolbar_div">
 		<span id="toolbar" class="ui-widget-header ui-corner-all">
 			<span id="file_ops">
@@ -59,13 +91,15 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 				<button id="play_sim">Simulate</button>
 				<button id="config_sim">4 hours</button>
 			</span>
-			
+
 		</span>
 	</div>
 
 
-	<div id="canvas">	
+	<div id="canvas">
 	</div>
+
+	<!-- Dialogs  -->
 	
 	<div id="results">
 		<div id="server_stats" class="stats">
@@ -90,26 +124,16 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 		</div>
 	</div>
 	
-	<div id="server_form" title="Server Properties">
-			<label for="server_form_rate">Average Service Duration<br> [1 / mu] (sec)</label>
-			<input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" />
-	</div>
 	
-	<div id="source_form" title="Source Properties">
-			<label for="source_form_rate">Average Arrival Rate <br>[1 / lambda] (sec)</label>
-			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
+	</div>
 
-	</div>
 	
-	<div id="splitter_form" title="Splitter Properties">
+
+	
+	<!--div id="splitter_form" title="Splitter Properties">
 			<label for="splitter_form_perc">Fraction of traffic<br>that goes to the top<br>channel</label>
 			<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" />
-	</div>
-	
-	<div id="monitor_form" title="Splitter Properties">
-
-	</div>
-	
+	</div-->
 	<div id="save_dialog" title="Save">
 		<p>Save the following to a text file. </p>
 		<textarea id="save_textarea" name="save_textarea" rows="20" cols="80"></textarea>
@@ -118,41 +142,56 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 		<p>Copy the text below</p>
 		<textarea id="load_textarea" name="load_textarea" rows="20" cols="80"></textarea>
 	</div>
-	
-	<div id="simulation_dialog" title="Simulation Properties">
 
+	<!--div id="simulation_dialog" title="Simulation Properties">
 		<div>
 			<label for="sim_until">Simulation duration</label><br>
-
-
 			<select id="time_selector">
 				<option>hours</option>
 				<option>mins</option>
 				<option>secs</option>
 			</select>
 			
-						<input type="text" name="sim_until" value="5000" id="sim_until">
-			<!--div id="time_selector">
-
-				<input type="radio" id="secs" name="time" /><label for="sec">Sec</label>
-				<input type="radio" id="mins" name="time" checked="checked" /><label for="min">Min</label>
-				<input type="radio" id="hours" name="time" /><label for="hour">Hour</label>
-
-			</div-->
-
+			<input type="text" name="sim_until" value="5000" id="sim_until">
 		</div>
 		<p>
 		<div>
 			<label for="sim_seed">Random generation seed</label>
 			<input type="text" name="sim_seed" value="1234" id="sim_seed">
 		</div>
-	</div>
+	</div-->
 
 	<div id="log">
-		
+
 	</div>
 
+
+	<div id="server_form" class="settings_form">
+		<button id="server_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="server_form_rate">Average time to service request [1 / mu] (sec)</label></td>
+				<td><input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td></tr>
+		</table>
+		<button id="server_form_delete" class="settings_form_delete">Delete</button>
+		<button id="server_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="server_form_save" class="settings_form_save">Apply</button>
+
+	</div>
 	
+	<div id="source_form" title="Source Properties" class="settings_form">
+				<button id="source_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
+				<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
+			</tr>
+		</table>
+		<button id="source_form_delete" class="settings_form_delete">Delete</button>
+		<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="source_form_save" class="settings_form_save">Apply</button>
+	</div>
+
 </body>
 
 </html>

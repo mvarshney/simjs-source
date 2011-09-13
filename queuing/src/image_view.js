@@ -92,11 +92,10 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		function () {
 
 		});
-	
-	this.settings.click(
-		function () {
-			this.view.model.showSettings(this.view.x, this.view.y);
-		});
+		
+	this.settings.click(function () {
+		this.view.model.showSettings();
+	});
 	
 	this.hideButtons = (function (view) {
 		return function () {

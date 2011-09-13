@@ -2,6 +2,8 @@ var QueueApp = {
 	init: function () {
 		this.canvas = Raphael("canvas", 600, 400);
 		
+
+		
 		// File menu
 		$( "#new_file" ).button({text: false, icons: {primary: "ui-icon-document"}})
 		.click(function () {
@@ -16,96 +18,7 @@ var QueueApp = {
 			QueueApp.save();
 		});
 		$("#file_ops").buttonset();
-		
-		// Simulation menu
-		$("#play_sim").button({icons: {primary: "ui-icon-play"}}).click(function () {
-			QueueApp.startSim();
-		});
-		$("#config_sim").button({icons: {primary: "ui-icon-clock"}}).click(function () {
-			QueueApp.showSimProperties();
-		});
-		$("#sim_ops").buttonset();
-		
-		$("#pause_sim").button({text: false, icons: {primary: "ui-icon-pause"}}).click(function () {
-			if (QueueApp.paused) {
-				QueueApp.paused = false;
-				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-pause'});
-				QueueApp.run();
-			} else {
-				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-play'});
-				QueueApp.paused = true;
-			}
-		});
-		$("#stop_sim").button({text: false, icons: {primary: "ui-icon-stop"}}).click(function () {
-			QueueApp.playing = false;
-			if (QueueApp.paused) {
-				QueueApp.complete();
-			}
-		});
-		
-		$("#sim_play_ops").buttonset().hide();
-		this.progress = $("#progressbar");
-		this.progress.progressbar().hide();
 
-
-		var dialogOption = {
-			autoOpen: false,
-	//		height: 150,
-			width: 230,
-			modal: false,
-			resizable: false,
-			buttons: {
-				'Delete': function () {
-					QueueApp.form_view.unlink();
-					$(this).dialog('close');
-				},
-				'Disconnect': function () {
-					QueueApp.form_view.disconnect();
-					$(this).dialog('close');
-				},
-				'Save': function () {
-					QueueApp.form_view.model.saveSettings();
-					$(this).dialog('close');
-				}
-			},
-			open: function() {
-				var $buttonPane = $(this).parent();
-				$buttonPane.find('button:first')
-				.css({'color': 'red'})
-				.button({icons: {primary:'ui-icon-trash'}});
-
-			}
-		};
-		
-		$("#server_form").dialog(dialogOption);
-		$("#source_form").dialog(dialogOption);
-		$("#splitter_form").dialog(dialogOption);
-		/*
-		$("#monitor_form").dialog({
-			autoOpen: false,
-			height: 50,
-			width: 230,
-			modal: false,
-			resizable: false,
-			buttons: {
-				'Delete': function () {
-					QueueApp.form_view.unlink();
-					$(this).dialog('close');
-				},
-				'Disconnect': function () {
-					QueueApp.form_view.disconnect();
-					$(this).dialog('close');
-				}
-			},
-			open: function() {
-				var $buttonPane = $(this).parent();
-				$buttonPane.find('button:first')
-				.css({'color': 'red'})
-				.button({icons: {primary:'ui-icon-trash'}});
-
-			}
-		});*/
-		
 		$('#save_dialog').dialog({
 			autoOpen: false,
 			width: 450,
@@ -131,19 +44,49 @@ var QueueApp = {
 			}
 		});
 		
-		$('#time_selector').buttonset();
-		$('#simulation_dialog').dialog({
-			autoOpen: false,
-			modal: true,
-			resizable: false,
-			buttons: {
-				Save: function () {
-					QueueApp.saveSimProperties();
-					$(this).dialog('close');
-				}
+		// Simulation menu
+		$("#play_sim").button({icons: {primary: "ui-icon-play"}}).click(function () {
+			QueueApp.startSim();
+		});
+		$("#config_sim").button({icons: {primary: "ui-icon-clock"}}).click(function () {
+			QueueApp.showSimProperties();
+		});
+		$("#sim_ops").buttonset();
+		
+		// buttons that are shown when simulation is running
+		$("#pause_sim").button({text: false, icons: {primary: "ui-icon-pause"}}).click(function () {
+			if (QueueApp.paused) {
+				QueueApp.paused = false;
+				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-pause'});
+				QueueApp.run();
+			} else {
+				$('#pause_sim').button('option', 'icons', {primary: 'ui-icon-play'});
+				QueueApp.paused = true;
 			}
 		});
 		
+		$("#stop_sim").button({text: false, icons: {primary: "ui-icon-stop"}}).click(function () {
+			QueueApp.playing = false;
+			if (QueueApp.paused) {
+				QueueApp.complete();
+			}
+		});
+		
+		$("#sim_play_ops").buttonset().hide();
+		
+		this.progress = $("#progressbar");
+		this.progress.progressbar().hide();
+
+		// settings window
+		$('.settings_form_delete').button({icons: {primary: 'ui-icon-trash'}});
+		$('.settings_form_disconnect').button();
+		$('.settings_form_save').button();
+		$('.settings_form').hide();
+
+		$( ".settings_form_close" ).button({icons: {primary: "ui-icon-close"},text: false})
+		.click(function () {
+			$(this).parent().hide();
+		});
 		this.reset();
 	},
 	
@@ -172,6 +115,8 @@ var QueueApp = {
 		this.posy = 50;
 		this.views = [];
 		this.models = [];
+		
+		this.canvas.rect(0, 0, 600, 400).attr({fill: '#FAF6AA', 'fill-opacity': '.6'});
 		
 		var a = [];
 		for (var i = 0; i <= 600; i+= 50) {

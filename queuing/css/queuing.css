@@ -1,13 +1,39 @@
 body {
 	font-size: 62.5%;
+			background-image: url('../images/background.gif');
+}
+
+#banner {
+	background: #F7B64A;
+	padding: 1px;
+	padding-left: 30px;
+	border-radius: 10px;
+	width: 830px;
+	margin-left: 30px;
+}
+
+#content {
+	border: 8px solid #bbb;
+	border-radius: 10px;
+	background: #ddd;
+	width: 820px;
+	padding: 10px;
+	margin-left: 30px;
+}
+
+h1 {
+	font-color: red;
+}
+
+#accordion {
+	float: left;
+	width: 200px;
+	height: 400px;
+	margin-right: 10px;
 }
 
 #toolbar {
 	padding: 10px 4px;
-}
-
-#canvas {
-	margin: 10px;
 }
 
 #progressbar {
@@ -30,18 +56,13 @@ input[type=text] {
 	width: 70px;
 }
 
-#time_selector {
-}
-
-
 pre {
 	font-size: 1.4em;
 }
 
 #results {
-	background: #F7B64A;
-	width: 600px;
-	margin: 10px;
+	background: #ddd;
+	width: 810px;
 }
 .stats {
 	display: inline-block;
@@ -61,8 +82,19 @@ pre {
 	display: none;
 }
 
-#settings li {
-	border: 1px solid red;
-	padding: 0.2em;
-	
+
+#server_form, #source_form {
+	padding: 10px;
+	background-color: white;
+	width: 220px;
+	-moz-box-shadow: 5px 5px 5px #ccc;
+	-webkit-box-shadow: 5px 5px 5px #ccc;
+	box-shadow: 5px 5px 5px #ccc;
+	position: relative;
+}
+
+.settings_form_close {
+    position: absolute;
+    top: -20px; right: -200px;
+    width: 20px; height: 20px
 }
