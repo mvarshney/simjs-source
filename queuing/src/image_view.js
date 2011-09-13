@@ -125,7 +125,7 @@ ImageView.prototype.moveto = function (x, y) {
 	
 	this.image.attr({x: x, y: y});
 	this.text.attr({x: this.x + this.width / 2, y: this.y + this.height + 5});
-	this.counters.attr({x: this.x + this.width / 2, y: this.y + this.height + 25});
+	this.counters.attr({x: this.x + this.width / 2, y: this.y + this.height + 20});
 	this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
 	this.settings.attr({x: this.x - 4, y: this.y - 12});
 	
@@ -153,12 +153,28 @@ ImageView.prototype.connect = function (to) {
 };
 
 ImageView.prototype.unlink = function () {
+	var i, len, index;
+	
+	len = QueueApp.models.length;
+	for (i = len - 1; i >= 0; i--) {
+		if (QueueApp.models[i] === this.model) {
+			index = i;
+			break;
+		}
+	}
+	
+	if (index) QueueApp.models.splice(index, 1);
+	
+	
 	if (this.model) this.model.unlink();
 	this.disconnect();
-	var len = QueueApp.views.length;
-	for (var i = len - 1; i >= 0; i--) {
+	len = QueueApp.views.length;
+	for (i = len - 1; i >= 0; i--) {
 		QueueApp.views[i].disconnect(this);
+		if (QueueApp.views[i] === this) index = i;
 	}
+	
+	QueueApp.views.splice(index, 1);
 	
 	this.image.remove();
 	this.arrow.remove();
@@ -172,6 +188,7 @@ ImageView.prototype.disconnect = function (dest) {
 		this.arrow.conn = null;
 		this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
 		this.arrow.show();
+		this.model.dest = null;
 	}
 };	
 
@@ -189,10 +206,6 @@ ImageView.prototype.moveConnection = function (dest) {
 	if (this.arrow && this.arrow.conn && this.arrow.conn.toView === dest) {
 		this.canvas.connection(this.arrow.conn);
 	}
-};
-
-ImageView.prototype.deleteConnection = function (peer) {
-	
 };
 
 ImageView.prototype.jsonify = function () {

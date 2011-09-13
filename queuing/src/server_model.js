@@ -42,9 +42,7 @@ ServerModel.prototype.start = function () {
 };
 
 ServerModel.prototype.connect = function () {
-	if (this.dest) {
-		this.entity.dest = this.dest.entity;
-	}
+	this.entity.dest = this.dest ? this.dest.entity : null;
 };
 
 ServerModel.prototype.showSettings = function (x, y) {
@@ -60,7 +58,7 @@ ServerModel.prototype.saveSettings = function (dialog) {
 	var d = $('#server_form');
 	this.mu = d.find('#server_form_rate').val();
 	$('#log').append('rate for ' + this.view.name + " is " + this.mu);
-	view.image.attr({title: 'Rate = ' + 1 / this.mu});
+	this.view.image.attr({title: 'Rate = ' + 1 / this.mu});
 };
 
 ServerModel.prototype.showStats = function () {

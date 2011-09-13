@@ -16,9 +16,7 @@ SourceModel.prototype.start = function () {
 };
 
 SourceModel.prototype.connect = function () {
-	if (this.dest) {
-		this.entity.dest = this.dest.entity;
-	}
+	this.entity.dest = this.dest ? this.dest.entity : null;
 };
 
 SourceModel.prototype.showSettings = function (x, y) {
@@ -34,7 +32,7 @@ SourceModel.prototype.saveSettings = function (dialog) {
 	var d = $('#source_form');
 	this.lambda = d.find('#source_form_rate').val();
 	$('#log').append('rate for ' + this.view.name + " is " + this.lambda);
-	view.image.attr({title: 'Rate = ' + 1 / this.lambda});
+	this.view.image.attr({title: 'Rate = ' + 1 / this.lambda});
 };
 
 SourceModel.prototype.unlink = function () {
@@ -50,10 +48,11 @@ var SourceEntity = {
 	start: function (lambda) {
 		this.lambda = lambda;
 		this.setTimer(0).done(this.traffic);
-		this.generated = 0;
+		this.generated = -1;
 	},
 	
 	traffic: function () {
+		this.generated ++;
 		if (!this.dest) return;
 
 		var duration = QueueApp.random.exponential(this.lambda);
@@ -62,6 +61,6 @@ var SourceEntity = {
 		.done(this.dest.arrive, this.dest, this)
 		.done(this.traffic);
 		
-		this.generated ++;
+
 	}
 };
