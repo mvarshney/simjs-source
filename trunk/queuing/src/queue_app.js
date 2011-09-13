@@ -19,11 +19,10 @@ var QueueApp = {
 		
 		// Simulation menu
 		$("#play_sim").button({icons: {primary: "ui-icon-play"}}).click(function () {
-
 			QueueApp.startSim();
 		});
 		$("#config_sim").button({icons: {primary: "ui-icon-clock"}}).click(function () {
-			$("#form_view").dialog('open');
+			QueueApp.showSimProperties();
 		});
 		$("#sim_ops").buttonset();
 		
@@ -51,7 +50,7 @@ var QueueApp = {
 
 		var dialogOption = {
 			autoOpen: false,
-			height: 150,
+	//		height: 150,
 			width: 230,
 			modal: false,
 			resizable: false,
@@ -81,6 +80,7 @@ var QueueApp = {
 		$("#server_form").dialog(dialogOption);
 		$("#source_form").dialog(dialogOption);
 		$("#splitter_form").dialog(dialogOption);
+		/*
 		$("#monitor_form").dialog({
 			autoOpen: false,
 			height: 50,
@@ -104,7 +104,7 @@ var QueueApp = {
 				.button({icons: {primary:'ui-icon-trash'}});
 
 			}
-		});
+		});*/
 		
 		$('#save_dialog').dialog({
 			autoOpen: false,
@@ -131,6 +131,19 @@ var QueueApp = {
 			}
 		});
 		
+		$('#time_selector').buttonset();
+		$('#simulation_dialog').dialog({
+			autoOpen: false,
+			modal: true,
+			resizable: false,
+			buttons: {
+				Save: function () {
+					QueueApp.saveSimProperties();
+					$(this).dialog('close');
+				}
+			}
+		});
+		
 		this.reset();
 	},
 	
@@ -146,7 +159,7 @@ var QueueApp = {
 		}
 		
 		this.sim = null;
-		this.until = 25000;
+		this.until = 3600 * 4;
 		this.seed = 1234;
 		this.showConn = false;
 		this.server_id = 0;
@@ -171,19 +184,22 @@ var QueueApp = {
 		.attr({'stroke-width': 4, 'stroke': 'pink'});
 		
 
-		for (var i = 0; i < 4; i ++) {
+		for (var i = 0; i < 3; i ++) {
 			this.canvas.rect(10, 10 + 50 * i, 50, 50)
 			.attr({fill: '#FAF6AA', 'fill-opacity': '50', stroke: 'F7D68A'});
 		}
+		
+		var t = this.parseTime(this.until);
+		$('#config_sim').button('option', 'label', t[0].toFixed(3) + " " + t[1]);
 
 		var q = this.canvas.image("images/server.png", 12, 25, 46.4, 22);
 		var s = this.canvas.image("images/customers.png", 15, 70, 34, 34);
 		var sp = this.canvas.image("images/splitter.png", 15, 115, 41*0.9, 48*0.9);
-		var m = this.canvas.image("images/odometer.png", 15, 170, 54*0.7, 54*0.7);
+//		var m = this.canvas.image("images/odometer.png", 15, 170, 54*0.7, 54*0.7);
 		q.attr({title: 'Drag and drop to create a new Queue'});
 		s.attr({title: 'Drag and drop to create a new Source'});
 		sp.attr({title: 'Drag and drop to create a new Splitter'});
-		m.attr({title: 'Drag and drop to create a new Monitor'});
+//		m.attr({title: 'Drag and drop to create a new Monitor'});
 		
 		function setDragger(obj, origx, origy, fn) {
 			obj.drag(	
@@ -201,6 +217,7 @@ var QueueApp = {
 					var x = this.attr('x');
 					var y = this.attr('y');
 					this.attr({x: origx, y: origy});
+					if (x < 60 && y < 160) {x = null; y = null;}
 					fn.call(QueueApp, x, y);
 				});
 		}
@@ -208,7 +225,7 @@ var QueueApp = {
 		setDragger(q, 12, 25, QueueApp.newServer);
 		setDragger(s, 15, 70, QueueApp.newSource);
 		setDragger(sp, 15, 115, QueueApp.newSplitter);
-		setDragger(m, 15, 170, QueueApp.newMonitor);
+//		setDragger(m, 15, 170, QueueApp.newMonitor);
 	},
 	
 	updateDrop: function () {
@@ -288,6 +305,9 @@ var QueueApp = {
 		}
 		if (json.seed) this.seed = json.seed;
 		if (json.until) this.until = json.until;
+		var t = this.parseTime(this.until);
+		$('#config_sim').button('option', 'label', t[0].toFixed(3) + " " + t[1]);
+		
 		
 		var len = json.objects.length;
 		var dict = {};
@@ -343,6 +363,33 @@ var QueueApp = {
 		}
 		return JSON.stringify(json);
 	},
+	
+	parseTime: function () {
+		if (this.until > 3600) return [this.until / 3600, "hours"];
+		else if (this.until > 60) return [this.until / 60, "mins"];
+		else return [this.until, "secs"];
+	},
+	
+	showSimProperties: function () {
+		var t = this.parseTime();
+		var d = $('#simulation_dialog');
+		d.find('#sim_seed').val(this.seed);
+		d.find('#sim_until').val(t[0]);
+		d.find('#time_selector').val(t[1]);
+		d.dialog('open');
+	},
+	
+	saveSimProperties: function () {
+		var d = $('#simulation_dialog');
+		this.until = d.find('#sim_until').val();
+		this.seed = d.find('#sim_seed').val();
+		var mult = d.find('#time_selector').val();
+		if (mult === 'hours') this.until *= 3600;
+		else if (mult === 'mins') this.until *= 60;
+		
+		var t = this.parseTime();
+		$('#config_sim').button('option', 'label', t[0].toFixed(3) + ' ' + t[1]);
+	},
 
 	startSim: function () {
 		var len, i, model;
@@ -370,7 +417,6 @@ var QueueApp = {
 		
 		this.playing = true;
 		this.paused = false;
-		this.until = 25000;
 		this.startedAt = new Date().getTime();
 		this.run();
 	},

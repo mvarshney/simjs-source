@@ -34,9 +34,7 @@
 			
 			QueueApp.init();
 	
-QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":342,"y":300,"type":"queue","name":"queue_2","out":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":148,"y":166,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}},{"x":333,"y":187,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
-
-//QueueApp.loadtext('[{"x":324,"y":158,"type":"splitter","name":"splitter_1","out":["queue_2","queue_1"],"model":{"prob":0.5}},{"x":315,"y":259,"type":"source","name":"source_5","out":"queue_1","model":{"lambda":0.5}},{"x":310,"y":68,"type":"source","name":"source_4","out":"queue_2","model":{"lambda":0.5}},{"x":162,"y":229,"type":"source","name":"source_3","out":"queue_4","model":{"lambda":0.5}},{"x":169,"y":125,"type":"source","name":"source_2","out":"queue_4","model":{"lambda":0.5}},{"x":5,"y":237,"type":"source","name":"source_1","out":"queue_3","model":{"lambda":0.5}},{"x":190,"y":165,"type":"queue","name":"queue_4","out":"splitter_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":40,"y":165,"type":"queue","name":"queue_3","out":"queue_4","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":362,"y":91,"type":"queue","name":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":380,"y":212,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]');
+QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":323,"y":50,"type":"queue","name":"queue_2","out":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":155,"y":98,"type":"source","name":"source_1","out":"queue_2","model":{"lambda":0.25}},{"x":314,"y":146,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
 		
 	});
 		
@@ -59,7 +57,7 @@ QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":34
 			</span>
 			<span id="sim_ops">
 				<button id="play_sim">Simulate</button>
-				<button id="config_sim">5000 sec</button>
+				<button id="config_sim">4 hours</button>
 			</span>
 			
 		</span>
@@ -93,30 +91,19 @@ QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":34
 	</div>
 	
 	<div id="server_form" title="Server Properties">
-		<form>
-		<fieldset>
-			<label for="server_form_rate">Average Service Duration [1 / mu] (sec)</label>
+			<label for="server_form_rate">Average Service Duration<br> [1 / mu] (sec)</label>
 			<input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" />
-		</fieldset>
-		</form>
 	</div>
 	
 	<div id="source_form" title="Source Properties">
-		<form>
-		<fieldset>
-			<label for="source_form_rate">Average Arrival Rate [1 / lambda] (sec)</label>
+			<label for="source_form_rate">Average Arrival Rate <br>[1 / lambda] (sec)</label>
 			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
-		</fieldset>
-		</form>
+
 	</div>
 	
 	<div id="splitter_form" title="Splitter Properties">
-		<form>
-		<fieldset>
-			<label for="source_form_rate">Average Arrival Rate [1 / lambda] (sec)</label>
-			<input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" />
-		</fieldset>
-		</form>
+			<label for="splitter_form_perc">Fraction of traffic<br>that goes to the top<br>channel</label>
+			<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" />
 	</div>
 	
 	<div id="monitor_form" title="Splitter Properties">
@@ -130,6 +117,35 @@ QueueApp.loadtext('{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":34
 	<div id="load_dialog" title="Load">
 		<p>Copy the text below</p>
 		<textarea id="load_textarea" name="load_textarea" rows="20" cols="80"></textarea>
+	</div>
+	
+	<div id="simulation_dialog" title="Simulation Properties">
+
+		<div>
+			<label for="sim_until">Simulation duration</label><br>
+
+
+			<select id="time_selector">
+				<option>hours</option>
+				<option>mins</option>
+				<option>secs</option>
+			</select>
+			
+						<input type="text" name="sim_until" value="5000" id="sim_until">
+			<!--div id="time_selector">
+
+				<input type="radio" id="secs" name="time" /><label for="sec">Sec</label>
+				<input type="radio" id="mins" name="time" checked="checked" /><label for="min">Min</label>
+				<input type="radio" id="hours" name="time" /><label for="hour">Hour</label>
+
+			</div-->
+
+		</div>
+		<p>
+		<div>
+			<label for="sim_seed">Random generation seed</label>
+			<input type="text" name="sim_seed" value="1234" id="sim_seed">
+		</div>
 	</div>
 
 	<div id="log">

@@ -25,6 +25,7 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.settings.view = this;
 	
 	this.arrows = [null, null];
+	this.counters = canvas.text(x, y, '');
 
 	for (var i = 0; i < 2; i ++) {
 		var arrow = canvas.image("images/orange-arrow.gif", x, y, 12, 12);
@@ -129,6 +130,7 @@ SplitterView.prototype.moveto = function (x, y) {
 	this.arrows[0].attr({x: this.x + this.width + 2, y: this.y + 5});
 	this.arrows[1].attr({x: this.x + this.width + 2, y: this.y + this.height - 15});
 	this.settings.attr({x: this.x - 4, y: this.y - 12});
+	this.counters.attr({x: this.x + this.width / 2, y: this.y + this.height + 5})
 
 	var len = QueueApp.views.length;
 	for (var i = len - 1; i >= 0; i--) {
@@ -151,12 +153,26 @@ SplitterView.prototype.connect = function (to, channel) {
 };
 
 SplitterView.prototype.unlink = function () {
+	var i, len, index;
+	
+	len = QueueApp.models.length;
+	for (i = len - 1; i >= 0; i--) {
+		if (QueueApp.models[i] === this.model) {
+			index = i;
+			break;
+		}
+	}
+	
+	if (index) QueueApp.models.splice(index, 1);
 	if (this.model) this.model.unlink();
 	this.disconnect();
 	var len = QueueApp.views.length;
 	for (var i = len - 1; i >= 0; i--) {
 		QueueApp.views[i].disconnect(this);
+		if (QueueApp.views[i] === this) index = i;
 	}
+	
+	QueueApp.views.splice(index, 1);
 	
 	this.image.remove();
 	this.arrows[0].remove();
