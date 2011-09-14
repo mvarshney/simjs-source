@@ -78,15 +78,36 @@ var QueueApp = {
 		this.progress.progressbar().hide();
 
 		// settings window
-		$('.settings_form_delete').button({icons: {primary: 'ui-icon-trash'}});
-		$('.settings_form_disconnect').button();
-		$('.settings_form_save').button();
+		$('.settings_form_delete').button({icons: {primary: 'ui-icon-trash'}})
+		.click(function () {
+			QueueApp.form_view.unlink();
+			$(this).parent().hide();
+		})
+
+		$('.settings_form_disconnect').button()
+		.click(function () {
+			QueueApp.form_view.disconnect();
+			$(this).parent().hide();
+		});
+
+		$('.settings_form_save').button()
+		.click(function () {
+			QueueApp.form_view.model.saveSettings();
+			$(this).parent().hide();
+		});
+		
 		$('.settings_form').hide();
 
 		$( ".settings_form_close" ).button({icons: {primary: "ui-icon-close"},text: false})
 		.click(function () {
 			$(this).parent().hide();
 		});
+		
+		$('#simulation_dialog_save').button().click(function () {
+			$(this).parent().hide();
+			QueueApp.saveSettings();
+		});
+		
 		this.reset();
 	},
 	
@@ -321,10 +342,14 @@ var QueueApp = {
 		d.find('#sim_seed').val(this.seed);
 		d.find('#sim_until').val(t[0]);
 		d.find('#time_selector').val(t[1]);
-		d.dialog('open');
+		d.show().position({
+			of: $('#config_sim'),
+			at: 'left bottom',
+			my: 'left top'
+		});
 	},
 	
-	saveSimProperties: function () {
+	saveSettings: function () {
 		var d = $('#simulation_dialog');
 		this.until = d.find('#sim_until').val();
 		this.seed = d.find('#sim_seed').val();

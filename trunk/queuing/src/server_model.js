@@ -24,7 +24,7 @@ function ServerModel(view) {
 		this.statTable.find('#ssized')
 	];
 	
-	view.image.attr({title: 'Rate = ' + 1 / this.mu});
+	this.view.image.attr({title: 'Service time = ' + 1 / this.mu});
 }
 
 ServerModel.prototype.jsonify = function () {
@@ -58,9 +58,8 @@ ServerModel.prototype.showSettings = function (x, y) {
 
 ServerModel.prototype.saveSettings = function (dialog) {
 	var d = $('#server_form');
-	this.mu = d.find('#server_form_rate').val();
-	$('#log').append('rate for ' + this.view.name + " is " + this.mu);
-	this.view.image.attr({title: 'Rate = ' + 1 / this.mu});
+	this.mu = 1 / d.find('#server_form_rate').val();
+	this.view.image.attr({title: 'Service time = ' + 1 / this.mu});
 };
 
 ServerModel.prototype.showStats = function () {
