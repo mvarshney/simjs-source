@@ -9,6 +9,7 @@ var QueueApp = {
 		.click(function () {
 			QueueApp.reset();
 		});
+		
 		$( "#load_file" ).button({text: false, icons: {primary: "ui-icon-folder-open"}})
 		.click(function () {
 			QueueApp.load();
@@ -18,6 +19,22 @@ var QueueApp = {
 			QueueApp.save();
 		});
 		$("#file_ops").buttonset();
+
+		$('#verify_clear').dialog({
+			autoOpen: false,
+			width: 250,
+			modal: true,
+			resizable: false,
+			buttons: {
+				'Cancel': function () {
+					$(this).dialog('close');
+				},
+				'Ok': function () {
+					$(this).dialog('close');
+					QueueApp.reset(true);
+				}
+			}
+		});
 
 		$('#save_dialog').dialog({
 			autoOpen: false,
@@ -111,7 +128,12 @@ var QueueApp = {
 		this.reset();
 	},
 	
-	reset: function () {
+	reset: function (dontask) {
+		if (!dontask && this.views && this.views.length != 0) {
+			$('#verify_clear').dialog('open');
+			return;
+		}
+		
 		// Delete data from old run, if present
 		var len, i;
 		
@@ -132,7 +154,7 @@ var QueueApp = {
 		this.sink_id = 0;
 		
 		this.canvas.clear();
-		this.posx = 50;
+		this.posx = 100;
 		this.posy = 50;
 		this.views = [];
 		this.models = [];
@@ -184,7 +206,7 @@ var QueueApp = {
 					var x = this.attr('x');
 					var y = this.attr('y');
 					this.attr({x: origx, y: origy});
-					if (x < 60 && y < 160) {x = null; y = null;}
+					if (x < 60 && y < 200) {x = null; y = null;}
 					fn.call(QueueApp, x, y);
 				});
 		}

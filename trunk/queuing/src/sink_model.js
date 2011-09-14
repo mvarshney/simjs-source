@@ -50,7 +50,7 @@ SinkModel.prototype.showStats = function () {
 	this.stat[3].text(p.durationSeries.average().toFixed(3));
 	this.stat[4].text(p.durationSeries.deviation().toFixed(3));
 	
-	this.view.showCounters(p.durationSeries.count(), null);
+	this.view.showCounters(p.durationSeries.count(), NaN);
 };
 
 SinkModel.prototype.unlink = function () {
