@@ -24,8 +24,11 @@ SplitterModel.prototype.showSettings = function (x, y) {
 	QueueApp.form_view = this.view;
 	d.find('#splitter_form_perc').val(this.prob);
 	
-	d.dialog('option', {title: this.view.name, position: [x, y]})
-	.dialog('open');
+	d.show().position({
+		of: $(this.view.settings.node),
+		at: 'right bottom',
+		my: 'left top'
+	});
 };
 
 SplitterModel.prototype.saveSettings = function (dialog) {

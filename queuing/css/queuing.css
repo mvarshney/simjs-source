@@ -83,7 +83,7 @@ pre {
 }
 
 
-#server_form, #source_form {
+#server_form, #source_form, #simulation_dialog, #splitter_form {
 	padding: 10px;
 	background-color: white;
 	width: 220px;

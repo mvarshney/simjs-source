@@ -2,7 +2,7 @@ function SourceModel(view) {
 	this.view = view;
 	this.lambda = 0.25;
 	this.dest = null;
-	view.image.attr({title: 'Rate = ' + 1 / this.lambda});
+	this.view.image.attr({title: 'Interarrival duration = ' + 1 / this.lambda});
 }
 
 SourceModel.prototype.jsonify = function () {
@@ -33,9 +33,8 @@ SourceModel.prototype.showSettings = function () {
 
 SourceModel.prototype.saveSettings = function (dialog) {
 	var d = $('#source_form');
-	this.lambda = d.find('#source_form_rate').val();
-	$('#log').append('rate for ' + this.view.name + " is " + this.lambda);
-	this.view.image.attr({title: 'Rate = ' + 1 / this.lambda});
+	this.lambda = 1 / d.find('#source_form_rate').val();
+	this.view.image.attr({title: 'Interarrival duration = ' + 1 / this.lambda});
 };
 
 SourceModel.prototype.unlink = function () {
