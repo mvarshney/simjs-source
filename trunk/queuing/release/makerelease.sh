@@ -1,6 +1,7 @@
 ## 
 
 rm queuing.js
+rm queuing-offline.js
 
 cat ../../src/sim.js | grep -v ARG_CHECK >> queuing.js
 cat ../../src/request.js| grep -v ARG_CHECK  >> queuing.js
@@ -26,7 +27,7 @@ cat ../../src/queues.js | grep -v ARG_CHECK >> queuing-offline.js
 cat ../../src/stats.js | grep -v ARG_CHECK >> queuing-offline.js
 cat ../../src/random.js | grep -v ARG_CHECK >> queuing-offline.js
 
-cat ../src/queue-offline.js >> queuing.js
+cat ../src/queue-offline.js >> queuing-offline.js
 java -jar compiler.jar --js queuing-offline.js --js_output_file queuing-offline-min.js
 
 
