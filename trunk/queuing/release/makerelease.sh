@@ -14,6 +14,7 @@ cat ../src/monitor_model.js >> queuing.js
 cat ../src/queue_app.js >> queuing.js
 cat ../src/server_model.js >> queuing.js
 cat ../src/source_model.js >> queuing.js
+cat ../src/sink_model.js >> queuing.js
 cat ../src/splitter_model.js >> queuing.js
 cat ../src/splitter_view.js >> queuing.js
 
