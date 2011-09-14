@@ -21,7 +21,6 @@
 	<script src="src/source_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/sink_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
-	<script src="src/monitor_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
 		
 	<!--script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script-->
@@ -32,11 +31,11 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			$('#accordion').accordion({autoHeight: false}).accordion('activate', 0);
+			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
 			
 			QueueApp.init();
 	
-QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":359,"y":129,"type":"sink","name":"sink_1","model":null},{"x":208,"y":83,"type":"queue","name":"queue_1","out":"sink_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":111,"y":76,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}}]}');
+//QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":359,"y":129,"type":"sink","name":"sink_1","model":null},{"x":208,"y":83,"type":"queue","name":"queue_1","out":"sink_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":111,"y":76,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}}]}');
 
 	});
 		
@@ -76,11 +75,25 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":35
 		</div>
 
 		<h3><a href='#'>Sample Models</a></h3>
-		<div>
-			<ul>
-				<li>M/M/1 queue</li>
-				<li>Feedback</li>
-			<ul>
+		<div id="sample_models">
+			<ul class="navigation">
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<ul>
 		</div>
 		
 		<h3><a href='#'>Contact us</a></h3>
@@ -152,7 +165,9 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":35
 	</div>
 
 	<div id="save_dialog" title="Save">
-		<p>Save the following to a text file. </p>
+		<p>Copy-paste the text below in a text file.
+		You can load this scenario later
+			by clicking the 'Load' button in the toolbar, and pasting this text.</p>
 		<textarea id="save_textarea" name="save_textarea" rows="20" cols="80"></textarea>
 	</div>
 	<div id="load_dialog" title="Load">
@@ -227,6 +242,12 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":35
 			<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
 			<button id="source_form_save" class="settings_form_save">Apply</button>
 	</div>
+	
+	<div id="verify_clear">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+			Do you wish to discard the scenario in the canvas?</p>
+	</div>
+	
 </body>
 
 </html>

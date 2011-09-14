@@ -80,7 +80,7 @@ ServerModel.prototype.showStats = function () {
 	this.stat[8].text(qs.deviation().toFixed(3));
 	this.stat[9].text(ss.deviation().toFixed(3));
 	
-	this.view.showCounters(qd.count(), 0);
+	this.view.showCounters(qd.count(), sd.count());
 };
 
 ServerModel.prototype.unlink = function () {

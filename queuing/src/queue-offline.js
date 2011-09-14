@@ -1,14 +1,3 @@
-load('../src/sim.js');
-load('../src/stats.js');
-load('../src/queues.js');
-load('../src/random.js');
-load('../src/request.js');
-
-var model = '{"until":25000,"seed":1234,"version":"1.0","objects":[{"x":139,"y":229,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}},{"x":259,"y":148,"type":"queue","name":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}';
-
-
-/***************************************************/
-
 function ServerModel(sim, random) {
 	this.nservers = 1;
 	this.mu = 1;
@@ -59,7 +48,7 @@ SourceModel.prototype.connect = function (dest) {
 };
 
 /*-------------------------*/
-function SplitterModel() {
+function SplitterModel(sim, random) {
 	this.prob = 0.5;
 	this.sim = sim;
 	this.random = random;
@@ -74,24 +63,23 @@ SplitterModel.prototype.connect = function (dest, channel) {
 };
 
 /*-------------------------*/
-function MonitorModel(sim, random) {
+function SinkModel(sim, random) {
+	this.entity = null;
 	this.sim = sim;
 }
 
-MonitorModel.prototype.start = function () {
-	this.entity = this.sim.addEntity(MonitorEntity);
+SinkModel.prototype.start = function () {
+	this.entity = this.sim.addEntity(SinkEntity);
+	
 };
 
-MonitorModel.prototype.connect = function (dest) {
-	this.entity.dest = dest.entity;
-};
 
-MonitorModel.prototype.printStats = function (printf) {
-	var m = this.entity.monitor;
-
-	printf("Monitor " + this.name);
-	printf("\tArrivals = " + m.count().toFixed(3));
-	printf("\tInterarrival = " + m.average().toFixed(3));
+SinkModel.prototype.printStats = function (printf) {
+	var p = this.entity.population;
+	printf("Sink " + this.name);
+	printf("\tDepartures = " + p.durationSeries.count());
+	printf("\tPopulation = " + p.sizeSeries.average());
+	printf("\tStay Duration = " + p.durationSeries.average());
 };
 
 /***************************************************/
@@ -103,11 +91,11 @@ var ServerEntity = {
 		this.facility = new Sim.Facility('queue');
 	},
 
-	arrive: function (from) {
+	arrive: function (stamp) {
 		var duration = this.random.exponential(this.mu);
 		var ro = this.useFacility(this.facility, duration);
 		if (this.dest) {
-			ro.done(this.dest.arrive, this.dest, this);
+			ro.done(this.dest.arrive, this.dest, stamp);
 		}
 	}
 };
@@ -122,24 +110,27 @@ var SourceEntity = {
 	
 	traffic: function () {
 		if (!this.dest) return;
+		this.dest.arrive(this.time());
 
+		this.generated ++;
+		
 		var duration = this.random.exponential(this.lambda);
 
-		this.setTimer(duration)
-		.done(this.dest.arrive, this.dest, this)
-		.done(this.traffic);
+		this.setTimer(duration).done(this.traffic);
 	}
 };
 
 /*-------------------------*/
-var MonitorEntity = {
+
+var SinkEntity = {
 	start: function () {
-		this.monitor = new Sim.TimeSeries();
+		this.population = new Sim.Population();
 	},
-	
-	arrive: function () {
-		this.monitor.record(1, this.time());
-		if (this.dest) this.dest.arrive();
+
+	arrive: function (stamp) {
+		if (!stamp) stamp = 0;
+		this.population.enter(stamp);
+		this.population.leave(stamp, this.time());
 	}
 };
 
@@ -150,18 +141,20 @@ var SplitterEntity = {
 		this.prob = prob;
 	},
 	
-	arrive: function () {
+	arrive: function (stamp) {
 		var r = this.random.uniform(0.0, 1.0);
 		if (r < this.prob) {
-			if (this.dest[0]) this.dest[0].arrive();
+			if (this.dest[0]) this.dest[0].arrive(stamp);
 		} else {
-			if (this.dest[1]) this.dest[1].arrive();
+			if (this.dest[1]) this.dest[1].arrive(stamp);
 		}
 	}
 };
 
-
-function QueueApp(json) {
+/***************************************/
+function QueueSimulator(jsontext) {
+	var json = JSON.parse(jsontext);
+	
 	var until = 5000, seed = 1234;
 	if (json.until) until = json.until;
 	if (json.seed) seed = json.seed;
@@ -172,14 +165,14 @@ function QueueApp(json) {
 	var len = json.objects.length;
 	var dict = {};
 	var ModelFactory = {queue: ServerModel, source: SourceModel, 
-						splitter: SplitterModel, monitor: MonitorModel};
+						splitter: SplitterModel, sink: SinkModel};
 						
 	for (var i = len - 1; i >= 0; i--) {
 		var conf = json.objects[i];
 		var model;
 		if (conf.type === 'queue') model = new ServerModel(sim, random);
 		else if (conf.type === 'source') model = new SourceModel(sim, random);
-		else if (conf.type === 'monitor') model = new MonitorModel(sim, random);
+		else if (conf.type === 'sink') model = new SinkModel(sim, random);
 		else if (conf.type === 'splitter') model = new SplitterModel(sim, random);
 		else throw "Cannot create model for " + conf.name;
 
@@ -214,5 +207,3 @@ function QueueApp(json) {
 		if (model.printStats) model.printStats(print);
 	}
 }
-
-QueueApp(JSON.parse(model));

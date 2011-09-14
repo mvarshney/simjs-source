@@ -119,3 +119,30 @@ pre {
 strong {
 	color: #F7B64A;
 }
+
+#sample_models {
+	padding: 5px;
+}
+.navigation {
+	list-style-type: none;
+	padding-left: 0;
+	margin-left: 0;
+}
+
+.navigation a {
+	text-decoration: none;
+	display: block;
+	padding: 2px;
+	border-bottom: dotted 1px black;
+}
+
+.navigation a:hover {
+	background-color: #F7B64A;
+	color: #fff;
+	font-weight: bold;
+		border-left: solid 5px black;
+}
+
+.navigation a:link a:visited {
+	color: #F7B64A;
+}

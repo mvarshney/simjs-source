@@ -191,9 +191,9 @@ SplitterView.prototype.disconnect = function (dest) {
 			arrow.conn = null;
 
 			if (i === 0) {
-				arrow.attr({cx: this.x + this.width + 2, cy: this.y + 5});
+				arrow.attr({x: this.x + this.width + 2, y: this.y + 5});
 			} else {
-				arrow.attr({cx: this.x + this.width + 2, cy: this.y + this.height - 15});
+				arrow.attr({x: this.x + this.width + 2, y: this.y + this.height - 15});
 			}
 			arrow.show();
 		}

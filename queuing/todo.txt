@@ -1,10 +1,4 @@
 
-- NEW scenario: check if there is existing scenario
-- NEW scenario: pop up dialog confirming to "Discard", "save", "cancel"
-- Load: instructions
-- Save: instructions
 - Simulation: show sim and real time
-- Queue: show out counter
-- Monitor: remove from code
 - Stats: check standard deviation
 - Forms: input validation
