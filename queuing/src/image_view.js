@@ -17,6 +17,10 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		this.width = 54 * 0.6;
 		this.height = 54 * 0.6;
 		this.image = canvas.image('images/odometer.png', x, y, this.width, this.height);
+	} else if (type === 'sink') {
+		this.width = 32;
+		this.height = 32;
+		this.image = canvas.image('images/door_out.png', x, y, this.width, this.height);
 	}
 	this.x = x;
 	this.y = y;
@@ -125,7 +129,9 @@ ImageView.prototype.moveto = function (x, y) {
 	this.image.attr({x: x, y: y});
 	this.text.attr({x: this.x + this.width / 2, y: this.y + this.height + 5});
 	this.counters.attr({x: this.x + this.width / 2, y: this.y + this.height + 20});
-	this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
+	if (this.arrow) {
+		this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
+	}
 	this.settings.attr({x: this.x - 4, y: this.y - 12});
 	
 	if (this.hasIn) {
@@ -176,9 +182,11 @@ ImageView.prototype.unlink = function () {
 	QueueApp.views.splice(index, 1);
 	
 	this.image.remove();
-	this.arrow.remove();
+	if (this.arrow) this.arrow.remove();
 	this.settings.remove();
+	this.counters.remove();
 	this.text.remove();
+
 };
 
 ImageView.prototype.disconnect = function (dest) {

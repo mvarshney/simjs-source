@@ -38,7 +38,7 @@ SourceModel.prototype.saveSettings = function (dialog) {
 };
 
 SourceModel.prototype.unlink = function () {
-	
+	this.view = null;
 };
 
 SourceModel.prototype.showStats = function () {
@@ -50,19 +50,17 @@ var SourceEntity = {
 	start: function (lambda) {
 		this.lambda = lambda;
 		this.setTimer(0).done(this.traffic);
-		this.generated = -1;
+		this.generated = 0;
 	},
 	
 	traffic: function () {
-		this.generated ++;
 		if (!this.dest) return;
+		this.dest.arrive(this.time());
 
+		this.generated ++;
+		
 		var duration = QueueApp.random.exponential(this.lambda);
 
-		this.setTimer(duration)
-		.done(this.dest.arrive, this.dest, this)
-		.done(this.traffic);
-		
-
+		this.setTimer(duration).done(this.traffic);
 	}
 };

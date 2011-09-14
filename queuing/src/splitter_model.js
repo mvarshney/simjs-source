@@ -39,7 +39,7 @@ SplitterModel.prototype.saveSettings = function (dialog) {
 };
 
 SplitterModel.prototype.unlink = function () {
-
+	this.view = null;
 };
 
 SplitterModel.prototype.showStats = function () {
@@ -58,15 +58,15 @@ var SplitterEntity = {
 		this.to2 = 0;
 	},
 	
-	arrive: function () {
+	arrive: function (stamp) {
 		this.arrived ++;
 		var r = QueueApp.random.uniform(0.0, 1.0);
 		if (r < this.prob) {
 			this.to1 ++;
-			if (this.dest1) this.dest1.arrive();
+			if (this.dest1) this.dest1.arrive(stamp);
 		} else {
 			this.to2 ++;
-			if (this.dest2) this.dest2.arrive();
+			if (this.dest2) this.dest2.arrive(stamp);
 		}
 	}
 };

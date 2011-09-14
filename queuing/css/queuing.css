@@ -1,6 +1,14 @@
+
+/***************************/
+
 body {
 	font-size: 62.5%;
-			background-image: url('../images/background.gif');
+	background-image: url('../images/background.gif');
+}
+
+p.info {
+	margin-left: 30px;
+	font-size: 1.2em;
 }
 
 #banner {
@@ -78,12 +86,12 @@ pre {
 	background-color: #FAF6AA;
 }
 
-#server_stats, #monitor_stats {
+#server_stats, #sink_stats {
 	display: none;
 }
 
 
-#server_form, #source_form, #simulation_dialog, #splitter_form {
+.settings_form {
 	padding: 10px;
 	background-color: white;
 	width: 220px;
@@ -97,4 +105,17 @@ pre {
     position: absolute;
     top: -20px; right: -200px;
     width: 20px; height: 20px
+}
+
+.inline {
+	display: inline;
+
+}
+
+.shift-down {
+	margin-bottom: -5px;
+}
+
+strong {
+	color: #F7B64A;
 }
