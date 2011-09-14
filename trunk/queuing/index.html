@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Online Queuing Network Simulator</title>
+	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	
+		
+	<script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	<script type="text/javascript" charset="utf-8">
+
+		$(function () {
+			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
+			
+			QueueApp.init();
+	
+//QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":359,"y":129,"type":"sink","name":"sink_1","model":null},{"x":208,"y":83,"type":"queue","name":"queue_1","out":"sink_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":111,"y":76,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}}]}');
+
+	});
+		
+	</script>
+</head>
+
+<body>
+
+	
+	<div id="banner">
+		<h1>Online Queuing Network Simulator</h1>
+		<h2>Powered by Sim.JS</h2>
+	</div>
+	
+	<p class="info">We bring the power of Discrete Event Simulations 
+	
+	<div id="content">
+	<div id="accordion">
+		<h3><a href='#'>Instructions</a></h3>
+		<div>
+			<p><strong>Adding objects</strong>. Drag n' drop 
+				<img src="images/server.png" class="inline shift-down" width="20%">
+				 (queues),
+				<img src="images/customers.png" class="inline shift-down" width="10%">
+				 (traffic source), 
+				<img src="images/door_out.png" class="inline shift-down" width="10%">
+				 (traffic sink), or 
+				<img src="images/splitter.png" class="inline shift-down" width="10%"> 
+				(splitter) from left panel into canvas
+				
+			<p><strong>Connecting</strong>. Drag <img src="images/orange-arrow.gif" class="inline" width="8%">
+				 and drop over the destination object
+			<p><strong>Properties, Disconnect and Delete</strong>. Hover mouse over object and click 
+				<img src="images/settings.gif" class="inline" width="8%">
+
+
+		</div>
+
+		<h3><a href='#'>Sample Models</a></h3>
+		<div id="sample_models">
+			<ul class="navigation">
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#mm1'>M/M/1 queue</a></li>
+				<li><a href='#mm1feedback'>Feedback</a></li>
+				<ul>
+		</div>
+		
+		<h3><a href='#'>Contact us</a></h3>
+		<div>
+			<p>Contact us at contact.simjs@gmail.com
+		</div>
+	</div>
+	
+	
+	<div id="toolbar_div">
+		<span id="toolbar" class="ui-widget-header ui-corner-all">
+			<span id="file_ops">
+				<button id="new_file">New Canvas</button>
+				<button id="load_file">Load a file</button>
+				<button id="save_file">Save to file</button>
+			</span>
+
+			<span id="sim_play_ops">
+				<div id="progressbar"></div>
+				<button id="pause_sim">Pause</button>
+				<button id="stop_sim">Stop</button>
+			</span>
+			<span id="sim_ops">
+				<button id="play_sim">Simulate</button>
+				<button id="config_sim">4 hours</button>
+			</span>
+
+		</span>
+	</div>
+
+
+	<div id="canvas">
+	</div>
+
+		<div id="results">
+
+		</div>
+	
+	</div>
+
+	<div id="log">
+		
+	</div>
+
+
+	<!-- Dialogs. These are all hidden -->
+
+	<div id="server_stats" class="stats">
+		<h2>Server 1</h2>
+		<table class="stats_table" border="1">
+			<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
+			<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
+			<tr><td>Server Utilization</td><td id="sutil">-</td><td>-</td></tr>
+			<tr><td>Time spent in queue</td><td id="qtime">-</td><td id="qtimed">-</td></tr>
+			<tr><td>Time spent in system</td><td id="stime">-</td><td id="stimed">-</td></tr>
+			<tr><td>Size of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
+			<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
+		</table>
+	</div>
+
+	<div id="sink_stats" class="stats">
+		<h2>Sink</h2>
+		<table class="stats_table" border="1">
+			<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
+			<tr><td>Departures</td><td id="depart">-</td><td>-</td></tr>
+			<tr><td>Population</td><td id="pop">-</td><td id="popd">-</td></tr>
+			<tr><td>Stay duration</td><td id="stay">-</td><td id="stayd">-</td></tr>
+		</table>
+	</div>
+
+	<div id="save_dialog" title="Save">
+		<p>Copy-paste the text below in a text file.
+		You can load this scenario later
+			by clicking the 'Load' button in the toolbar, and pasting this text.</p>
+		<textarea id="save_textarea" name="save_textarea" rows="20" cols="80"></textarea>
+	</div>
+	<div id="load_dialog" title="Load">
+		<p>Copy the text below</p>
+		<textarea id="load_textarea" name="load_textarea" rows="20" cols="80"></textarea>
+	</div>
+
+	<div id="simulation_dialog" title="Simulation Properties"  class="settings_form">
+			<button id="simulation_dialog_close" class="settings_form_close"></button>
+		<table>
+			<tr><td><label for="sim_until">Simulation duration</label>
+									<select id="time_selector">
+										<option>hours</option>
+										<option>mins</option>
+										<option>secs</option>
+									</select>
+				</td>
+				<td><input type="text" name="sim_until" value="5000" id="sim_until"></td></tr>
+			<tr><td><label for="sim_seed">Random generation seed</label>
+	
+				</td>
+				<td><input type="text" name="sim_seed" value="1234" id="sim_seed"></td></tr>
+		</table>
+		<hr>
+				<button id="simulation_dialog_save">Apply</button>
+	</div>
+
+
+	<div id="server_form" class="settings_form">
+		<button id="server_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="server_form_rate">Average time to service request [1 / mu] (sec)</label></td>
+				<td><input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td></tr>
+		</table>
+		<hr>
+		<button id="server_form_delete" class="settings_form_delete">Delete</button>
+		<button id="server_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="server_form_save" class="settings_form_save">Apply</button>
+
+	</div>
+	
+	<div id="source_form" title="Source Properties" class="settings_form">
+				<button id="source_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
+				<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
+			</tr>
+		</table>
+		<hr>
+		<button id="source_form_delete" class="settings_form_delete">Delete</button>
+		<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="source_form_save" class="settings_form_save">Apply</button>
+	</div>
+
+	<div id="sink_form" class="settings_form">
+		<button id="source_form_close" class="settings_form_close"></button>
+		<button id="source_form_delete" class="settings_form_delete">Delete</button>
+	</div>
+
+	<div id="splitter_form" title="Splitter Properties" class="settings_form">
+		<button id="source_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="splitter_form_perc">Fraction of traffic that goes to the top channel</label></td>
+				<td>	<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" /></td>
+			</tr>
+		</table>
+			<hr>
+			<button id="source_form_delete" class="settings_form_delete">Delete</button>
+			<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+			<button id="source_form_save" class="settings_form_save">Apply</button>
+	</div>
+	
+	<div id="verify_clear">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+			Do you wish to discard the scenario in the canvas?</p>
+	</div>
+	
+</body>
+
+</html>
