@@ -129,13 +129,14 @@ var QueueApp = {
 		this.server_id = 0;
 		this.source_id = 0;
 		this.splitter_id = 0;
-		this.monitor_id = 0;
+		this.sink_id = 0;
 		
 		this.canvas.clear();
 		this.posx = 50;
 		this.posy = 50;
 		this.views = [];
 		this.models = [];
+		this.form_view = null;
 		
 		this.canvas.rect(0, 0, 600, 400).attr({fill: '#FAF6AA', 'fill-opacity': '.6'});
 		
@@ -150,7 +151,7 @@ var QueueApp = {
 		.attr({'stroke-width': 4, 'stroke': 'pink'});
 		
 
-		for (var i = 0; i < 3; i ++) {
+		for (var i = 0; i < 4; i ++) {
 			this.canvas.rect(10, 10 + 50 * i, 50, 50)
 			.attr({fill: '#FAF6AA', 'fill-opacity': '50', stroke: 'F7D68A'});
 		}
@@ -161,11 +162,11 @@ var QueueApp = {
 		var q = this.canvas.image("images/server.png", 12, 25, 46.4, 22);
 		var s = this.canvas.image("images/customers.png", 15, 70, 34, 34);
 		var sp = this.canvas.image("images/splitter.png", 15, 115, 41*0.9, 48*0.9);
-//		var m = this.canvas.image("images/odometer.png", 15, 170, 54*0.7, 54*0.7);
+		var si = this.canvas.image("images/door_out.png", 18, 165, 32, 32);
 		q.attr({title: 'Drag and drop to create a new Queue'});
 		s.attr({title: 'Drag and drop to create a new Source'});
 		sp.attr({title: 'Drag and drop to create a new Splitter'});
-//		m.attr({title: 'Drag and drop to create a new Monitor'});
+		si.attr({title: 'Drag and drop to create a new Sink'});
 		
 		function setDragger(obj, origx, origy, fn) {
 			obj.drag(	
@@ -191,7 +192,7 @@ var QueueApp = {
 		setDragger(q, 12, 25, QueueApp.newServer);
 		setDragger(s, 15, 70, QueueApp.newSource);
 		setDragger(sp, 15, 115, QueueApp.newSplitter);
-//		setDragger(m, 15, 170, QueueApp.newMonitor);
+		setDragger(si, 18, 165, QueueApp.newSink);
 	},
 	
 	updateDrop: function () {
@@ -231,16 +232,16 @@ var QueueApp = {
 			'source', 'source_' + this.source_id, false, true, x, y);		
 	},
 	
+	newSink: function (x, y) {
+		this.sink_id ++;
+		return this.newView(ImageView, SinkModel,
+				'sink', 'sink_' + this.sink_id, true, false, x, y);
+	},
+	
 	newSplitter: function (x, y) {
 		this.splitter_id ++;
 		return this.newView(SplitterView, SplitterModel, 
 					'splitter', 'splitter_' + this.splitter_id, true, true, x, y);
-	},
-	
-	newMonitor: function (x, y) {
-		this.monitor_id++;
-		return this.newView(ImageView, MonitorModel,
-			'monitor', 'monitor_' + this.monitor_id, true, true, x, y);
 	},
 	
 	toggleConnections: function () {
@@ -287,8 +288,8 @@ var QueueApp = {
 				obj = this.newSource();
 			} else if (conf.type === 'splitter') {
 				obj = this.newSplitter();
-			} else if (conf.type === 'monitor') {
-				obj = this.newMonitor();
+			} else if (conf.type === 'sink') {
+				obj = this.newSink();
 			}
 			
 			obj.moveto(conf.x, conf.y);

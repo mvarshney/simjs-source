@@ -177,7 +177,10 @@ SplitterView.prototype.unlink = function () {
 	this.image.remove();
 	this.arrows[0].remove();
 	this.arrows[1].remove();
+	this.hidden[0].remove();
+	this.hidden[0].remove();
 	this.settings.remove();
+	this.counters.remove();
 };
 
 SplitterView.prototype.disconnect = function (dest) {

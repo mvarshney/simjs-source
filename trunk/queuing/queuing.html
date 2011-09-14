@@ -19,6 +19,7 @@
 	<script src="src/image_view.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/splitter_view.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/source_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/sink_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/monitor_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
@@ -31,11 +32,11 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			$('#accordion').accordion({autoHeight: false});
+			$('#accordion').accordion({autoHeight: false}).accordion('activate', 0);
 			
 			QueueApp.init();
 	
-QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":323,"y":50,"type":"queue","name":"queue_2","out":"queue_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":155,"y":98,"type":"source","name":"source_1","out":"queue_2","model":{"lambda":0.25}},{"x":314,"y":146,"type":"queue","name":"queue_1","out":"queue_2","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}}]}');
+QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":359,"y":129,"type":"sink","name":"sink_1","model":null},{"x":208,"y":83,"type":"queue","name":"queue_1","out":"sink_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":111,"y":76,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}}]}');
 
 	});
 		
@@ -50,21 +51,36 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 		<h2>Powered by Sim.JS</h2>
 	</div>
 	
-	<div id="content">
+	<p class="info">We bring the power of Discrete Event Simulations 
 	
+	<div id="content">
 	<div id="accordion">
 		<h3><a href='#'>Instructions</a></h3>
 		<div>
-			<p><b>Adding objects.</b> Drag and drop Queues, Sources or Splitters from the left panel into the canvas.
-			<p><b>Making Connection.</b> Drag the circle at the right side of the object and drop into another object.
-			<p><b>Properties and Delete.</b> Hover mouse over the object. Click the button at the top left corner.
-			<p><b>Clear canvas.</b> Click the first button in the toolbar.
+			<p><strong>Adding objects</strong>. Drag n' drop 
+				<img src="images/server.png" class="inline shift-down" width="20%">
+				 (queues),
+				<img src="images/customers.png" class="inline shift-down" width="10%">
+				 (traffic source), 
+				<img src="images/door_out.png" class="inline shift-down" width="10%">
+				 (traffic sink), or 
+				<img src="images/splitter.png" class="inline shift-down" width="10%"> 
+				(splitter) from left panel into canvas
+				
+			<p><strong>Connecting</strong>. Drag <img src="images/orange-arrow.gif" class="inline" width="8%">
+				 and drop over the destination object
+			<p><strong>Properties, Disconnect and Delete</strong>. Hover mouse over object and click 
+				<img src="images/settings.gif" class="inline" width="8%">
+
 
 		</div>
 
 		<h3><a href='#'>Sample Models</a></h3>
 		<div>
-			asdf
+			<ul>
+				<li>M/M/1 queue</li>
+				<li>Feedback</li>
+			<ul>
 		</div>
 		
 		<h3><a href='#'>Contact us</a></h3>
@@ -99,42 +115,41 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 	<div id="canvas">
 	</div>
 
-	<!-- Dialogs  -->
-	
-	<div id="results">
-		<div id="server_stats" class="stats">
-			<h2>Server 1</h2>
-			<table class="stats_table" border="1">
-				<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
-				<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
-				<tr><td>Server Utilization</td><td id="sutil">-</td><td>-</td></tr>
-				<tr><td>Time spent in queue</td><td id="qtime">-</td><td id="qtimed">-</td></tr>
-				<tr><td>Time spent in system</td><td id="stime">-</td><td id="stimed">-</td></tr>
-				<tr><td>Size of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
-				<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
-			</table>
+		<div id="results">
+
 		</div>
-		<div id="monitor_stats" class="stats">
-			<h2>Monitor</h2>
-			<table border="1" class="stats_table">
-				<tr><th>Metric</th><th>Mean</th><th>Std Dev</th></tr>
-				<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
-				<tr><td>Inter-arrival (sec)</td><td id="inter">-</td><td id="interd">-</td></tr>
-			</table>
-		</div>
-	</div>
-	
 	
 	</div>
 
-	
 	<div id="log">
-
+		
 	</div>
 
 
-	
+	<!-- Dialogs. These are all hidden -->
 
+	<div id="server_stats" class="stats">
+		<h2>Server 1</h2>
+		<table class="stats_table" border="1">
+			<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
+			<tr><td>Arrivals</td><td id="arrival">-</td><td>-</td></tr>
+			<tr><td>Server Utilization</td><td id="sutil">-</td><td>-</td></tr>
+			<tr><td>Time spent in queue</td><td id="qtime">-</td><td id="qtimed">-</td></tr>
+			<tr><td>Time spent in system</td><td id="stime">-</td><td id="stimed">-</td></tr>
+			<tr><td>Size of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
+			<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
+		</table>
+	</div>
+
+	<div id="sink_stats" class="stats">
+		<h2>Sink</h2>
+		<table class="stats_table" border="1">
+			<tr><th>Metric</th> <th>Mean</th><th>Std Dev</th></tr>
+			<tr><td>Departures</td><td id="depart">-</td><td>-</td></tr>
+			<tr><td>Population</td><td id="pop">-</td><td id="popd">-</td></tr>
+			<tr><td>Stay duration</td><td id="stay">-</td><td id="stayd">-</td></tr>
+		</table>
+	</div>
 
 	<div id="save_dialog" title="Save">
 		<p>Save the following to a text file. </p>
@@ -194,6 +209,10 @@ QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":32
 		<button id="source_form_save" class="settings_form_save">Apply</button>
 	</div>
 
+	<div id="sink_form" class="settings_form">
+		<button id="source_form_close" class="settings_form_close"></button>
+		<button id="source_form_delete" class="settings_form_delete">Delete</button>
+	</div>
 
 	<div id="splitter_form" title="Splitter Properties" class="settings_form">
 		<button id="source_form_close" class="settings_form_close"></button>

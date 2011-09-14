@@ -85,6 +85,8 @@ ServerModel.prototype.showStats = function () {
 
 ServerModel.prototype.unlink = function () {
 	this.statTable.remove();
+	this.view = null;
+	this.stat = null;
 }
 
 /***************************************************/
@@ -95,11 +97,11 @@ var ServerEntity = {
 		this.facility = new Sim.Facility('queue');
 	},
 
-	arrive: function (from) {
+	arrive: function (stamp) {
 		var duration = QueueApp.random.exponential(this.mu);
 		var ro = this.useFacility(this.facility, duration);
 		if (this.dest) {
-			ro.done(this.dest.arrive, this.dest, this);
+			ro.done(this.dest.arrive, this.dest, stamp);
 		}
 	}
 };
