@@ -4,9 +4,10 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.name = name;
 
 	this.hidden = [canvas.rect(x, y, 10, 10), canvas.rect(x, y, 10, 10)];
-	this.image = canvas.image('images/splitter.png', x, y, 41, 48);
-	this.width = 41;
-	this.height = 48;
+	this.width = 41 * 0.7;
+	this.height = 48 * 0.7;
+	this.image = canvas.image('images/splitter.png', x, y, this.width, this.height);
+
 
 	this.x = x;
 	this.y = y;
@@ -89,6 +90,7 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		});
 	
 
+	this.settings.hide();
 	this.settings.click(
 		function () {
 			this.view.model.showSettings(this.view.x, this.view.y);

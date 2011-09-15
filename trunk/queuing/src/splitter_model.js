@@ -43,10 +43,12 @@ SplitterModel.prototype.unlink = function () {
 };
 
 SplitterModel.prototype.showStats = function () {
+/*
 	var msg = ['In:', this.entity.arrived, 
 				'Out [1]:', this.entity.to1,
 				'Out [2]:', this.entity.to2].join(' ');
 	this.view.counters.attr({text: msg});
+*/
 };
 
 /*-------------------------*/

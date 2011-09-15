@@ -13,10 +13,6 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		this.image = canvas.image('images/customers.png', x, y, 34, 34);
 		this.width = 34;
 		this.height = 34;
-	} else if (type === 'monitor') {
-		this.width = 54 * 0.6;
-		this.height = 54 * 0.6;
-		this.image = canvas.image('images/odometer.png', x, y, this.width, this.height);
 	} else if (type === 'sink') {
 		this.width = 32;
 		this.height = 32;
@@ -234,10 +230,12 @@ ImageView.prototype.jsonify = function () {
 };
 
 ImageView.prototype.showCounters = function (incoming, outgoing) {
+/*
 	var msg = '';
 
 	if (!isNaN(incoming)) msg += 'In: ' + incoming;
 	if (!isNaN(outgoing)) msg += '  Out: ' + outgoing;
 	this.counters.attr({text: msg});
 	this.counters.show();
+	*/
 };
