@@ -4,12 +4,20 @@
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	
+	<meta property="og:title" content="Online Queuing Network Simulator" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="http://www.simjs.com/queuing" />
+	<meta property="og:image" content="" />
+	<meta property="og:site_name" content="Online Queuing Network Simulator" />
+	<meta property="fb:admins" content="100000008048392" />
+	
 	<title>Online Queuing Network Simulator</title>
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 	
-	<!--script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
@@ -22,9 +30,9 @@
 	<script src="src/sink_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
-	<script src="src/models.js" type="text/javascript" charset="utf-8"></script-->
+	<script src="src/models.js" type="text/javascript" charset="utf-8"></script>
 	
-	<script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script>
+	<!--script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script-->
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -32,13 +40,28 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			$('#accordion').accordion({autoHeight: false}).accordion('activate', 0);
+			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
+			$('#about_this_model').accordion({collapsible: true}).hide();
+			
 			$('#sample_models a').click(function (event) {
-				var model = MODELS[$(this).attr('id')];
+				var id = $(this).attr('id');
+				var name = $(this).text();
+				var model = MODELS[id];
 				if (!model) return;
 
 				QueueApp.reset(true);
 				QueueApp.loadtext(model.model);
+				
+				$('#about_this_model a').text('About this model [' + name + ']');
+				var a = $('#about_this_model');
+				a.show();
+				if (a.accordion('option', 'active') !== 0) {
+					a.accordion('option', 'active', 0);
+				}
+
+				$('.about_text').hide();
+				$('#about_' + id).show();
+				return false;
 			});
 			
 			QueueApp.init();
@@ -48,93 +71,169 @@
 	});
 		
 	</script>
+
 </head>
 
 <body>
-
 	
 	<div id="banner">
 		<h1>Online Queuing Network Simulator</h1>
 		<h2>Powered by Sim.JS</h2>
 	</div>
+
 	
-	<div id="content">
-	<div id="accordion">
-		<h3><a href='#'>Instructions</a></h3>
-		<div>
-			<p><strong>Adding objects</strong>. Drag n' drop 
-				<img src="images/server.png" class="inline shift-down" width="20%">
-				 (queues),
-				<img src="images/customers.png" class="inline shift-down" width="10%">
-				 (traffic source), 
-				<img src="images/door_out.png" class="inline shift-down" width="10%">
-				 (traffic sink), or 
-				<img src="images/splitter.png" class="inline shift-down" width="10%"> 
-				(splitter) from left panel into canvas
-				
-			<p><strong>Connecting</strong>. Drag <img src="images/orange-arrow.gif" class="inline" width="8%">
-				 and drop over the destination object
-			<p><strong>Properties, Disconnect and Delete</strong>. Hover mouse over object and click 
-				<img src="images/settings.gif" class="inline" width="8%">
+	<div id="like_buttons">
+		<iframe src="http://www.facebook.com/plugins/like.php?app_id=260050727351679&amp;href=http%3A%2F%2Fwww.simjs.com%2Fqueuing&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
 
+		<!-- Place this tag where you want the +1 button to render -->
+		<g:plusone size="medium" annotation="none" href="http://www.simjs.com/queuing"></g:plusone>
 
-		</div>
+		<!-- Place this render call where appropriate -->
+		<script type="text/javascript">
+		(function() {
+			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+			po.src = 'https://apis.google.com/js/plusone.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+			})();
+		</script>
 
-		<h3><a href='#'>Sample Models</a></h3>
-		<div id="sample_models">
-			<ul class="navigation">
-				<li><a href='#' id="model_mm1">M/M/1 queue</a></li>
-				<li><a href='#' id="model_mm1feedback">Feedback</a></li>
-				<li><a href='#' id="model_backforth">Round n' Round</a></li>
-				<li><a href='#' id="model_waterfall">Waterfall</a></li>
-				<li><a href='#' id="model_freeway">Freeway</a></li>
-				<li><a href='#' id="model_staytillend">Stay till the end</a></li>
-				<li><a href='#' id="model_winner">And the winner is...</a></li>
-				<ul>
-		</div>
+		<a href="https://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a>
+		<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	</div> <!-- id="like_buttons" -->
+
+	<div id="main_layout">
+
+		<div id="content">
+			<div id="accordion">
+				<h3><a href='#'>Instructions</a></h3>
+				<div>
+					<p><strong>Adding objects</strong>. Drag n' drop 
+						<img src="images/server.png" class="inline shift-down" width="20%">
+						(queues),
+						<img src="images/customers.png" class="inline shift-down" width="10%">
+						(traffic source), 
+						<img src="images/door_out.png" class="inline shift-down" width="10%">
+						(traffic sink), or 
+						<img src="images/splitter.png" class="inline shift-down" width="10%"> 
+						(splitter) from left panel into canvas</p>
+
+					<p><strong>Connecting</strong>. 
+						Drag <img src="images/orange-arrow.gif" class="inline" width="8%">
+							and drop over the destination object</p>
+					<p><strong>Properties, Disconnect and Delete</strong>. Hover mouse over object and click 
+							<img src="images/settings.gif" class="inline" width="8%"></p>
+				</div>
+
+				<h3><a href='#'>Sample Models</a></h3>
+				<div id="sample_models">
+					<ul class="navigation">
+						<li><a href='#' id="model_mm1">M/M/1 queue</a></li>
+						<li><a href='#' id="model_mm1feedback">Feedback</a></li>
+						<li><a href='#' id="model_backforth">Round n' Round</a></li>
+						<li><a href='#' id="model_waterfall">Waterfall</a></li>
+						<li><a href='#' id="model_compile">Compile n' Debug</a></li>
+						<li><a href='#' id="model_freeway">Freeway</a></li>
+						<li><a href='#' id="model_staytillend">Stay till the end</a></li>
+						<li><a href='#' id="model_winner">And the winner is...</a></li>
+					</ul>
+				</div>
+
+				<h3><a href='#'>Contact us</a></h3>
+				<div>
+					<p>Contact us at contact.simjs@gmail.com</p>
+				</div>
+			</div> <!-- id="accordion" -->
+
+			<div id="toolbar_div">
+				<span id="toolbar" class="ui-widget-header ui-corner-all">
+					<span id="file_ops">
+						<button id="new_file">New Canvas</button>
+						<button id="load_file">Load a file</button>
+						<button id="save_file">Save to file</button>
+					</span>
+
+					<span id="sim_play_ops">
+						<div id="progressbar"></div>
+						<button id="pause_sim">Pause</button>
+						<button id="stop_sim">Stop</button>
+					</span>
+					<span id="sim_ops">
+						<button id="play_sim">Simulate</button>
+						<button id="config_sim">4 hours</button>
+					</span>
+				</span>
+			</div> <!-- id="toolbar_div" -->
+
+			<div id="canvas">
+			</div>
+
+			<!-- 'About this model' -->
+			<div id="about_this_model">
+				<h3><a href='#'>About this model</a></h3>
+				<div>
+					<div id='about_model_mm1' class="about_text">
+						<strong>About model M/M/1</strong>
+
+					</div>
+
+					<div id='about_model_mm1feedback' class="about_text">
+						About model M/M/1 feedback
+					</div>
+
+					<div id="about_model_backforth" class="about_text">
+						asdfasfd asfd sa fd sfd
+					</div>
+
+					<div id="about_model_waterfall" class="about_text">
+						klj oj j kj lkj lk 
+					</div>
+
+					<div id="about_model_compile" class="about_text">
+
+					</div>
+
+					<div id="about_model_freeway" class="about_text">
+						oasj dfl;kjas dlfksja flksj f
+					</div>
+
+					<div id="about_model_staytillend" class="about_text">
+
+					</div>
+
+					<div id="about_model_winner">
+
+					</div>
+				</div>
+			</div> <!-- id="about_this_model" -->
+
+			<div id="results">
+
+			</div>
+
+		</div> <!-- id="content" -->
+
+		<div id="info">
+			Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+
+			Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+		</div> <!-- id="info" -->
+
+		<div id="googlead">
+			<script type="text/javascript"><!--
+			google_ad_client = "ca-pub-3302317457074890";
+			/* queuing */
+			google_ad_slot = "1131965817";
+			google_ad_width = 200;
+			google_ad_height = 200;
+			//-->
+			</script>
+			<script type="text/javascript"
+			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+			</script>
+		</div> <!-- id="googlead" -->
 		
-		<h3><a href='#'>Contact us</a></h3>
-		<div>
-			<p>Contact us at contact.simjs@gmail.com
-		</div>
-	</div>
-	
-	
-	<div id="toolbar_div">
-		<span id="toolbar" class="ui-widget-header ui-corner-all">
-			<span id="file_ops">
-				<button id="new_file">New Canvas</button>
-				<button id="load_file">Load a file</button>
-				<button id="save_file">Save to file</button>
-			</span>
-
-			<span id="sim_play_ops">
-				<div id="progressbar"></div>
-				<button id="pause_sim">Pause</button>
-				<button id="stop_sim">Stop</button>
-			</span>
-			<span id="sim_ops">
-				<button id="play_sim">Simulate</button>
-				<button id="config_sim">4 hours</button>
-			</span>
-
-		</span>
-	</div>
-
-
-	<div id="canvas">
-	</div>
-
-		<div id="results">
-
-		</div>
-	
-	</div>
-
-	<div id="log">
 		
-	</div>
-
+	</div> <!-- id="main_layout" -->
 
 	<!-- Dialogs. These are all hidden -->
 
@@ -162,34 +261,34 @@
 	</div>
 
 	<div id="save_dialog" title="Save">
-		<p>Copy-paste the text below in a text file.
-		You can load this scenario later
+		<p>Copy-paste the text below in a text file.You can load this scenario later
 			by clicking the 'Load' button in the toolbar, and pasting this text.</p>
 		<textarea id="save_textarea" name="save_textarea" rows="20" cols="80"></textarea>
 	</div>
+	
 	<div id="load_dialog" title="Load">
 		<p>Copy the text below</p>
 		<textarea id="load_textarea" name="load_textarea" rows="20" cols="80"></textarea>
 	</div>
 
 	<div id="simulation_dialog" title="Simulation Properties"  class="settings_form">
-			<button id="simulation_dialog_close" class="settings_form_close"></button>
+		<button id="simulation_dialog_close" class="settings_form_close"></button>
 		<table>
 			<tr><td><label for="sim_until">Simulation duration</label>
-									<select id="time_selector">
-										<option>hours</option>
-										<option>mins</option>
-										<option>secs</option>
-									</select>
-				</td>
-				<td><input type="text" name="sim_until" value="5000" id="sim_until"></td></tr>
+				<select id="time_selector">
+					<option>hours</option>
+					<option>mins</option>
+					<option>secs</option>
+				</select>
+			</td>
+			<td><input type="text" name="sim_until" value="5000" id="sim_until"></td></tr>
 			<tr><td><label for="sim_seed">Random generation seed</label>
-	
-				</td>
-				<td><input type="text" name="sim_seed" value="1234" id="sim_seed"></td></tr>
+
+			</td>
+			<td><input type="text" name="sim_seed" value="1234" id="sim_seed"></td></tr>
 		</table>
 		<hr>
-				<button id="simulation_dialog_save">Apply</button>
+		<button id="simulation_dialog_save">Apply</button>
 	</div>
 
 
@@ -206,45 +305,45 @@
 		<button id="server_form_save" class="settings_form_save">Apply</button>
 
 	</div>
-	
-	<div id="source_form" title="Source Properties" class="settings_form">
-				<button id="source_form_close" class="settings_form_close"></button>
-		<table>
-			<tr>
-				<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
-				<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
-			</tr>
-		</table>
-		<hr>
-		<button id="source_form_delete" class="settings_form_delete">Delete</button>
-		<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
-		<button id="source_form_save" class="settings_form_save">Apply</button>
-	</div>
 
-	<div id="sink_form" class="settings_form">
-		<button id="source_form_close" class="settings_form_close"></button>
-		<button id="source_form_delete" class="settings_form_delete">Delete</button>
-	</div>
+								<div id="source_form" title="Source Properties" class="settings_form">
+									<button id="source_form_close" class="settings_form_close"></button>
+									<table>
+										<tr>
+											<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
+											<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
+										</tr>
+									</table>
+									<hr>
+									<button id="source_form_delete" class="settings_form_delete">Delete</button>
+									<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+									<button id="source_form_save" class="settings_form_save">Apply</button>
+								</div>
 
-	<div id="splitter_form" title="Splitter Properties" class="settings_form">
-		<button id="source_form_close" class="settings_form_close"></button>
-		<table>
-			<tr>
-				<td><label for="splitter_form_perc">Fraction of traffic that goes to the top channel</label></td>
-				<td>	<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" /></td>
-			</tr>
-		</table>
-			<hr>
-			<button id="source_form_delete" class="settings_form_delete">Delete</button>
-			<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
-			<button id="source_form_save" class="settings_form_save">Apply</button>
-	</div>
-	
-	<div id="verify_clear">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-			Do you wish to discard the scenario in the canvas?</p>
-	</div>
-	
-</body>
+								<div id="sink_form" class="settings_form">
+									<button id="sink_form_close" class="settings_form_close"></button>
+									<button id="sink_form_delete" class="settings_form_delete">Delete</button>
+								</div>
 
-</html>
+								<div id="splitter_form" title="Splitter Properties" class="settings_form">
+									<button id="splitter_form_close" class="settings_form_close"></button>
+									<table>
+										<tr>
+											<td><label for="splitter_form_perc">Fraction of traffic that goes to the top channel</label></td>
+											<td>	<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" /></td>
+										</tr>
+									</table>
+									<hr>
+									<button id="splitter_form_delete" class="settings_form_delete">Delete</button>
+									<button id="splitter_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+									<button id="splitter_form_save" class="settings_form_save">Apply</button>
+								</div>
+
+								<div id="verify_clear">
+									<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+										Do you wish to discard the scenario in the canvas?</p>
+									</div>
+
+								</body>
+
+								</html>

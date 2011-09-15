@@ -215,6 +215,8 @@ var QueueApp = {
 		setDragger(s, 15, 70, QueueApp.newSource);
 		setDragger(sp, 15, 115, QueueApp.newSplitter);
 		setDragger(si, 18, 165, QueueApp.newSink);
+		
+		$('#about_this_model').hide();
 	},
 	
 	updateDrop: function () {
@@ -398,6 +400,8 @@ var QueueApp = {
 		$("#file_ops").toggle();
 		$("#sim_ops").toggle();
 		
+		$('#about_this_model').accordion('activate', false);
+		
 		len = this.models.length;
 		for (i = len - 1; i >= 0; i --) {
 			this.models[i].start();
@@ -406,10 +410,6 @@ var QueueApp = {
 		for (i = len - 1; i >= 0; i --) {
 			this.models[i].connect();
 		}
-		
-		this.sim.setLogger(function (msg) {
-			console.log(msg);
-		});
 		
 		this.playing = true;
 		this.paused = false;

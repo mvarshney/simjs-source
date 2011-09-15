@@ -11,13 +11,22 @@ p.info {
 	font-size: 1.2em;
 }
 
+#like_buttons {
+	position:absolute;
+	top:30px;
+	left:900px;
+	padding: 4px;
+	border: solid 4px #F7B64A;
+	border-radius: 10px;
+	background-color: #FAF6AA;
+}
+
 #banner {
 	background: #F7B64A;
 	padding: 1px;
 	padding-left: 30px;
 	border-radius: 10px;
 	width: 830px;
-	margin-left: 30px;
 }
 
 #content {
@@ -26,7 +35,28 @@ p.info {
 	background: #ddd;
 	width: 820px;
 	padding: 10px;
-	margin-left: 30px;
+}
+
+#main_layout {
+	width: 1080px;
+}
+
+#info{
+	border: 1px solid red;
+	width: 200px;
+	margin-bottom: 50px;
+	position: absolute;
+	top: 100px;
+	left: 880px;
+}
+
+#googlead {
+	border: 1px solid red;
+	width: 200px;
+	margin-bottom: 50px;
+	position: absolute;
+	top: 400px;
+	left: 880px;
 }
 
 h1 {
@@ -49,10 +79,6 @@ h1 {
 	float: left;
 }
 
-/*input.text { font-size: 1.2em; margin-bottom:12px; width:95%; padding: .4em; }
-input.radio { font-size: 67.5%;}
-fieldset { padding:0; border:0; margin-top:0px; font-size: 1.2em;}
-*/
 label {
 	font-size: 1.2em;
 }
@@ -62,10 +88,6 @@ input[type=text] {
 	font-size: 1.2em;
 	height: 1.4em;
 	width: 70px;
-}
-
-pre {
-	font-size: 1.4em;
 }
 
 #results {
@@ -98,7 +120,7 @@ pre {
 	-moz-box-shadow: 5px 5px 5px #ccc;
 	-webkit-box-shadow: 5px 5px 5px #ccc;
 	box-shadow: 5px 5px 5px #ccc;
-	position: relative;
+/*	position: relative;  */
 }
 
 .settings_form_close {
@@ -107,9 +129,9 @@ pre {
     width: 20px; height: 20px
 }
 
+
 .inline {
 	display: inline;
-
 }
 
 .shift-down {
