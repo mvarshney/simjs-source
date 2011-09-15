@@ -145,7 +145,7 @@ var QueueApp = {
 		}
 		
 		this.sim = null;
-		this.until = 3600 * 4;
+		this.until = 3600 * 8;
 		this.seed = 1234;
 		this.showConn = false;
 		this.server_id = 0;
@@ -354,9 +354,12 @@ var QueueApp = {
 	},
 	
 	parseTime: function () {
-		if (this.until > 3600) return [this.until / 3600, "hours"];
-		else if (this.until > 60) return [this.until / 60, "mins"];
-		else return [this.until, "secs"];
+		if (this.until > 3600) { 
+			return [this.until / 3600, "hours"]; 
+		} else {
+			if (this.until > 60) return [this.until / 60, "mins"];
+			else return [this.until, "secs"];
+		}
 	},
 	
 	showSimProperties: function () {
@@ -374,8 +377,8 @@ var QueueApp = {
 	
 	saveSettings: function () {
 		var d = $('#simulation_dialog');
-		this.until = d.find('#sim_until').val();
-		this.seed = d.find('#sim_seed').val();
+		this.until = 1 * d.find('#sim_until').val();
+		this.seed = 1 * d.find('#sim_seed').val();
 		var mult = d.find('#time_selector').val();
 		if (mult === 'hours') this.until *= 3600;
 		else if (mult === 'mins') this.until *= 60;

@@ -22,7 +22,8 @@
 	<script src="src/sink_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
-		
+	<script src="src/models.js" type="text/javascript" charset="utf-8"></script>
+	
 	<!--script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script-->
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -32,6 +33,23 @@
 
 		$(function () {
 			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
+			$('#about_this_model').accordion({collapsible: true}).hide();
+			
+			$('#sample_models a').click(function (event) {
+				var id = $(this).attr('id');
+				var name = $(this).text();
+				var model = MODELS[id];
+				if (!model) return;
+
+				QueueApp.reset(true);
+				QueueApp.loadtext(model.model);
+				
+				$('#about_this_model a').text('About this model [' + name + ']');
+				$('#about_this_model').show();
+				$('.about_text').hide();
+				$('#about_' + id).show();
+				return false;
+			});
 			
 			QueueApp.init();
 	
@@ -49,8 +67,6 @@
 		<h1>Online Queuing Network Simulator</h1>
 		<h2>Powered by Sim.JS</h2>
 	</div>
-	
-	<p class="info">We bring the power of Discrete Event Simulations 
 	
 	<div id="content">
 	<div id="accordion">
@@ -77,22 +93,13 @@
 		<h3><a href='#'>Sample Models</a></h3>
 		<div id="sample_models">
 			<ul class="navigation">
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#' id="model_mm1">M/M/1 queue</a></li>
+				<li><a href='#' id="model_mm1feedback">Feedback</a></li>
+				<li><a href='#' id="model_backforth">Round n' Round</a></li>
+				<li><a href='#' id="model_waterfall">Waterfall</a></li>
+				<li><a href='#' id="model_freeway">Freeway</a></li>
+				<li><a href='#' id="model_staytillend">Stay till the end</a></li>
+				<li><a href='#' id="model_winner">And the winner is...</a></li>
 				<ul>
 		</div>
 		
@@ -128,6 +135,41 @@
 	<div id="canvas">
 	</div>
 
+	<!-- 'About this model' -->
+	<div id="about_this_model">
+		<h3><a href='#'>About this model</a></h3>
+		<div>
+			<div id='about_model_mm1' class="about_text">
+				<strong>About model M/M/1</strong>
+				<p>
+			</div>
+			
+			<div id='about_model_mm1feedback' class="about_text">
+				About model M/M/1 feedback
+			</div>
+			
+			<div id="about_model_backforth" class="about_text">
+				asdfasfd asfd sa fd sfd
+			</div>
+			
+			<div id="about_model_waterfall" class="about_text">
+				klj oj j kj lkj lk 
+			</div>
+			
+			<div id="about_model_freeway" class="about_text">
+				oasj dfl;kjas dlfksja flksj f
+			</div>
+			
+			<div id="about_model_staytillend" class="about_text">
+				
+			</div>
+			
+			<div id="about_model_winner">
+				
+			</div>
+		</div>
+	</div>
+
 		<div id="results">
 
 		</div>
@@ -137,6 +179,7 @@
 	<div id="log">
 		
 	</div>
+
 
 
 	<!-- Dialogs. These are all hidden -->

@@ -9,7 +9,21 @@
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 	
-		
+	<!--script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/random.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/request.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/stats.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/queues.js" type="text/javascript" charset="utf-8"></script>
+
+	<script src="src/queue_app.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/image_view.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/splitter_view.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/source_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/sink_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/server_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/models.js" type="text/javascript" charset="utf-8"></script-->
+	
 	<script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script>
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -18,7 +32,14 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
+			$('#accordion').accordion({autoHeight: false}).accordion('activate', 0);
+			$('#sample_models a').click(function (event) {
+				var model = MODELS[$(this).attr('id')];
+				if (!model) return;
+
+				QueueApp.reset(true);
+				QueueApp.loadtext(model.model);
+			});
 			
 			QueueApp.init();
 	
@@ -36,8 +57,6 @@
 		<h1>Online Queuing Network Simulator</h1>
 		<h2>Powered by Sim.JS</h2>
 	</div>
-	
-	<p class="info">We bring the power of Discrete Event Simulations 
 	
 	<div id="content">
 	<div id="accordion">
@@ -64,22 +83,13 @@
 		<h3><a href='#'>Sample Models</a></h3>
 		<div id="sample_models">
 			<ul class="navigation">
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
-				<li><a href='#mm1'>M/M/1 queue</a></li>
-				<li><a href='#mm1feedback'>Feedback</a></li>
+				<li><a href='#' id="model_mm1">M/M/1 queue</a></li>
+				<li><a href='#' id="model_mm1feedback">Feedback</a></li>
+				<li><a href='#' id="model_backforth">Round n' Round</a></li>
+				<li><a href='#' id="model_waterfall">Waterfall</a></li>
+				<li><a href='#' id="model_freeway">Freeway</a></li>
+				<li><a href='#' id="model_staytillend">Stay till the end</a></li>
+				<li><a href='#' id="model_winner">And the winner is...</a></li>
 				<ul>
 		</div>
 		
