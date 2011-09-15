@@ -13,8 +13,8 @@
 	<meta property="fb:admins" content="100000008048392" />
 	
 	<title>Online Queuing Network Simulator</title>
-	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 	
 	<script src="../src/sim.js" type="text/javascript" charset="utf-8"></script>
@@ -306,44 +306,44 @@
 
 	</div>
 
-								<div id="source_form" title="Source Properties" class="settings_form">
-									<button id="source_form_close" class="settings_form_close"></button>
-									<table>
-										<tr>
-											<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
-											<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
-										</tr>
-									</table>
-									<hr>
-									<button id="source_form_delete" class="settings_form_delete">Delete</button>
-									<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
-									<button id="source_form_save" class="settings_form_save">Apply</button>
-								</div>
+	<div id="source_form" title="Source Properties" class="settings_form">
+		<button id="source_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="source_form_rate">Average Interval between<br> arrivals [1 / lambda] (sec)</label></td>
+				<td><input type="text" name="source_form_rate" id="source_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td>
+			</tr>
+		</table>
+		<hr>
+		<button id="source_form_delete" class="settings_form_delete">Delete</button>
+		<button id="source_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="source_form_save" class="settings_form_save">Apply</button>
+	</div>
 
-								<div id="sink_form" class="settings_form">
-									<button id="sink_form_close" class="settings_form_close"></button>
-									<button id="sink_form_delete" class="settings_form_delete">Delete</button>
-								</div>
+	<div id="sink_form" class="settings_form">
+		<button id="sink_form_close" class="settings_form_close"></button>
+		<button id="sink_form_delete" class="settings_form_delete">Delete</button>
+	</div>
 
-								<div id="splitter_form" title="Splitter Properties" class="settings_form">
-									<button id="splitter_form_close" class="settings_form_close"></button>
-									<table>
-										<tr>
-											<td><label for="splitter_form_perc">Fraction of traffic that goes to the top channel</label></td>
-											<td>	<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" /></td>
-										</tr>
-									</table>
-									<hr>
-									<button id="splitter_form_delete" class="settings_form_delete">Delete</button>
-									<button id="splitter_form_disconnect" class="settings_form_disconnect">Disconnect</button>
-									<button id="splitter_form_save" class="settings_form_save">Apply</button>
-								</div>
+	<div id="splitter_form" title="Splitter Properties" class="settings_form">
+		<button id="splitter_form_close" class="settings_form_close"></button>
+		<table>
+			<tr>
+				<td><label for="splitter_form_perc">Fraction of traffic that goes to the top channel</label></td>
+				<td>	<input type="text" name="splitter_form_perc" id="splitter_form_perc" value="" class="text ui-widget-content ui-corner-all" /></td>
+			</tr>
+		</table>
+		<hr>
+		<button id="splitter_form_delete" class="settings_form_delete">Delete</button>
+		<button id="splitter_form_disconnect" class="settings_form_disconnect">Disconnect</button>
+		<button id="splitter_form_save" class="settings_form_save">Apply</button>
+	</div>
 
-								<div id="verify_clear">
-									<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-										Do you wish to discard the scenario in the canvas?</p>
-									</div>
+	<div id="verify_clear">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+			Do you wish to discard the scenario in the canvas?</p>
+	</div>
 
-								</body>
+</body>
 
-								</html>
+</html>
