@@ -1,18 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 	"http://www.w3.org/TR/html4/loose.dtd">
 
-<html>
+<html itemscope itemtype="http://schema.org/Product">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	
-	<meta property="og:title" content="Online Queuing Network Simulator" />
+	<meta itemprop="name" content="M/M/1 Queuing Network Simulator">
+	<meta itemprop="description" content="M/M/1 Queuing Network Simulator">
+	<meta property="og:title" content="M/M/1 Queuing Network Simulator" />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="http://www.simjs.com/queuing" />
-	<meta property="og:image" content="" />
-	<meta property="og:site_name" content="Online Queuing Network Simulator" />
+	<!--meta property="og:image" content="" /-->
+	<meta property="og:site_name" content="M/M/1 Queuing Network Simulator" />
 	<meta property="fb:admins" content="100000008048392" />
 	
-	<title>Online Queuing Network Simulator</title>
+	<title>M/M/1 Queuing Network Simulator</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min.js" type="text/javascript" charset="utf-8"></script>
@@ -32,7 +34,7 @@
 	<script src="src/splitter_model.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/models.js" type="text/javascript" charset="utf-8"></script>
 	
-	<!--script src="release/queuing-min.js" type="text/javascript" charset="utf-8"></script-->
+	<!--script src="queuing-min.js" type="text/javascript" charset="utf-8"></script-->
 	
 	<link rel="stylesheet" href="css/queuing.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -40,8 +42,15 @@
 	<script type="text/javascript" charset="utf-8">
 
 		$(function () {
-			$('#accordion').accordion({autoHeight: false}).accordion('activate', 1);
-			$('#about_this_model').accordion({collapsible: true}).hide();
+			(function() {
+				var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+				po.src = 'https://apis.google.com/js/plusone.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+				})();
+			
+			$('#accordion').accordion({autoHeight: false});
+			$('#about_this_model').accordion({collapsible: true, autoHeight: false}).hide();
+			
 			
 			$('#sample_models a').click(function (event) {
 				var id = $(this).attr('id');
@@ -65,9 +74,6 @@
 			});
 			
 			QueueApp.init();
-	
-//QueueApp.loadtext('{"until":14400,"seed":1234,"version":"1.0","objects":[{"x":359,"y":129,"type":"sink","name":"sink_1","model":null},{"x":208,"y":83,"type":"queue","name":"queue_1","out":"sink_1","model":{"nservers":1,"mu":1,"infinite":true,"maxqlen":0}},{"x":111,"y":76,"type":"source","name":"source_1","out":"queue_1","model":{"lambda":0.25}}]}');
-
 	});
 		
 	</script>
@@ -77,25 +83,16 @@
 <body>
 	
 	<div id="banner">
-		<h1>Online Queuing Network Simulator</h1>
-		<h2>Powered by Sim.JS</h2>
+		<h1>M/M/1 Queuing Network Simulator</h1>
+		<p id="subtitle">Powered by <a href="http://www.simjs.com">Sim.JS</a> -- A Discrete Event Simulation library in JavaScript</p>
 	</div>
 
 	
 	<div id="like_buttons">
-		<iframe src="http://www.facebook.com/plugins/like.php?app_id=260050727351679&amp;href=http%3A%2F%2Fwww.simjs.com%2Fqueuing&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
+		<iframe src="https://www.facebook.com/plugins/like.php?app_id=260050727351679&href=http%3A%2F%2Fwww.simjs.com%2Fqueuing&send=false&layout=button_count&width=100&show_faces=false&action=like&colorscheme=light&font&height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
 
 		<!-- Place this tag where you want the +1 button to render -->
 		<g:plusone size="medium" annotation="none" href="http://www.simjs.com/queuing"></g:plusone>
-
-		<!-- Place this render call where appropriate -->
-		<script type="text/javascript">
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'https://apis.google.com/js/plusone.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-			})();
-		</script>
 
 		<a href="https://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a>
 		<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
@@ -124,16 +121,16 @@
 							<img src="images/settings.gif" class="inline" width="8%"></p>
 				</div>
 
-				<h3><a href='#'>Sample Models</a></h3>
+				<h3><a href='#'>Example Models and Exercises</a></h3>
 				<div id="sample_models">
 					<ul class="navigation">
 						<li><a href='#' id="model_mm1">M/M/1 queue</a></li>
 						<li><a href='#' id="model_mm1feedback">Feedback</a></li>
 						<li><a href='#' id="model_backforth">Round n' Round</a></li>
-						<li><a href='#' id="model_waterfall">Waterfall</a></li>
+						<li><a href='#' id="model_waterfall">Assembly line</a></li>
 						<li><a href='#' id="model_compile">Compile n' Debug</a></li>
+						<li><a href='#' id="model_staytillend">Quality Control</a></li>
 						<li><a href='#' id="model_freeway">Freeway</a></li>
-						<li><a href='#' id="model_staytillend">Stay till the end</a></li>
 						<li><a href='#' id="model_winner">And the winner is...</a></li>
 					</ul>
 				</div>
@@ -172,36 +169,79 @@
 				<h3><a href='#'>About this model</a></h3>
 				<div>
 					<div id='about_model_mm1' class="about_text">
-						<strong>About model M/M/1</strong>
-
+						The very basic queuing system with one Server (exponential service time with rate &lambda; and infinite queue) and one Source (Poisson traffic with rate &mu;). 
+						<p>This model is simple enough to analytically determine the steady state properties of the system (in the following, &rho; = &lambda; / &mu;):</p>
+						<ul>
+							<li>Server utilization -- fraction of time server was busy = &lambda; / &mu;</li>
+							<li>Average time spent by customers waiting in queue = &rho; / (&mu; - &lambda;)</li>
+							<li>Average time spent by customers in obtaining service (time spent waiting in queue + time spent get service from server) = 1 / (&mu; - &lambda;)</li>
+							<li>Average length of queue = &rho; * &rho; / (1 - &rho;)</li>
+							<li>Average number of customer inside the system (being serviced or waiting in queue) = &rho; / (1 - &rho;) </li>
+						</ul>
+					<p>Try out different values of &lambda; and &mu; and see what happens!</p>
+					
+					<p><strong>Exercises:</strong> Think what should happen before you try these. What will happen when arrival rate is same as service rate (that is, &lambda; = &mu;)? When arrival rate is higher? Keep the service rate constant and change arrival rate such that average queue length is about 5. Try again for queue length 50. What can we infer?</p>
 					</div>
 
 					<div id='about_model_mm1feedback' class="about_text">
-						About model M/M/1 feedback
+						<p><strong>Life at DMV:</strong> Alice is a fastidious clerk whose responsibility is to review the forms and approve them. She takes exponential time to review the forms, AND she ends up rejecting a fraction of application (because they were not complete). The rejected customers immediately fix their application and join the queue again <em>at the end</em>. We would like to know what is the average time taken for customers to get their applications approved, and how many customers are within the system.</p>
+						
+						<p><strong>Modeling:</strong> Alice is modeled as a M/M/1 service. The output from the service is fed into a <em>splitter</em> that loops back a fraction of traffic back to queue and the remaining exit the system. The <em>sink</em> measures: (a) Population -- the number of customers within the system, and (b) Stay duration -- average time that customers (who exited) spent within the system.</p>
+						
+						<p><strong>Exercises:</strong> What happens when Alice rejects 0%, 10%, 50%, 90% of applications? Which is better for customers: Alice who rejects 10% applications, or Bob who works twice as fast as Alice but rejects twice as many applications? </p>
 					</div>
 
 					<div id="about_model_backforth" class="about_text">
-						asdfasfd asfd sa fd sfd
+						<p><strong>The joys of government office:</strong> Alice was a good employee (see 'Feedback'), Chuck and Dave are not. They work in one government office and are responsible for approving loan applications. Customers line up for Chuck's desk first, but Chuck approves only some of them. The remaining he sends over to Dave. Dave also approves only some of the customers, and send the remaining back to Chuck. We would like to know what is the average time taken for customers to get their applications approved, and how many customers are within the system.</p>
+						
+						<p><strong>Modeling:</strong> Both Chuck and Dave are represented as M/M/1 services. The output of both services is fed into a '<em>splitter</em>', which loops back a fraction of traffic to the other service, while the remaining exit the system. The '<em>sink</em>' records the statistics we are interested in.</p>
+					
+						<p><strong>Exercises:</strong> What should be the difference between: when Chuck rejects 30% and Dave rejects 70% applications, versus Chuck rejecting 70% and Dave 30%? See if you can intuitively predict before running the simulation. </p>
 					</div>
 
 					<div id="about_model_waterfall" class="about_text">
-						klj oj j kj lkj lk 
+						<p>Real life example? We don't know.. it just looks pretty! Seriously though, this is a "network of queues" where output of one M/M/1 service feeds the next service. This is an important problem in <strong>assembly line productions</strong> where we would like to study the impact on one slow service on the overall throughput of the system.</p>
+						
+						<p>In the above scenario, all services have identical rates. Try to vary them and see what happens.</p>
+				
+						<p><strong>Exercises:</strong></p> 
+						<ul>
+							<li>The location of slow server? Say there are three servers with identical rates, and one with a slower rate. Where would you put this server -- first? last? See if you can intuitively predict, before you simulate all four combinations.</li>
+							<li>Say the four servers have rate 1, 2, 3 and 4. How would you arrange them -- ascending? descending? See if you can intuitively predict, before you run the simulations.</li>
+						</ul>
 					</div>
 
 					<div id="about_model_compile" class="about_text">
-
-					</div>
-
-					<div id="about_model_freeway" class="about_text">
-						oasj dfl;kjas dlfksja flksj f
+						<p><strong>Life of [un]happy programmer:</strong> Programmers write code; something fails (aka bugs) and they have to fix it again. The good code is sent to testers who reject problematic code and send it back to programmers. The programmers work on code from three sources: original code coming from their managers, code that was rejected in the coding stage, and the code that was rejected in the testing stage. We would like to know what is the rate at which code is shipped by our software firm?</p>
+						
+						<p><strong>Modeling:</strong> Both the programming and testing stages are represented by M/M/1 queues ('queue_1' and 'queue_2', resp). Output from programming service is fed to splitter, which sends a fraction (the good code) to testers, and loops back the remaining back to programmers. The testers, similarly, send a fraction of traffic (the good code) for shipping (the sink) and remaining back to the programmers. The '<em>sink</em>' records the statistics we are interested in.</p>
+						
+						<p><strong>Exercises:</strong> Do you agree with "its better to find problems sooner than later"? Try out these two cases: 10% code rejected after queue_1 and 30% after queue_2, and vice versa. </p>
 					</div>
 
 					<div id="about_model_staytillend" class="about_text">
-
+						<p><strong>Only the best for our customers:</strong> Acme corporation sells paper cups. Before shipping, Acme runs each paper cup through a four-stage Quality Assurance pipeline to make sure there are no leaks, the cups have correct size, color and strength. In each stage, only the accepted cups are passed on to the next stage of testing. The testing takes exponential time and the arrivals from the factory is Poisson. We would like to know how much time is spent in QA, and if we can speed it up.</p>
+					
+						<p><strong>Modeling:</strong> Each of the four stages is represented as M/M/1 servers. All servers are connected to '<em>spiltters</em>' which reject a fraction of output, and send the remaining to the next server or shipping. The sinks tell us what how much time was cumulatively spent after each testing stage.</p>
+						
+						<p><strong>Exercises:</strong></p> 
+						<ul>
+							<li>Suppose the four stages have defect rate of 10%, 20%, 30% and 40%. How would you organize these stages: ascending defect rates or descending defect rates? Why?</li>
+							<li>Suppose there is a stage that takes much longer time than other stages but results in much less defects? Where would you place this stage -- first or last? How about when it produced highest defect rates also? Did the simulation results matched your intuitions?</li>
+						</ul>
+					</div>
+					
+					<div id="about_model_freeway" class="about_text">
+						<p><strong>On a busy highway:</strong> Life is usual at the freeway: cars enter and cars leave. The freeway has four segments, each modeled as M/M/1 queue (why? because we can!). At each segments, some cars arrive and some leave. We would like to know steady state probabilities of overall throughput and the time that cars spend in the freeway.</p>
+						
+						<p><strong>Exercises:</strong> Reason intuitively first on what should happen before you try these cases: (a) one segment has very high input and output rate, (b) one segment is the "bottleneck" (has very high service rate), (c) freeway exit rate is same, lower or higher than entrance rates.</p>
 					</div>
 
-					<div id="about_model_winner">
 
+					<div id="about_model_winner" class="about_text">
+						<p><strong>And the trophy goes to __:</strong> We have a competition is progress and we are looking at the semi-finals and the final stages. Competitors arrive in the semi-finals stages, some lose and fall out from competition. The winners proceed to final stage where they come out as winners or runner-ups. This 'pyramidical' model is different from most of the others, which were 'linear'. We would like to know how much time is spent by contestants in this competition.</p>
+						
+						<p><strong>Exercises:</strong> What will be impact on overall statistics if one semi-final stage takes a long time and has higher rejection rate? What about the other three combinations of service rate and rejection rate?</p>
 					</div>
 				</div>
 			</div> <!-- id="about_this_model" -->
@@ -213,9 +253,15 @@
 		</div> <!-- id="content" -->
 
 		<div id="info">
-			Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+			<p><strong>About Queuing Network Simulator</strong></p>
+			
+			<p>We bring the power of Discrete Event Simulation and Web technologies for teaching and learning Queuing Theory and Queuing Networks. </p>
+			
+			<p>Complex networks of M/M/1 queues can be modeled and simulated easily with this web-based simulator. The simulator runs a complete discrete event simulation to generate the statistics of queues and systems.</p> 
+				
+			<p style="color:#1c94c4">Try out the example models and exercises, or experiment with your own concoctions!</p>
 
-			Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+			<p>*Coming soon: finite capacity queues, closed loops queue, multi-server queues and much more.</p>
 		</div> <!-- id="info" -->
 
 		<div id="googlead">
@@ -245,7 +291,7 @@
 			<tr><td>Server Utilization</td><td id="sutil">-</td><td>-</td></tr>
 			<tr><td>Time spent in queue</td><td id="qtime">-</td><td id="qtimed">-</td></tr>
 			<tr><td>Time spent in system</td><td id="stime">-</td><td id="stimed">-</td></tr>
-			<tr><td>Size of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
+			<tr><td>Length of queue</td><td id="qsize">-</td><td id="qsized">-</td></tr>
 			<tr><td>Customers in system</td><td id="ssize">-</td><td id="ssized">-</td></tr>
 		</table>
 	</div>

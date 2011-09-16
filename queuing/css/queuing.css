@@ -6,6 +6,18 @@ body {
 	background-image: url('../images/background.gif');
 }
 
+h1 {
+	color: #1c94c4;
+	margin-bottom: 0px;
+}
+
+p#subtitle {
+
+    font-size: 1.2em;
+    text-transform: uppercase;
+    color: #1c94c4;
+}
+
 p.info {
 	margin-left: 30px;
 	font-size: 1.2em;
@@ -16,13 +28,12 @@ p.info {
 	top:30px;
 	left:900px;
 	padding: 4px;
-	border: solid 4px #F7B64A;
-	border-radius: 10px;
-	background-color: #FAF6AA;
+	border-bottom: solid 4px #F7B64A;
 }
 
 #banner {
-	background: #F7B64A;
+	/*background: #F7B64A;*/
+	background-image: url('../images/banner.png');
 	padding: 1px;
 	padding-left: 30px;
 	border-radius: 10px;
@@ -42,21 +53,24 @@ p.info {
 }
 
 #info{
-	border: 1px solid red;
+	border: 4px solid #ffd478;
+	background: #FAF6AA;
 	width: 200px;
 	margin-bottom: 50px;
 	position: absolute;
-	top: 100px;
+	top: 80px;
 	left: 880px;
+	padding: 5px;
+	font-size: 1.1em;
 }
 
 #googlead {
-	border: 1px solid red;
 	width: 200px;
 	margin-bottom: 50px;
 	position: absolute;
 	top: 400px;
 	left: 880px;
+/*	border: 1px solid; */
 }
 
 h1 {
@@ -145,6 +159,11 @@ strong {
 #sample_models {
 	padding: 5px;
 }
+
+.about_text {
+	display: none;
+}
+
 .navigation {
 	list-style-type: none;
 	padding-left: 0;

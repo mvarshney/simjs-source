@@ -63,9 +63,9 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 
 				var view = this.view;
 				if (this.id === 0) {
-					this.attr({cx: view.x + view.width + 2, cy: view.y + 5});
+					this.attr({x: view.x + view.width + 2, y: view.y + 5});
 				} else {
-					this.attr({cx: view.x + view.width + 2, cy: view.y + view.height - 15});
+					this.attr({x: view.x + view.width + 2, y: view.y + view.height - 15});
 				}
 			});
 		this.arrows[i] = arrow;
