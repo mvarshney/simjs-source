@@ -1,0 +1,10 @@
+FCFS Facility
+	Max queue length support
+
+Performance optimizations
+
+Entity.start() function is called at time of addEntity() 
+	rather than sim.simulate()
+
+Arguments can be passed to start() function via addEntity()
+	
