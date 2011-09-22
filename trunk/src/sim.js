@@ -293,7 +293,7 @@ Sim.Facility = function (name, discipline, servers, maxqlen) {
 	
 	this.free = servers ? servers : 1;
 	this.servers = servers ? servers : 1;
-	this.maxqlen = (maxqlen === undefined) ? -1 : maxqlen;
+	this.maxqlen = (maxqlen === undefined) ? -1 : 1 * maxqlen;
 	
 	switch (discipline) {
 
@@ -353,7 +353,6 @@ Sim.Facility.prototype.useFCFS = function (duration, ro) {
 	ARG_CHECK(arguments, 2, 2);
 	if ( (this.maxqlen === 0 && !this.free)
 	 		|| (this.maxqlen > 0 && this.queue.size() >= this.maxqlen)) {
-		
 		ro.msg = -1;
 		ro.deliverAt = ro.entity.time();
 		ro.entity.sim.queue.insert(ro);
