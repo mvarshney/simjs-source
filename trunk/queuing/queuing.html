@@ -118,7 +118,7 @@
 			<div id="accordion">
 				<h3><a href='#'>Instructions</a></h3>
 				<div>
-					<p><strong>Adding objects</strong>. Drag n' drop 
+					<p><strong>Adding objects.</strong> Drag n' drop 
 						<img src="images/server.png" class="inline shift-down" width="20%">
 						(queues),
 						<img src="images/customers.png" class="inline shift-down" width="10%">
@@ -128,11 +128,10 @@
 						<img src="images/splitter.png" class="inline shift-down" width="10%"> 
 						(splitter) from left panel into canvas</p>
 
-					<p><strong>Connecting</strong>. 
+					<p><strong>Connecting.</strong> 
 						Drag <img src="images/orange-arrow.gif" class="inline" width="8%">
 							and drop over the destination object</p>
-					<p><strong>Properties, Disconnect and Delete</strong>. Hover mouse over object and click 
-							<img src="images/settings.gif" class="inline" width="8%"></p>
+					<p><strong>Properties, Disconnect and Delete.</strong> Double-click</p>
 				</div>
 
 				<h3><a href='#'>Example Models and Exercises</a></h3>
@@ -358,6 +357,10 @@
 			<tr>
 				<td><label for="server_form_rate">Average service rate [mu] (customers per second)</label></td>
 				<td><input type="text" name="server_form_rate" id="server_form_rate" value="" class="text ui-widget-content ui-corner-all" /></td></tr>
+			<tr>
+				<td><label for="queue_length">Max Queue Length<br>(-1 for infinite queue)</label></td>
+				<td><input type="text" name="queue_length" value="-1" id="queue_length" class="text ui-widget-content ui-corner-all"></td></tr>
+				
 		</table>
 		<hr>
 		<button id="server_form_delete" class="settings_form_delete">Delete</button>
