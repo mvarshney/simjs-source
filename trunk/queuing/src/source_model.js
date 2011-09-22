@@ -2,7 +2,7 @@ function SourceModel(view) {
 	this.view = view;
 	this.lambda = 0.25;
 	this.dest = null;
-	this.view.image.attr({title: 'Interarrival duration = ' + 1 / this.lambda});
+	this.view.image.attr({title: 'Interarrival rate = ' + this.lambda});
 }
 
 SourceModel.prototype.jsonify = function () {
@@ -22,7 +22,7 @@ SourceModel.prototype.connect = function () {
 SourceModel.prototype.showSettings = function () {
 	var d = $('#source_form');
 	QueueApp.form_view = this.view;
-	d.find('#source_form_rate').val(1 / this.lambda);
+	d.find('#source_form_rate').val(this.lambda);
 	
 	d.show().position({
 		of: $(this.view.image.node),
@@ -33,8 +33,8 @@ SourceModel.prototype.showSettings = function () {
 
 SourceModel.prototype.saveSettings = function (dialog) {
 	var d = $('#source_form');
-	this.lambda = 1 / d.find('#source_form_rate').val();
-	this.view.image.attr({title: 'Interarrival duration = ' + 1 / this.lambda});
+	this.lambda = d.find('#source_form_rate').val();
+	this.view.image.attr({title: 'Interarrival rate = ' + this.lambda});
 };
 
 SourceModel.prototype.unlink = function () {
