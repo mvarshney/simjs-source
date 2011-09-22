@@ -2,7 +2,6 @@ function ServerModel(view) {
 	this.view = view;
 	this.nservers = 1;
 	this.mu = 1;
-	this.infinite = true;
 	this.maxqlen = -1;
 	
 	this.entity = null;
@@ -13,6 +12,7 @@ function ServerModel(view) {
 	$("#results").append(this.statTable);
 	this.stat = [
 		this.statTable.find('#arrival'),
+		this.statTable.find('#drop'),
 		this.statTable.find('#sutil'),
 		this.statTable.find('#qtime'),
 		this.statTable.find('#stime'),
@@ -31,13 +31,12 @@ ServerModel.prototype.jsonify = function () {
 	return {
 		nservers: this.nservers,
 		mu: this.mu,
-		infinite: this.infinite,
 		maxqlen: this.maxqlen
 	};
 };
 
 ServerModel.prototype.start = function () {
-	this.entity = QueueApp.sim.addEntity(ServerEntity, this.nservers, this.mu);
+	this.entity = QueueApp.sim.addEntity(ServerEntity, this.nservers, this.mu, this.maxqlen);
 	
 };
 
@@ -71,16 +70,17 @@ ServerModel.prototype.showStats = function () {
 	var sd = service.systemStats().durationSeries;
 	var ss = service.systemStats().sizeSeries;
 	var usage = service.usage() / QueueApp.sim.time() * 100;
-	this.stat[0].text(qd.count());
-	this.stat[1].text(usage.toFixed(1) + "%");
-	this.stat[2].text(qd.average().toFixed(3));
-	this.stat[3].text(sd.average().toFixed(3));
-	this.stat[4].text(qs.average().toFixed(3));
-	this.stat[5].text(ss.average().toFixed(3));
-	this.stat[6].text(qd.deviation().toFixed(3));
-	this.stat[7].text(sd.deviation().toFixed(3));
-	this.stat[8].text(qs.deviation().toFixed(3));
-	this.stat[9].text(ss.deviation().toFixed(3));
+	this.stat[0].text(this.entity.arrived);
+	this.stat[1].text(this.entity.dropped);
+	this.stat[2].text(usage.toFixed(1) + "%");
+	this.stat[3].text(qd.average().toFixed(3));
+	this.stat[4].text(sd.average().toFixed(3));
+	this.stat[5].text(qs.average().toFixed(3));
+	this.stat[6].text(ss.average().toFixed(3));
+	this.stat[7].text(qd.deviation().toFixed(3));
+	this.stat[8].text(sd.deviation().toFixed(3));
+	this.stat[9].text(qs.deviation().toFixed(3));
+	this.stat[10].text(ss.deviation().toFixed(3));
 	
 	this.view.showCounters(qd.count(), sd.count());
 };
@@ -94,16 +94,26 @@ ServerModel.prototype.unlink = function () {
 /***************************************************/
 
 var ServerEntity = {
-	start: function (nservers, mu) {
+	start: function (nservers, mu, maxqlen) {
 		this.mu = mu;
-		this.facility = new Sim.Facility('queue');
+		this.facility = new Sim.Facility('queue', Sim.Facility.FCFS, nservers, maxqlen);
+		this.dropped = 0;
+		this.arrived = 0;
 	},
 
 	arrive: function (stamp) {
+		this.arrived ++;
 		var duration = QueueApp.random.exponential(this.mu);
-		var ro = this.useFacility(this.facility, duration);
-		if (this.dest) {
-			ro.done(this.dest.arrive, this.dest, stamp);
+		this.useFacility(this.facility, duration).done(this.completed, this, stamp);
+	},
+	
+	completed: function (stamp) {
+		if (this.callbackMessage === -1) {
+			this.dropped ++; 
+		} else {
+			if (this.dest) {
+				this.dest.arrive(stamp);
+			}
 		}
 	}
 };

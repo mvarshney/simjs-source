@@ -54,6 +54,7 @@ var QueueApp = {
 				},
 				'Load': function () {
 					$(this).dialog('close');
+					QueueApp.reset(true);
 					QueueApp.loadtext($('#load_textarea').val());
 
 				}
@@ -316,6 +317,9 @@ var QueueApp = {
 				obj = this.newSink();
 			}
 			
+			if (conf.model) {
+				for (prop in conf.model) obj.model[prop] = conf.model[prop];
+			}
 			obj.moveto(conf.x, conf.y);
 			obj.name = conf.name;
 			dict[conf.name] = obj;
