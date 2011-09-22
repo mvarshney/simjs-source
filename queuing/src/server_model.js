@@ -3,7 +3,7 @@ function ServerModel(view) {
 	this.nservers = 1;
 	this.mu = 1;
 	this.infinite = true;
-	this.maxqlen = 0;
+	this.maxqlen = -1;
 	
 	this.entity = null;
 	this.dest = null;
@@ -49,6 +49,7 @@ ServerModel.prototype.showSettings = function (x, y) {
 	var d = $('#server_form');
 	QueueApp.form_view = this.view;
 	d.find('#server_form_rate').val(this.mu);
+	d.find('#queue_length').val(this.maxqlen);
 	d.show().position({
 		of: $(this.view.image.node),
 		at: 'center center',
@@ -59,6 +60,7 @@ ServerModel.prototype.showSettings = function (x, y) {
 ServerModel.prototype.saveSettings = function (dialog) {
 	var d = $('#server_form');
 	this.mu = d.find('#server_form_rate').val();
+	this.maxqlen = d.find('#queue_length').val();
 	this.view.image.attr({title: 'Service rate = ' + this.mu});
 };
 
