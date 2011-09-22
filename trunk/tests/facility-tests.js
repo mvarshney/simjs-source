@@ -176,6 +176,101 @@ function testFacilityFCFSTwoServers() {
 	entities = 1;
 }
 
+
+function testFacilityFCFSDrop0() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('fcfs', Sim.Facility.FCFS, 1, 0);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(fac, 10).done(function () {
+				assertEquals(this.time(), 10);
+				assertEquals(this.callbackMessage, 0);
+				this.count ++;
+			});
+		
+			this.setTimer(4).done(function () {
+				this.useFacility(fac, 10).done(function () {
+					assertEquals(this.time(), 4);
+					assertEquals(this.callbackMessage, -1);
+					this.count ++;
+				});	
+			});
+			
+			this.setTimer(16).done(function () {
+				this.useFacility(fac, 10).done(function () {
+					assertEquals(this.time(), 26);
+					assertEquals(this.callbackMessage, 0);
+					this.count ++;
+				});	
+			});
+				
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 26);
+			assertEquals(this.count, 3);
+			assertEquals(fac.usage(), 20);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
+function testFacilityFCFSDrop1() {
+	var sim = new Sim();
+	var fac = new Sim.Facility('fcfs', Sim.Facility.FCFS, 1, 1);
+	
+	var Entity = {
+		count: 0,
+		start: function () {
+			this.useFacility(fac, 10).done(function () {
+				assertEquals(this.time(), 10);
+				assertEquals(this.callbackMessage, 0);
+				this.count ++;
+			});
+		
+			this.setTimer(1).done(function () {
+				this.useFacility(fac, 10).done(function () {
+					assertEquals(this.time(), 20);
+					assertEquals(this.callbackMessage, 0);
+					this.count ++;
+				});	
+			});
+			
+			this.setTimer(2).done(function () {
+				this.useFacility(fac, 10).done(function () {
+					assertEquals(this.time(), 2);
+					assertEquals(this.callbackMessage, -1);
+					this.count ++;
+				});	
+			});
+			
+			this.setTimer(26).done(function () {
+				this.useFacility(fac, 10).done(function () {
+					assertEquals(this.time(), 36);
+					assertEquals(this.callbackMessage, 0);
+					this.count ++;
+				});	
+			});
+				
+		},
+		finalize: function () {
+			finalized++;
+			assertEquals(this.time(), 36);
+			assertEquals(this.count, 4);
+			assertEquals(fac.usage(), 30);
+		}
+	};
+
+	sim.addEntity(Entity);
+	sim.simulate(100);
+	entities = 1;
+}
+
 function testFacilityLCFSSimple() {
 	var sim = new Sim();
 	var fac = new Sim.Facility('lcfs', Sim.Facility.LCFS);
@@ -208,6 +303,7 @@ function testFacilityLCFSSimple() {
 	sim.simulate(100);
 	entities = 1;
 }
+
 
 function testFacilityLCFSPreemptTwice() {
 	var sim = new Sim();
