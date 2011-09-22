@@ -391,7 +391,7 @@ Sim.Facility.prototype.useFCFSCallback = function (ro) {
 	this.free ++;
 	this.freeServers[ro.msg] = true;
 
-	this.stats.leave(ro.scheduledAt, ro.deliverAt);
+	this.stats.leave(ro.scheduledAt, ro.entity.time());
 	
 	// if there is someone waiting, schedule it now
 	this.useFCFSSchedule(ro.entity.time());
