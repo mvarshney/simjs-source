@@ -32,8 +32,8 @@ SinkModel.prototype.showSettings = function (x, y) {
 	var d = $('#sink_form');
 	QueueApp.form_view = this.view;
 	d.show().position({
-		of: $(this.view.settings.node),
-		at: 'right bottom',
+		of: $(this.view.image.node),
+		at: 'center center',
 		my: 'left top'
 	});
 };

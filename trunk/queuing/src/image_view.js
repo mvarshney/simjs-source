@@ -23,10 +23,6 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.hasIn = hasIn;
 	this.hasOut = hasOut;
 	
-
-	this.settings = canvas.image("images/settings.gif", x, y, 12, 12);
-	this.settings.view = this;
-	
 	this.text = canvas.text(x, y, this.name);
 	this.counters = canvas.text(x, y, '');
 	this.counters.hide();
@@ -73,8 +69,6 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 			});
 	}
 	
-	this.settings.hide();
-	
 	// move
 	this.moveto(x, y);
 
@@ -92,23 +86,9 @@ var ImageView = function (canvas, type, name, x, y, hasIn, hasOut) {
 		function () {
 
 		});
-		
-	this.settings.click(function () {
+	
+	this.image.dblclick(function () {
 		this.view.model.showSettings();
-	});
-	
-	this.hideButtons = (function (view) {
-		return function () {
-			view.settings.hide();
-		}
-	}(this));
-	
-	this.timeout = null;
-	this.image.mouseover(function () {
-		var view = this.view;
-		view.settings.show();
-		if (view.timeout) clearTimeout(view.timeout);
-		view.timeout = setTimeout(view.hideButtons, 2000);
 	});
 }
 
@@ -128,7 +108,6 @@ ImageView.prototype.moveto = function (x, y) {
 	if (this.arrow) {
 		this.arrow.attr({x: this.x + this.width + 2, y: this.y + this.height / 2 - 6});
 	}
-	this.settings.attr({x: this.x - 4, y: this.y - 12});
 	
 	if (this.hasIn) {
 		var len = QueueApp.views.length;
@@ -179,7 +158,6 @@ ImageView.prototype.unlink = function () {
 	
 	this.image.remove();
 	if (this.arrow) this.arrow.remove();
-	this.settings.remove();
 	this.counters.remove();
 	this.text.remove();
 
