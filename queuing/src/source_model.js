@@ -25,8 +25,8 @@ SourceModel.prototype.showSettings = function () {
 	d.find('#source_form_rate').val(1 / this.lambda);
 	
 	d.show().position({
-		of: $(this.view.settings.node),
-		at: 'right bottom',
+		of: $(this.view.image.node),
+		at: 'center center',
 		my: 'left top'
 	});
 };

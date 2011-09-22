@@ -50,8 +50,8 @@ ServerModel.prototype.showSettings = function (x, y) {
 	QueueApp.form_view = this.view;
 	d.find('#server_form_rate').val(1 / this.mu);
 	d.show().position({
-		of: $(this.view.settings.node),
-		at: 'right bottom',
+		of: $(this.view.image.node),
+		at: 'center center',
 		my: 'left top'
 	});
 };

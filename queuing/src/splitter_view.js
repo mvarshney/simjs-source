@@ -19,11 +19,6 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 	this.image.animate({scale: "1.2 1.2"}, 200, function () {
 		this.animate({scale: "1 1"}, 200);		
 	});
-
-
-
-	this.settings = canvas.image("images/settings.gif", x, y, 12, 12);
-	this.settings.view = this;
 	
 	this.arrows = [null, null];
 	this.counters = canvas.text(x, y, '');
@@ -89,25 +84,8 @@ var SplitterView = function (canvas, type, name, x, y, hasIn, hasOut) {
 
 		});
 	
-
-	this.settings.hide();
-	this.settings.click(
-		function () {
-			this.view.model.showSettings(this.view.x, this.view.y);
-		});
-	
-	this.hideButtons = (function (view) {
-		return function () {
-			view.settings.hide();
-		}
-	}(this));
-
-	this.timeout = null;
-	this.image.mouseover(function () {
-		var view = this.view;
-		view.settings.show();
-		if (view.timeout) clearTimeout(view.timeout);
-		view.timeout = setTimeout(view.hideButtons, 2000);
+	this.image.dblclick(function () {
+		this.view.model.showSettings();
 	});
 }
 
@@ -131,7 +109,6 @@ SplitterView.prototype.moveto = function (x, y) {
 
 	this.arrows[0].attr({x: this.x + this.width + 2, y: this.y + 5});
 	this.arrows[1].attr({x: this.x + this.width + 2, y: this.y + this.height - 15});
-	this.settings.attr({x: this.x - 4, y: this.y - 12});
 	this.counters.attr({x: this.x + this.width / 2, y: this.y + this.height + 5})
 
 	var len = QueueApp.views.length;
@@ -181,7 +158,6 @@ SplitterView.prototype.unlink = function () {
 	this.arrows[1].remove();
 	this.hidden[0].remove();
 	this.hidden[0].remove();
-	this.settings.remove();
 	this.counters.remove();
 };
 

@@ -25,8 +25,8 @@ SplitterModel.prototype.showSettings = function (x, y) {
 	d.find('#splitter_form_perc').val(this.prob);
 	
 	d.show().position({
-		of: $(this.view.settings.node),
-		at: 'right bottom',
+		of: $(this.view.image.node),
+		at: 'center center',
 		my: 'left top'
 	});
 };
