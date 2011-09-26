@@ -57,13 +57,13 @@ Sim.DataSeries.prototype.record = function (value, weight) {
 	this.Count ++;
 	if (this.histogram) {
 		if (value < this.hLower) { 
-			this.histogram[0] ++; 
+			this.histogram[0] += w; 
 		}
 		else if (value > this.hUpper) { 
-			this.histogram[this.histogram.length - 1] ++;
+			this.histogram[this.histogram.length - 1] += w;
 		} else {
 			var index = Math.floor((value - this.hLower) / this.hBucketSize) + 1;
-			this.histogram[index] ++;
+			this.histogram[index] += w;
 		}
 	}
 	
@@ -135,7 +135,7 @@ Sim.TimeSeries.prototype.reset = function () {
 
 Sim.TimeSeries.prototype.setHistogram = function (lower, upper, nbuckets) {
 	ARG_CHECK(arguments, 3, 3);
-	this.dataSeries.setHistogram(lower, upper, nbucket);
+	this.dataSeries.setHistogram(lower, upper, nbuckets);
 };
 
 Sim.TimeSeries.prototype.getHistogram = function () {
