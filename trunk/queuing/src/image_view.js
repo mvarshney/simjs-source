@@ -179,8 +179,8 @@ ImageView.prototype.dropObject = function () {
 
 ImageView.prototype.acceptDrop = function (x, y) {
 	if (!this.hasIn) return false;
-	return (x > this.x && x < this.x + this.width
-			&& y > this.y && y < this.y + this.height);
+	return (x > (this.x - 10) && x < (this.x + this.width + 10)
+			&& y > (this.y - 10) && y < (this.y + this.height + 10));
 };
 
 ImageView.prototype.moveConnection = function (dest) {
