@@ -1,9 +1,3 @@
-load('../../src/sim.js');
-load('../../src/stats.js');
-load('../../src/queues.js');
-load('../../src/random.js');
-load('../../src/request.js');
-
 String.prototype.hashCode = function(){
 	var hash = 0;
 	if (this.length == 0) return hash;
@@ -72,90 +66,6 @@ function assignToMappers(splits, nmappers) {
 	return assigns;
 }
 
-/*
-function MapSplit(split, mapper, record_sep, field_sep) {
-	var records = split.split(record_sep);
-	var nrecords = records.length;
-	var results = [];
-	for (var i = 0; i < nrecords; i++) {
-		var kv = records[i].split(field_sep);
-		results.push(mapper(kv[0], kv[1]));
-	}
-
-	return results;
-}
-
-
-function PartitionAndSort(inter, npartitions) {
-	var partitions = [];
-	var len = inter.length;
-	var dict = {};
-	var key, val, i, hash;
-
-	for (i = 0; i < npartitions; i++) {
-		partitions[i] = [];
-	}
-
-	for (i = 0; i < len; i++) {
-		key = inter[i][0];
-		val = inter[i][1];
-		if (!dict[key]) {
-			dict[key] = [val];
-		} else {
-			dict[key].push(val);
-		}
-	}
-
-	for (key in dict) {
-		hash = key.hashCode() % npartitions;
-		partitions[hash].push([key, dict[key]]);
-	}
-
-	for (i = 0; i < npartitions; i++) {
-		partitions[i].sort(function (a, b) {
-			return a[0] < b[0] ? -1 : 1;
-		});
-	}
-
-	return partitions;
-}
-
-function Combine(partition, combiner) {
-	var len = partition.length;
-	for (var i = 0; i < len; i++) {
-		var key = partition[i][0];
-		var val = partition[i][1];
-		partition[i] = combiner(key, val);
-	}
-}
-
-function MapReduce(data, conf) {
-	var splits = split(data, conf.nsplits, conf.record_sep);
-	var assigns = assignToMappers(splits, conf.nmappers);
-	var len = assigns[0].length;
-
-	for (var i = 0; i < len; i++) {
-		var inter = MapSplit(assigns[0][i], conf.mapper, conf.record_sep, conf.field_sep);
-		var partitions = PartitionAndSort(inter, conf.nreducers);
-
-		print(partitions[0].join('\n'));
-
-		if (conf.combiner) {
-			for (var i = 0; i < conf.nreducers; i++) {
-				Combine(partitions[i], conf.combiner);
-			}
-		}
-
-		print(assigns[0][i]);
-		print('------------------');
-		print(inter.join(' | '));
-		print('------------------');
-
-		print(partitions[0].join('\n'));
-	}
-}
-*/
-
 var MapTracker = {
 	start: function (id, jobtracker, conf) {
 		this.id = id;
@@ -163,20 +73,21 @@ var MapTracker = {
 		this.conf = conf;
 		this.setTimer(0).done(this.fetchtask);
 		this.name = 'Mapper ' + id;
-		this.log('Mapper started');
 	},
 
 	fetchtask: function () {
 		this.split = this.jobtracker.fetchmap(this.id);
-		this.log('fetched map job');
 		if (!this.split) return;
 
 		 var records = this.split.split(this.conf.record_sep);
 		 var nrecords = records.length;
+		 var sep = this.conf.field_sep;
+		 var mapper = this.conf.mapper;
 		 this.intermediate = [];
 		 for (var i = 0; i < nrecords; i++) {
-			 var kv = records[i].split(this.conf.field_sep);
-			 this.intermediate.push(this.conf.mapper(kv[0], kv[1]));
+			 var kv = records[i].split(sep);
+			 var mapped = mapper(kv[0], kv[1]);
+			 if (mapped) this.intermediate.push(mapped);
 		 }
 
 		var duration = this.conf.maptime * nrecords;
@@ -210,7 +121,16 @@ var MapTracker = {
 			partitions[hash].push([key, dict[key]]);
 		}
 
+		var combiner = this.conf.combiner;
 		for (i = 0; i < npartitions; i++) {
+			if (combiner) {
+				var len = partitions[i].length;
+				for (var j = 0; j < len; j++) {
+					var c = combiner(partitions[i][j][0], partitions[i][j][1]);
+					partitions[i][j][0] = c[0];
+					partitions[i][j][1] = [c[1]];
+				}
+			}
 			partitions[i].sort(function (a, b) {
 				return a[0] < b[0] ? -1 : 1;
 			});
@@ -238,21 +158,37 @@ var ReduceTracker = {
 	},
 
 	fetchdata: function (data) {
-		data = data.data;
-		this.log('I will fetch data');
-		this.data = this.data.concat(data);
-		this.data.sort(function (a, b) {
-			return a[0] < b[0] ? -1 : 1;
-		});
+		var right  = data.data;
+		var left = this.data;
+		
+		this.data = [];
+
+		while((left.length > 0) && (right.length > 0))
+		{
+			if (left[0][0] === right[0][0]) {
+				var a = left.shift();
+				var b = right.shift();
+				this.data.push([a[0], a[1].concat(b[1])]);
+			} else if (left[0][0] < right[0][0]) {
+				this.data.push(left.shift());
+			} else {
+			 	this.data.push(right.shift());
+			}
+		}
+		while(left.length > 0)
+			this.data.push(left.shift());
+		while(right.length > 0)
+			this.data.push(right.shift());
 	},
 
 	reduce: function () {
-		this.log('I will reduce');	
 		print('Output of reducer ' + this.id);
 		var len = this.data.length;
+		var reducer = this.conf.reducer;
+		if (!reducer) reducer = function (key, val) { return [key, val]; }
 		for (var i = 0; i < len; i++) {
 			var kv = this.data[i];
-			print(this.conf.reducer(kv[0], kv[1]));
+			print(reducer(kv[0], kv[1]));
 		}
 	}
 };
@@ -293,14 +229,13 @@ var JobTracker = {
 	},
 
 	donemap: function (id, partitions) {
-		this.log('Mapping done by ' + id);
 		var mapper = this.maptasks[id].task;
 		var max = -1;
 		
 		// ask all reducers to fetch their data
 		for (var i = this.reducetasks.length - 1; i >= 0; i--) {
 			var reducer = this.reducetasks[i].task;
-			var duration = partitions[i].length / conf.datarate;
+			var duration = partitions[i].length / this.conf.datarate;
 			this.setTimer(duration).done(reducer.fetchdata, reducer, {data:partitions[i]});
 			if (duration > max) max = duration;
 		}
@@ -320,107 +255,3 @@ var JobTracker = {
 		}
 	}
 };
-
-
-var data = 'This section provides a reasonable amount of detail on every user-facing aspect of the Map/Reduce framwork. This should help users implement configure and tune their jobs in a fine-grained manner. However please note that the javadoc for each class/interface remains the most comprehensive documentation available; this is only meant to be a tutorial';
-
-var conf = {
-	nsplits: 2,
-	record_sep: ' ',
-	nmappers: 2,
-	field_sep: null,
-	mapper: function (key, value) {
-		return [key, 1];
-	},
-	combiner: function (key, value) {
-		return [key, value.length];
-	},
-	nreducers: 2,
-	reducer: function (key, value) {
-		return [key, value.length];
-	},
-
-	maptime: 1,
-	reducetime: 1,
-	datarate: 10
-};
-
-//MapReduce(data, conf);
-
-var sim = new Sim();
-sim.setLogger(print);
-var job = sim.addEntity(JobTracker);
-job.submit(data, conf);
-sim.simulate(1000);
-
-/*
-
-Step 1: Splitting input into splits
-Input: text, separater, nsplits
-Output: split1, split2 ... splitn
-
-Step 2: Assignment of splits to mappers
-Input: [splits], nmappers
-Output: [split1, ..] [split2..] .... [splitnmap..]
-
-Step 3: Mapper function
-Input: split, mapper, field-separator
-Output: [k1:v1, k2:v2.....]
-
-Step 4: sort and partition and combine
-Input: [k1:v1, k2:v2 ...]
-Step 4.1: partition
-Input: [k1:v1, k2:v2 ...]
-Output: [k1: v1, k2: v2]  [k3: v3]
-Step 4.2: sort
-Input: [k1: v1, k2: v2]  [k3: v3]
-Output: [k1: [v1, v2], ]  [k3: [], ..]
-Step 4.1-2 partition and sort
-Input: [[k1, v1], [k2, v2].....]
-Output: [k1: [v1, v2], k2: [ ]]   [         ]
-
-
-Step 4.3: Combiner
-Input: [k1: [v1, v2], ]  [k3: [], ..]
-Ouput: [k1: v1, k2: v2] [k3: v3, ..]
-
-Step 5: Copy data to reducers and merge
-Input: [k1: ..] [k10: ...] (with or without combiner)
-Output: [k1: [..], k2: [...]]
-
-Step 6: Reduce
-Input: [k1: [..], k2: [...]]
-Output: [K1: V1, K2: V2]
-
-
-
-
-JobClient
-	- runJob
-		polls the job progress once a second and report to console
-		if job is successful, job counters are displayed
-		otherwise error is logged
-	- submitJob
-		as the jobtracker for a new job id (calling JobTracker.newJobId)
-		verify output directory
-		compute teh input splits
-		copy the resources (jar file, splits, confs) to JobTracker filesystem under jobid directory
-		tell the jobtracker that job is ready (JobTracker.submitJob)
-
-
-JobTracker
-	- newJobId
-	- submitJob
-		puts in internal queue from hwere job scheduler will pick it up
-		create one map task for each split
-		create reduce tasks (based on mapred.reduce.tasks in JobConf)
-		tasks are given id
-
-TaskTracker
-	periodically send heartbeat calls to jobtracker
-	tell jobtracker that it is ready for new task
-	receive task in response to heartbeat
-
-
-
-*/
