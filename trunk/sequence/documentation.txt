@@ -1,0 +1,46 @@
+define(name, type, scale, x, y, 'hidden')
+	name: string
+		an identifier of this object. This name is used in other commands such as hide(), say()
+	type: 'host' | 'server' 
+		More will be added later
+	scale: number
+		percentage scale (100 = original size)
+	x: number (range 0: 100)
+		percentage offset along x axis
+	y: number (range 0: 100)
+		percentage offset along y axis
+	'hidden': (optional)
+		This object will be hidden in all panels, by default. Use the show() command to display
+		in specific panels
+
+panel(msg, notes, options)
+msg: string (optional)
+	Message shown at the top of panel. Can be null or empty string ("")
+notes: string (optional)
+	Message shown in side bar. Can be null or empty string
+options: (optional)
+	- frame: true | false (default: true)
+		Draws frame around the panel
+	- width: <number> (default: global default)
+		Adjust the width of the panel
+	- clear: true | false (default: false)
+		Hides all objects in the panel. That is, the panel is drawn empty. Note that the
+		title will still be shown.
+
+say(name, msg, x, y, options)
+name: string | array of strings | null | empty string
+	The strings are same as defined via the define() command.
+	If string: The message is shown for the objects
+	If array: The message is shown for the array of objects
+	If null or empty string: The message is not related to any object
+msg: string
+	Message shown
+options:
+	- type: 'rect' | 'ellipse' | 'none' (default: 'ellipse')
+		The type of frame around the text. 'none' will not draw any frame.
+	- angles: [angle_from_bubble, angle_from_object] | [ [x, y], [x, y] ] (default: x = -90, y=90)
+		Concept: Lines are drawn between the frame (where the message is) and the 
+		object (for which the message is displayed).
+		TODO.
+	
+		

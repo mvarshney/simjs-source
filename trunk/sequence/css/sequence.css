@@ -1,0 +1,15 @@
+body {
+	font-size: 67.5%;
+}
+
+#page {
+	border: 1px solid black;
+	margin: 5px;
+	height: 400px;
+	width: 600px;
+	float: left;
+}
+
+textarea {
+	font-size: 1.2em;
+}
