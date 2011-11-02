@@ -1,4 +1,5 @@
 define(name, type, scale, x, y, 'hidden')
+-----------------------------------------
 	name: string
 		an identifier of this object. This name is used in other commands such as hide(), say()
 	type: 'host' | 'server' 
@@ -14,6 +15,7 @@ define(name, type, scale, x, y, 'hidden')
 		in specific panels
 
 panel(msg, notes, options)
+--------------------------
 msg: string (optional)
 	Message shown at the top of panel. Can be null or empty string ("")
 notes: string (optional)
@@ -26,8 +28,11 @@ options: (optional)
 	- clear: true | false (default: false)
 		Hides all objects in the panel. That is, the panel is drawn empty. Note that the
 		title will still be shown.
+	- type: 'banner' | 'simple' (default: 'simple)
+		Banner is a full length strip containing one line of text
 
 say(name, msg, x, y, options)
+------------------------------
 name: string | array of strings | null | empty string
 	The strings are same as defined via the define() command.
 	If string: The message is shown for the objects
@@ -43,4 +48,9 @@ options:
 		object (for which the message is displayed).
 		TODO.
 	
-		
+send(from, to, msg, x, y, options)
+-----------------------------------
+options
+	- angles: [angle_from_src, angle_from_dst, angle_from_message]
+	
+	

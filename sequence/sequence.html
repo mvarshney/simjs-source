@@ -7,31 +7,49 @@
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/raphael-min2.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/runmode.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/javascript.js" type="text/javascript" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="css/codemirror.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="css/default.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	
 	<script src="src/sequence.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/models.js" type="text/javascript" charset="utf-8"></script>
 	
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/sequence.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	
 	<script type="text/javascript" charset="utf-8">
-
+	$(function () {
+		var cm = CodeMirror.fromTextArea(document.getElementById('input'), {
+			onBlur: drawInput,
+			lineNumbers: true,
+			fixedGutter: true,
+			lineWrapping: true
+		});
+		
+		$('#svg_text_div').hide();
+		
+	});
 
 	</script>
 
 </head>
 
 <body id="sequence" onload="">
-
-	
 	<div id="page">
-		
 	</div>
 	
-	<div id="error">
-		
-	</div>
-	<textarea name="script" rows="30" cols="50" id="input"></textarea>
-	<input type="button" name="execute" value="Visualize this" id="execute">
+	<div id="error">	</div>
+	<textarea name="script" rows="30" cols="50" id="input"></textarea>	
 	
+	<a href="documentation.txt">Documentation</a>
+	
+	<div id="svg_text_div">
+		<textarea rows="30" cols="50"></textarea>
+	</div>
 	
 </body>
 </html>
