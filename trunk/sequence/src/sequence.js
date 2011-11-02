@@ -1,7 +1,9 @@
 var Icons = {
 	host: {img: "images/host.png", w: 68, h: 48},
 	cloud: {img: "images/cloud_orange.png", w: 89, h: 47},
-	server: {img: "images/server.png", w: 64, h: 74}
+	server: {img: "images/server.png", w: 64, h: 74},
+	trash: {img: "images/trash.png", w:24, h:24},
+	cookie: {img: "images/cookie.png", w: 48, h: 48}
 };
 
 function Parse(str) {
@@ -12,7 +14,12 @@ function Parse(str) {
 	
 
 	function define(name, type, scale, x, y, hidden) {
-		conf.objects[name] = {type: type, scale: scale, x: x, y: y, hidden: hidden};
+		if (cPanel) {
+			cPanel.events.push({type: 'define', name: name,
+						object: {type: type, scale: scale, x: x, y: y, hidden: hidden}})
+		} else {
+			conf.objects[name] = {type: type, scale: scale, x: x, y: y, hidden: hidden};
+		}
 	}
 
 	function panel(msg, notes, options) {
@@ -37,59 +44,47 @@ function Parse(str) {
 			type: 'send', at: at, to: to, msg: msg, x: x, y: y, options: options});
 	}
 	
-	function hide(at) {
-		cPanel.events.push({type: 'hide', at: at});
+	function hide(at, options) {
+		cPanel.events.push({type: 'hide', at: at, options: options});
 	}
 	
-	function show(at) {
-		cPanel.events.push({type: 'show', at: at});
+	function show(at, options) {
+		cPanel.events.push({type: 'show', at: at, options: options});
 	}
 	
-	function move(at, x, y) {
-		cPanel.events.push({type: 'move', x: x, y: y, at: at});
+	function move(at, x, y, options) {
+		cPanel.events.push({type: 'move', x: x, y: y, at: at, options: options});
 	}
 	
-
-	new Function ('define', 'panel', 'say', 'send', 'hide', 'show', 'move', str)
+	if (str instanceof Function) {
+		str(define, panel, say, send, hide, show, move);
+	} else {
+		new Function ('define', 'panel', 'say', 'send', 'hide', 'show', 'move', str)
 			(define, panel, say, send, hide, show, move);
+	}
 
 	return conf;
 }
 
 
-function model() {
+function model(define, panel, say, send, hide, show, move) {
 	define('A', 'host', 60, 20, 80);
 	define('B', 'host', 40, 80, 50);
 	
+	panel("title", "", {type: 'banner'});
 	panel("One fine morning...", "");
-	say(['A', 'B'], 'Hello  World', 30, 30, {angles: [[-90, 90], [225, 180]], type: 'rect'});
+	say(['A', 'B'], 'Hello  World', 30, 30, {angles: [[-90, 90], [0	, 180]], type: 'cloud'});
 	say('B', 'Me too', 70, 30, {type: 'ellipse'});
 	
-	panel('', '', {width: 50, clear: true, frame: false});
-	say(null, 'Something\ngreat\nwill\nhappen\nnext', 50, 50, {type: 'none'});
+	panel('', '', {width: 70, clear: true, frame: false});
+	say(null, 'Something\ngreat\nwill\nhappen\nnext', 50, 50, {type: 'cloud', curvy: 20});
 
 	panel("second panel..");
-	move('B', 80, 80)
-	send('A', 'B', 'message', 50, 20, {angles: [90, 90], curvy: 10});
-	send('B', 'A', 'message', 90, 40, {angles: [-90, -90], curvy: 10});
-
-	
-	/*
-	say('A', 'Hello World\nMore text to follow', 30, 30, {angles: [-90, 90]});
-	say('B', 'I am here as well\nLine two\nLine three', 70, 50, {angles: [-90, 180], frame: false})
-	panel()
-	locate('B', 80, 50);
-	say(null, 'Panel message\nasdf', 30, 8, {type: 'rect'})
-	send('A', 'B', 'message\nmode');
-	panel()
-	hide('A')
-	say('B', 'My world is my own', 50, 10, {frame: false})
-	panel("", "", {width: 30, frame: false});
-	say(null, 'And\nNow\nOther\nSteps', 50, 50, {type: 'rect', frame: false});
-	hide('A');
-	hide('B')
+//	move('B', 80, 80)
+	send('A', 'B', 'message', 50, 20, {angles: [90, 180], curvy: 30});
+	send('B', 'A', 'message', 90, 20, {angles: [-90, -90], curvy: 40});
+	panel("title", "", {type: 'banner'});
 	panel();
-	*/
 }
 
 function endPoint(rect, angle, gap) {
@@ -137,7 +132,7 @@ function controlPoint(point, angle, stretch) {
 
 function handle_say(cs, pconf, pw, ph, ev) {
 	var tx, txbb, b, bb;
-	var type = 'ellipse';
+	var type = 'none';
 	
 	if (ev.options) {
 		if (ev.options.type) type = ev.options.type;
@@ -145,34 +140,39 @@ function handle_say(cs, pconf, pw, ph, ev) {
 	
 	tx = cs.text(pconf.x + pw * ev.x / 100,
 					pconf.y + ph * ev.y / 100,
-					ev.msg);
+					ev.msg)
+			.attr({'font-family': '"Comic Sans MS", cursive, sans-serif'});
 	txbb = tx.getBBox();
 	
 	if (type === 'rect') {
 		b = cs.rect(txbb.x - 2,
 				txbb.y - 2,
 				txbb.width + 4,
-				txbb.height + 4);
+				txbb.height + 4).attr({fill: 'white', 'stroke-width': 0.5});
 		bb = b.getBBox();
+		
 	} else if (type === 'ellipse') {
 		b = cs.ellipse(
 				txbb.x + txbb.width / 2, 
 				txbb.y + txbb.height / 2, 
 				txbb.width/2 + 10,
-				txbb.height);
-		
+				txbb.height).attr({fill: 'white','stroke-width': 0.5});
 		bb = b.getBBox();
 	} else if (type === 'cloud') {
-		b = cs.image('images/cloud_plain_T.png',
-						txbb.x - 10,
-						txbb.y - 10,
-						txbb.width + 20,
-						txbb.height + 20)
+		var a = txbb.x, b = txbb.y, w = txbb.width, h = txbb.height, g = 10;
+		if (ev.options && ev.options.curvy) g = ev.options.curvy;
+		var path = cs.path(['M', a, b, 
+				'C', a, b-g, a+w, b-g, a+w, b,
+				'C', a+w+g, b, a+w+g, b+h, a+w, b+h,
+				'C', a+w, b+h+g, a, b+h+g, a, b+h,
+				'C', a-g, b+h, a-g, b, a, b,
+				'Z'].join(',')).attr({fill: 'white'});
+		b = path;
 		bb = b.getBBox();
 	} else {
 		bb = txbb;
 	}
-
+	tx.toFront();
 
 	if (ev.at) {
 		var srcangle = -90, dstangle = 90;
@@ -184,7 +184,7 @@ function handle_say(cs, pconf, pw, ph, ev) {
 					srcangle = ev.options.angles[z][0];
 				if (ev.options && ev.options.angles) 
 					dstangle = ev.options.angles[z][1];
-				var from = endPoint(bb, srcangle, 5);
+				var from = endPoint(bb, srcangle);
 				var to = endPoint(pconf.objects[ev.at[z]].getBBox(), dstangle);
 				var line = ['M', from.x, ' ', from.y, 'L', to.x, ' ', to.y].join();
 				cs.path(line).attr({'stroke-dasharray': '-'});
@@ -192,7 +192,7 @@ function handle_say(cs, pconf, pw, ph, ev) {
 		} else {
 			if (ev.options && ev.options.angles) srcangle = ev.options.angles[0];
 			if (ev.options && ev.options.angles) dstangle = ev.options.angles[1];
-			var from = endPoint(bb, srcangle, 5);
+			var from = endPoint(bb, srcangle);
 			var to = endPoint(pconf.objects[ev.at].getBBox(), dstangle);
 			var line = ['M', from.x, ' ', from.y, 'L', to.x, ' ', to.y].join();
 			cs.path(line).attr({'stroke-dasharray': '-'});							
@@ -200,8 +200,6 @@ function handle_say(cs, pconf, pw, ph, ev) {
 		
 	}
 }
-
-
 
 
 function handle_send(cs, pconf, pw, ph, ev) {
@@ -212,12 +210,24 @@ function handle_send(cs, pconf, pw, ph, ev) {
 		tx, txbb, bb, b;
 		
 	if (ev.options && ev.options.angles)
-		parseInt(srcangle = ev.options.angles[0]);
+		srcangle = parseInt(ev.options.angles[0]);
 	if (ev.options && ev.options.angles)
-		parseInt(dstangle = ev.options.angles[1]);
+		dstangle = parseInt(ev.options.angles[1]);
 	if (ev.options && ev.options.curvy) 
 		stretch = parseInt(ev.options.curvy);
+		
+	// if this is a packet drop event
+	if (!ev.to) {
+		from = pconf.objects[ev.at];
+		bb = from.getBBox();
+		var a = bb.x + bb.width, b = bb.y + bb.height, g = 5;
+		cs.path(['M', a-g, b-g, "L", a+g, b+g,
+					'M', a+g, b-g, "L", a-g, b+g].join(","))
+			.attr({stroke: 'red', 'stroke-width': 3});
+		return;
+	}
 	
+	// Draw the thick arrow
 	from = endPoint(pconf.objects[ev.at].getBBox(), srcangle);
 	to = endPoint(pconf.objects[ev.to].getBBox(), dstangle);
 	
@@ -229,39 +239,48 @@ function handle_send(cs, pconf, pw, ph, ev) {
 				toctrl.x, toctrl.y,
 				to.x, to.y].join(',');
 
-
 	path = cs.path(pathstr)
 			.attr({'stroke-width': 3, 'stroke': 'blue'})
 	
+	cs.arrow(toctrl.x, toctrl.y, to.x, to.y, 10)
+		.attr({'stroke-width': 3, 'stroke': 'blue'});
+	
+	// Draw the green packet
 	len = Raphael.getTotalLength(pathstr);
 	mid = Raphael.getPointAtLength(pathstr, len / 2);
 	cs.path(Raphael.getSubpath(pathstr, len*0.4, len*0.6))
 		.attr({'stroke-width': 10, 'stroke': 'green'})
-			
-//	cs.path(['M', from.x, from.y, 'L', fromctrl.x, fromctrl.y].join(',')).attr({stroke: 'red'});
-//	cs.path(['M',to.x, to.y, 'L', toctrl.x, toctrl.y].join(',')).attr({stroke: 'red'});
-
-	srcangle = -90;
-	tx = cs.text(pconf.x + pw * ev.x / 100,
-					pconf.y + ph * ev.y / 100,
-					ev.msg);
-	txbb = tx.getBBox();
-	b = cs.rect(txbb.x - 2,
-			txbb.y - 2,
-			txbb.width + 4,
-			txbb.height + 4);
-	bb = b.getBBox();
 	
-	if (ev.options && ev.options.tailangle) srcangle = ev.options.tailangle;
-	var from = endPoint(bb, srcangle, 5);
-	var line = ['M', from.x, ' ', from.y, 'L', mid.x, ' ', mid.y].join();
-	cs.path(line);
+	// Draw message
+	if (ev.msg) {	
+		srcangle = -90;
+		if (ev.options && ev.options.angles && ev.options.angles.length >= 3)
+			srcangle = parseInt(ev.options.angles[2]);
+
+		tx = cs.text(pconf.x + pconf.width * ev.x / 100,
+			pconf.y + pconf.height * ev.y / 100,
+			ev.msg)
+			.attr({'font-family': '"Comic Sans MS", cursive, sans-serif'});
+		txbb = tx.getBBox();
+		b = cs.rect(txbb.x - 2,
+				txbb.y - 2,
+				txbb.width + 4,
+				txbb.height + 4)
+			.attr({fill: 'white', 'stroke-width': 0.5});
+		bb = b.getBBox();
+		tx.toFront();
+
+		var from = endPoint(bb, srcangle, 5);
+		var line = ['M', from.x, ' ', from.y, 'L', mid.x, ' ', mid.y].join();
+		cs.path(line);
+	}
 }
 
 
 function drawComics(conf) {
 	var cs = conf.canvas;
 	cs.clear();
+	cs.rect(0, 0, conf.width, conf.height).attr({fill: '#FFF9F0'});
 	var currx = 0,
 		curry = 0,
 		npanels = conf.panels.length,
@@ -269,40 +288,66 @@ function drawComics(conf) {
 		
 	for (i = 0; i < npanels; i++) {
 		var pconf = conf.panels[i],
-			op = pconf.options,
-			pw = conf.panelw,
+			op = pconf.options || {},
+			pw = op.width || conf.panelw,
 			ph = conf.panelh,
-			framed = true;
-		
-		if (!op) op = {};
-		
-		// Read options
-		if (op.width) pw = pconf.options.width;
-		if (op.frame !== undefined) framed = op.frame;
-		
-		// Draw Panel boundary
-		if (currx + conf.gap + pw > conf.width) {
+			framed = op.frame !== undefined ? op.frame : true,
+			type = op.type !== undefined ? op.type : 'simple',
+			color = op.color || '#fff', // ''90-#8df-#fff',
+			cleared = op.clear;
+	
+		// Determine Panel boundary
+		if (type === 'banner') {
+	
+			if (currx !== 0) { // we are not at new line already
+				currx = 0;
+				curry += ph + conf.gap;
+			}
+			pw = conf.width - 2 * conf.gap;
+			ph = 20;
+			cleared = true;
+		}
+	 	if (currx + conf.gap + pw > conf.width) {
 			currx = 0;
 			curry += ph + conf.gap;
-		} 
+		}
 		
 		pconf.x = currx + conf.gap;
 		pconf.y = curry + conf.gap;
-		pconf.view = cs.rect(pconf.x, pconf.y, pw, ph);
-		if (!framed) pconf.view.attr({stroke: 'none'});
-		currx += conf.gap + pw;
+
+		pconf.view = cs.rect(pconf.x, pconf.y, pw, ph)
+			.attr({fill: color});
+			
+		if (!framed) 
+			pconf.view.attr({stroke: 'none', fill: 'none'});
+			
+		if (type === 'banner') {
+			currx = 0;
+			curry += ph + conf.gap;
+		} else {
+			currx += conf.gap + pw;
+		}
+		
+		pconf.width = pw;
+		pconf.height = ph;
 		
 		// Draw title
 		if (pconf.msg) {
-			var tx = cs.text(0, 0, pconf.msg).attr({'font-weight': 'bold'});
+			var tx = cs.text(0, 0, pconf.msg.toUpperCase())
+				.attr({'font-weight': 'bold', 
+						x: pconf.x +  4,
+						y: pconf.y + 10,
+						'text-anchor': 'start',
+						'font-family': '"Comic Sans MS", cursive, sans-serif'});
 			var bb = tx.getBBox();
-			tx.attr({x: pconf.x + bb.width / 2 + 4, y: pconf.y + bb.height/2 + 4});
-			cs.path(['M', pconf.x, ' ', pconf.y + bb.height + 6, 'H', pconf.x + pw].join(''))
-				.attr({'stroke-width': 0.5});
+			cs.rect(pconf.x, pconf.y, pw, bb.height + 6)
+				.attr({fill: 'white', 'stroke-width': 0.5});
+			tx.toFront();
 		}
 		
 		// Draw objects
 		pconf.objects = {};
+		if (!cleared) {
 		for (name in conf.objects) {
 			obj = conf.objects[name];
 			icon = Icons[obj.type];
@@ -314,7 +359,8 @@ function drawComics(conf) {
 								icon.w * obj.scale / 100,
 								icon.h * obj.scale / 100);
 
-			if (op.clear || obj.hidden) pconf.objects[name].hide();
+			if (obj.hidden) pconf.objects[name].hide();
+		}
 		}
 		
 		// Draw events
@@ -329,6 +375,9 @@ function drawComics(conf) {
 				}
 				case 'hide': {
 					pconf.objects[ev.at].hide();
+					if (ev.options && ev.options.permanent) {
+						conf.objects[ev.at].hidden = true;
+					}
 					break;
 				}
 				case 'show': {
@@ -344,6 +393,14 @@ function drawComics(conf) {
 					handle_say(cs, pconf, pw, ph, ev);
 					break;
 				}
+				case 'define': {
+					conf.objects[ev.name] = ev.object;
+					break;
+				}
+				case 'drop': {
+					delete conf.objects[ev.at];
+					break;
+				}
 			}
 		}
 		
@@ -352,16 +409,19 @@ function drawComics(conf) {
 	
 }
 
-var CANVAS;
 
-function drawInput() {
-	var input = $('#input').val();
+
+function drawInput(cm) {
+//	var input = $('#input').val();
+	var input = cm.getValue();
 	var conf;
 	try {
 		conf = Parse(input);
 	} catch (e) {
 		$('#error').html("Syntax error in input");
+		return;
 	}
+	$('#error').html('Successfully parsed');
 	conf.width = $('#page').width();
 	conf.height = $('#page').height();
 	conf.gap = 10;
@@ -372,63 +432,42 @@ function drawInput() {
 	drawComics(conf);
 }
 
+var CANVAS;
 $(function () {
 	CANVAS = Raphael('page', $('#page').width(), $('#page').height());
-		
-	var a = model.toString().split("\n");
-	a[0] = null;
-	a[a.length - 1] = null;
-	modelstr = a.join("\n");
-	var conf = Parse(modelstr);
 	
-	conf.width = $('#page').width();
-	conf.height = $('#page').height();
-	conf.gap = 10;
-	conf.panelw = 180;
-	conf.panelh = 140;
-	conf.canvas = CANVAS;
-	
+	if (!false)	 {
+		var a = model.toString().split("\n");
+		a[0] = null;
+		a[a.length - 1] = null;
+		modelstr = a.join("\n");
+		var conf = Parse(crosssitescripting);
 
-	
-	drawComics(conf);
+		conf.width = $('#page').width();
+		conf.height = $('#page').height();
+		conf.gap = 10;
+		conf.panelw = 180;
+		conf.panelh = 140;
+		conf.canvas = CANVAS;
+
+		drawComics(conf);
+	}
 	
 	$('#input').blur(drawInput);
 	$('#execute').click(drawInput);
 });
 
-
-Raphael.fn.connection = function (obj1, obj2, line, bg) {
-    if (obj1.line && obj1.from && obj1.to) {
-        line = obj1;
-        obj1 = line.from;
-        obj2 = line.to;
-    }
-
-     var bb1 = obj1.getBBox(),
-            bb2 = obj2.getBBox(),
-            x1 = bb1.x + bb1.width + 1,
-            y1 = bb1.y + bb1.height / 2,
-            x4 = bb2.x - 1,
-            y4 = bb2.y + bb2.height / 2,
-            res = [3, 6];
-
-    dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-    dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-    var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
-        y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
-        x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
-        y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
-    var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
-    if (line && line.line) {
-        line.bg && line.bg.attr({path: path});
-        line.line.attr({path: path});
-    } else {
-        var color = typeof line == "string" ? line : "#000";
-        return {
-            bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
-            line: this.path(path).attr({stroke: color, fill: "none"}),
-            from: obj1,
-            to: obj2
-        };
-    }
+Raphael.fn.arrow = function(x1, y1, x2, y2, size) {
+  var angle = Raphael.angle(x1, y1, x2, y2);
+  var a45   = Raphael.rad(angle-45);
+  var a45m  = Raphael.rad(angle+45);
+  var x2a = x2 + Math.cos(a45) * size;
+  var y2a = y2 + Math.sin(a45) * size;
+  var x2b = x2 + Math.cos(a45m) * size;
+  var y2b = y2 + Math.sin(a45m) * size;
+  return this.path(
+    "M"+x2+" "+y2+"L"+x2a+" "+y2a+
+    "M"+x2+" "+y2+"L"+x2b+" "+y2b
+  );
 };
+
