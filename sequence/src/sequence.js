@@ -105,7 +105,7 @@ function ParseText(str) {
 			continue;
 		}
 		
-		j = line.split(':', 2);
+		j = line.split(':');
 		var send = (j[0].indexOf(' to ') !== -1);
 		var from, to, ev = {x: 0, y: 0};
 		
@@ -131,7 +131,7 @@ function ParseText(str) {
 			ev.at = from;
 		}
 		
-		ev.msg = $.trim(j[1]);
+		ev.msg = $.trim(j.slice(1).join(':'));
 		ev.msg = ev.msg.replace(/\\n/g, '\n');
 		ev.options = readOptions(lines, lineno);
 		
@@ -149,7 +149,7 @@ function ParseText(str) {
 		cPanel.events.push(ev);
 	}
 	
-	console.log(JSON.stringify(conf, null, 4));
+//	console.log(JSON.stringify(conf, null, 4));
 	return conf;
 }
 
@@ -270,12 +270,13 @@ function handle_say(cs, pconf, pw, ph, ev) {
 	// Step 1: draw text
 	tx = cs.text(pconf.x + pw * ev.x / 100,
 					pconf.y + ph * ev.y / 100,
-					ev.msg)
+					ev.msg.toUpperCase())
 			.attr({'font-family': '"Comic Sans MS", cursive, sans-serif'});
 	txbb = tx.getBBox();
 	
 	// Step 2: draw tail
 	if (ev.at) {
+		tailwidth = op.twidth === undefined ? Math.max(5, txbb.width/10) : parseInt(op.twidth)
 		var srcangle = -90, dstangle = 90;
 		
 		if (ev.at instanceof Array) {
@@ -294,18 +295,9 @@ function handle_say(cs, pconf, pw, ph, ev) {
 			from = {x: txbb.x + txbb.width/2, y: txbb.y + txbb.height/2};
 			var to = endPoint(pconf.objects[ev.at].getBBox(), angle);
 			
-			if (tailangle) {
-				g1 = controlPoint({x:to.x, y: to.y}, tailangle, tailcurvy);
-				cs.circle(g1.x, g1.y, 2);
-				path = cs.path(['M', to.x, to.y,
-								'Q', g1.x, g1.y, from.x-tailwidth, from.y,
-								'M', to.x, to.y,
-								'Q', g1.x, g1.y, from.x+tailwidth, from.y,
-								].join(','));
-			} else {
-				path = cs.path(['M', from.x-tailwidth, from.y, 
-					'L', to.x, to.y, from.x+tailwidth, from.y, 'Z'].join(','));
-			}
+			path = cs.path(['M', from.x-tailwidth, from.y, 
+			'L', to.x, to.y, from.x+tailwidth, from.y, 'Z'].join(','));
+
 			path.attr({'stroke-width': 1, 'stroke-dasharray': style, fill: color});
 		}	
 	}
@@ -354,11 +346,7 @@ function handle_say(cs, pconf, pw, ph, ev) {
 				'Z'].join(',');
 				
 		b = cs.path(dd).attr({'stroke-dasharray': style, 'stroke-width': 1.5});
-		b = cs.path(dd).attr({fill: color, stroke: 'none'});
-		
-		
-//		b.attr({fill: color, 'stroke-dasharray': style});
-		
+		b = cs.path(dd).attr({fill: color, stroke: 'none'});		
 		
 		bb = b.getBBox();
 	} else {
@@ -552,15 +540,15 @@ function drawComics(conf) {
 						'font-family': '"Comic Sans MS", cursive, sans-serif'});
 			var bb = tx.getBBox();
 			cs.rect(pconf.x, pconf.y, pw, bb.height + 6)
-				.attr({fill: 'white', 'stroke-width': 0.5});
+				.attr({fill: color, 'stroke-width': 0.5});
 			tx.toFront();
 		}
 		
 		// Draw objects
 		pconf.objects = {};
-		if (!cleared) {
 		for (name in conf.objects) {
 			obj = conf.objects[name];
+			if (cleared || obj.hidden) continue;
 			if (obj.type instanceof Array) {
 				icon = {img: obj.type[0], w: obj.type[1], h: obj.type[2]};
 			} else {
@@ -574,8 +562,6 @@ function drawComics(conf) {
 								icon.w * obj.scale / 100,
 								icon.h * obj.scale / 100);
 
-			if (obj.hidden) pconf.objects[name].hide();
-		}
 		}
 		
 		// Draw events
@@ -601,7 +587,28 @@ function drawComics(conf) {
 					break;
 				}
 				case 'show': {
+					obj = pconf.objects[ev.at];
+					if (obj) {
+						obj.show();
+					} else {
+						obj = conf.objects[ev.at];
+						if (obj.type instanceof Array) {
+							icon = {img: obj.type[0], w: obj.type[1], h: obj.type[2]};
+						} else {
+							icon = Icons[obj.type];
+						}
+						if (!icon) throw "Object type " + obj.type + " is not supported";
+						pconf.objects[ev.at] = 
+							cs.image(icon.img, 
+								pconf.x + pw * obj.x / 100 - icon.w * obj.scale / 100 / 2,
+								pconf.y + ph * obj.y / 100 - icon.h * obj.scale / 100 / 2,
+								icon.w * obj.scale / 100,
+								icon.h * obj.scale / 100);
+					}
 					pconf.objects[ev.at].show();
+					if (ev.options && ev.options.permanent) {
+						conf.objects[ev.at].hidden = false;
+					}
 					break;
 				}
 				case 'send': {
@@ -644,29 +651,6 @@ function drawInput(canvas, width, height, input, design) {
 	drawComics(conf);
 }
 
-/*
-var CANVAS;
-$(function () {
-	CANVAS = Raphael('page', $('#page').width(), $('#page').height());
-	
-	$('.comic_links').click(function () {
-		var link = $(this).attr('href');
-		var func = {'#xss1': crosssitescripting, 
-					'#xss2': crosssitescripting2,
-					'#dhcp': dhcpbasics,
-					'#hdfs': hdfs};
-		drawInput(func[link]);
-		return false;
-	});
-	
-	drawInput(test, true);
-
-	
-//	console.log($('#page').html());
-	$('#input').blur(drawInput);
-	$('#execute').click(drawInput);
-});
-*/
 
 Raphael.fn.arrow = function(x1, y1, x2, y2, size) {
   var angle = Raphael.angle(x1, y1, x2, y2);

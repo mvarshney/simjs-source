@@ -5,39 +5,32 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Sequence</title>
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<!--script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script-->
+	
+
 	<script src="lib/raphael-min2.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/runmode.js" type="text/javascript" charset="utf-8"></script>
-	<script src="lib/javascript.js" type="text/javascript" charset="utf-8"></script>
-	
-	<link rel="stylesheet" href="css/codemirror.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	<link rel="stylesheet" href="css/default.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	
-	
 	<script src="src/sequence.js" type="text/javascript" charset="utf-8"></script>
-	<script src="src/models.js" type="text/javascript" charset="utf-8"></script>
 	
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/sequence.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	
 	<script type="text/javascript" charset="utf-8">
 	$(function () {
-		/*
-		var cm = CodeMirror.fromTextArea(document.getElementById('input'), {
-			onBlur: drawInput,
-			lineNumbers: true,
-			fixedGutter: true,
-			lineWrapping: true
-		});
-		*/
-//		$('#svg_text_div').hide();
+
 		var width = $('#page').width(),
 				height = $('#page').height(),
 				canvas = Raphael('page', width, height);
 		
 		$('.comic').hide();
 		drawInput(canvas, width, height, $('#hdfs').html(), true);
+
+		$('#svg_save').click(function () {
+			var content = $('#page').html();
+			content = content.replace(/href/g, 'xlink:href');
+			content = content.replace(/<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
+			var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
+			var newWindow=window.open(uriContent, 'saved.sv');
+		});
 	});
 
 	</script>
@@ -48,11 +41,189 @@
 	<div id="page">
 	</div>
 	
-	<pre class="comic" id="hdfs">
+	<div id="vaishali" class="comic">
+		define maneesh images/computer2.jpg 34 33 100 10 80
+		define vaishali images/computer2.jpg 34 33 100 80 30
+		
+		panel
+		vaishali: Hello
+			- 24 26, angle=180
+		maneesh: I love you
+			- 57 58, angle=0, twidth=10
+		
+		panel
+		hide maneesh
+		vaishali: Where are you, jannu...???
+			- 40 50, angle=180
+		
+		panel
+		maneesh to vaishali: I am doing my work\nI will be back
+			- 40 20, angles=90 180
+		vaishali to maneesh:
+			- 0 0, angles=-90 0 
+			
+			panel Another story
+				- type=banner, color=violet
+				
+			panel
+				
+		
+	</div>
+		
+	<div class="comic" id="hdfs">
+		define c images/computer2.jpg 34 33 100 10 80
+		define n images/blade.png 45 20 100 80 40
+		define d1 images/blade.png 45 20 100 40 90
+		define d2 images/blade.png 45 20 100 60 80
+		define d3 images/blade.png 45 20 100 80 90
+		define u images/BluePerson.gif 30 30 100 20 70 hidden
+		
+		panel
+			- clear = true, width=120, color=#faa
+		: Hadoop\nDistributed\nFile\nSystem\n(HDFS)
+			- 50 50, type = none
+		
+		panel
+			- clear=true, width=60, color=#cfc
+			: The\nCast
+				- 50 50, type=none
+		
+		panel
+			- width = 220
+		n: I am NAMENODE.\nI coordinate everything
+			- 71 13
+		c: I am CLIENT.\nI read/write data
+			- 23 30
+		d1, d2, d3: We are DATANODES.\nWe store data
+			- 60 60
+		
+		panel
+			n: There is only\nONE of me
+				- 64 13
+			c: People sit in\nfront of me\n(there can be any\nnumber of me)
+				- 22 30
+			d1, d2, d3: There are MANY of us.\nSometimes even thousands!
+				- 60 60
+			
+		panel Writing Data in HDFS Cluster
+			- type=banner, color=#cfc
+		
+		panel Request from User
+		show u
+		hide d1 permanent, d2 permanent, d3 permanent, n permanent
+		move c 70 88
+		u: Please write 200 MB\ndata for me
+			- 35 30
+		c: Okay. I will see what\nI can do for you. But--
+			- 71 55
+		
+		panel Block and Replication
+		show u
+		move c 20 78, u 70 88
+		c: --are you not\nforgetting\nsomething?
+			- 22 35
+		u: Ah yes.. please:\na) divide the data\nin 128MB blocks\nb) copy each block\nin three places
+			- 73 45
+		
+		panel
+		show u
+		move c 20 78, u 70 88
+		c: A good client always knows\nthese two things: 
+			- 56 18
+		: BLOCKSIZE: large file is divided\nin blocks (usually 64 or 128MB)
+			- 54 48, type=rect, color=#fc9
+		: REPLICATION FACTOR:\nnumber of places each\nblock must be replicated\n(usually 3)
+			- 64 81, type=rect, color=#fc9
+		
+		panel Divide file into blocks
+		show n
+		move n 41 40
+		hide n
+		: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx
+			- 25 40, type=rect, color=#fcc
+		n: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxx
+			- 79, 45, type=rect, color=#fcc, twidth=1
+		n: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxx
+			- 79, 80, type=rect, color=#fcc, twidth=1
+		
+		panel Ask Namnode
+		show n
+		c: I will work on\nthe first block\nfirst
+			- 25 40
+		c to n: Please help me write\n128MB block with\nreplication 3
+			- 71 79, angles=0 180 90
+		
+		panel
+			show n
+			n: Need to find 3 datanodes\nfor this guy
+				- 37 13
+			: How do I do that?\nWill tell you some\nother time
+				- 37 44, type=balloon, style=-
+			n to c: Here are the addresses\n of three datanodes
+				- 70 88, angles = -90 0 90
+		
+		panel Client starts writing data
+				show d1 permanent, d2 permanent, d3 permanent
+				c: I send my data to\nfirst datanode only
+					- 50 32, angle=45
+				c to d1:
+					- 0 0, angles=90 90, curvy=40
+		
+		panel
+		d1: While I am recieving\ndata, I forward the same\ndata to the next datanode
+			- 50 22
+		c to d1:
+			- 0 0, angles=90 120, curvy=40
+		d1 to d2: 
+			- 0 0, angles = 90 120, curvy=40
+			
+		panel
+		c to d1:
+			- 0 0, angles=90 120, curvy=40
+		d1 to d2: 
+			- 0 0, angles = 90 120, curvy=40
+		d2 to d3:
+			- 0 0, angles = 90 90, curvy=40
+		d2: I do the same\nwhat previous guy did
+			- 30 18
+		d3: I am the last\nin chain
+			- 80 30
+		
+		panel TA..DA.. Replication Pipeline
+		c to d1:
+			- 0 0, angles=90 120, curvy=40
+		d1 to d2: 
+			- 0 0, angles = 90 120, curvy=40
+		d2 to d3:
+			- 0 0, angles = 90 90, curvy=40
+		
+		panel
+		hide c
+		show n permanent
+		: Once all data (for\nthis block) is\nwritten to hard disk
+			- 36 24
+		d1 to n: Done
+			- 24 60, angles=90 180 0
+		d2 to n: Me too
+			- 32 72, angles=90 225 0
+		d3 to n: Me too
+			- 90 74, angles=90 -90 90
+		
+		panel
+		hide d1, d2, d3
+		n: Block successfully stored\nand replicated in HDFS
+			- 30 19, angle=180
+		c: And I repeat the same\nsteps with remaining blocks
+			- 59 63, angle=0
+			
+	</div>
+	
+	<div class="comic" id="dhcp">
 		define A images/computer2.jpg 34 33 100 20 30
 		define B images/computer2.jpg 34 33 100 10 45
 		define C images/computer2.jpg 34 33 100 20 70
 		define S images/server.png 64 74 50 80 50
+		define T images/server.png 64 74 50 80 24 hidden
 
 		panel 
 			- clear = true, width = 140
@@ -128,81 +299,67 @@
 			- 55 35, twidth=20
 		S to C: DHCP_Ack 192.168.0.3
 			- 50 90, angles = 180 0 90
-done		
+			
+		panel Two DHCP Servers. Client must select one of them
+			- type=banner, color=#afa
 
 		
+		panel DHCP Discover
+		show T permanent
+		C to T: DHCP_Discover
+			- 70 90, angles=0 180 90
+		C to S: DHCP_Discover
+			- 70 90, angles=0 180 90
+		: Reaches both\nservers
+			- 30 30
+		
+		panel Both select an address each
+		hide C
+		T: Address Table:\n192.168.0.123 (offered)
+			- 35 40, type = rect, color=#cfc, angle=180
+		S: Address Table:\n192.168.0.3 (offered)
+			- 35 70, type = rect, color=#cfc, angle=180
+			
+		panel Two offers to the client
+		T to C: DHCP_Offer\n192.168.0.123
+			- 25 30, angles=180 30 0
+		S to C: DHCP_Offer\n192.168.0.3
+			- 55 90, angles=180 -30 90
 
-		panel('', '', {width: 170});
-		hide('A'); hide('B'); hide('C');
-		move('S', 80, 70);
-		say('', 'Address Table\n192.168.0.1 (used)\n192.168.0.2 (used)\n192.168.0.3 (USED)\n192.168.0.4 (free)\n...',
-			30, 50, {type: 'rect'});
-		say('S', 'One more\naddress gone!', 75, 20);
+		panel Client selects one address
+		C: I select\n192.168.0.3
+			- 20 35
+		C to T: DHCP_Request 192.168.0.3
+			- 60 90, angles=0 180 90
+		C to S: DHCP_Request 192.168.0.3
+			- 60 90, angles=0 180 90
+		
+		panel
+		hide C
+		T: I will put the address\nback in free pool
+			- 28 15, angle=180
+		: Address Table:\n192.168.0.123 (FREE)
+			- 41 33, type = rect, color=#cfc, angle=180
+		S: I will mark the address\nas used
+			- 33 68, angle=180
+		: Address Table:\n192.168.0.3 (USED)
+			- 41 87, type = rect, color=#cfc, angle=180
+		
+		panel
+		S to C: DHCP_Ack 192.168.0.3
+			- 50 90, angles=180 0 90
+done		
 
-		panel("DHCP Ack", '', {width: 170});
-		hide('A'); hide('B');
-		move('S', 80, 70);
-		say('S', 'One more happy client!\nI will now start a "lease" timer\nbut more on that some other time', 55, 35, {type: 'none'});
-		send('S', "C", "DHCP_Ack 192.168.0.3", 49, 91, {angles: [180, 0, 90]});
 
-		/*
-		panel("ARP")
-		hide('S');
-		send("C", "A", "", 20, 20, {angles: [0, 0]});
-		send("C", "B", "Anybody has 192.168.0.3?", 80, 70, {angles: [0, 0, 90]});
-		send("A", null);
-		send("B", null);
-		say('', "Client verifies no\nother host has\nsame IP address\nby using ARP", 
-			70, 40, {type: 'none'});
-		*/	
-		panel("Two DHCP Servers. Client must select one of them", "", {type: "banner"});
-		define('T', 'server', 50, 80, 20);
-
-		panel("DHCP Discover");
-		hide('A', {permanent: true}); hide('B', {permanent: true});
-		send("C", "T", "", 20, 20, {angles: [0, 180]});
-		send("C", "S", "DHCP_Discover", 70, 85, {angles: [0, 180, 90]});
-		say('', 'Reaches both\nservers', 30, 40, {type: 'none'});
-
-		panel();
-		hide('C');
-		say('T', 'Address Table:\n192.168.0.123 (offered)', 
-			35, 20, {type: 'rect', angles: [0, 180]});
-		say('S', 'Address Table:\n192.168.0.3 (offered)', 
-			35, 50, {type: 'rect', angles: [0, 180]});
-		say('', 'Both servers have selected\none IP address', 60, 80, {type: 'none'});
-
-		panel('DHCP offer');
-		send('T', "C", "DHCP_Offer\n192.168.0.123", 25, 30, {angles: [180, 0, -90]});
-		send('S', "C", "DHCP_Offer\n192.168.0.3", 75, 85, {angles: [180, 0, 90]});
-
-		panel("Client selects one address");
-		send("C", "T", "", 20, 20, {angles: [0, 180]});
-		send("C", "S", "DHCP_Request 192.168.0.3", 60, 90, {angles: [0, 180, 90]});
-		send("C", "T", "DHCP_Request 192.168.0.3", 60, 90, {angles: [0, 180, 90]});
-		say('C', 'I select\n192.168.0.3', 20, 35);
-
-		panel()
 		say('T', 'Address Table:\n192.168.0.123 (FREE)', 
 			35, 20, {type: 'rect', angles: [0, 180]});
 		say('S', 'Address Table:\n192.168.0.3 (USED)', 
 			35, 50, {type: 'rect', angles: [0, 180]});
 		send('S', "C", "DHCP_Ack 192.168.0.3", 70, 90, {angles: [180, 0, 90]});
 
-	</pre>
+	</div>
 	
-	<textarea name="script" rows="30" cols="50" id="input"></textarea>	
-	
-	<!--a href="documentation.txt">Documentation</a>
-	
-	<div id="svg_text_div">
-		<textarea rows="30" cols="50"></textarea>
-	</div-->
-	
-	<a href="#hdfs" class="comic_links">HDFS</a> <br>
-	<a href="#xss1" class="comic_links">Cross Site Scripting 1</a> <br>
-	<a href="#xss2" class="comic_links">Cross Site Scripting 2</a> <br>
-	<a href="#dhcp" class="comic_links">DHCP</a> <br>
-	
+
+	<button id="svg_save">Open as SVG file in new window</button>
 </body>
 </html>
