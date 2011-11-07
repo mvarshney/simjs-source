@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Sequence</title>
+	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<!--script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script-->
+	
+
+	<script src="lib/raphael-min2.js" type="text/javascript" charset="utf-8"></script>
+	<script src="src/sequence.js" type="text/javascript" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="css/sequence.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	<script type="text/javascript" charset="utf-8">
+	$(function () {
+
+		var width = $('#page').width(),
+				height = $('#page').height(),
+				canvas = Raphael('page', width, height);
+		
+		$('#editor').blur(function () {
+			drawInput(canvas, width, height, $('#editor').val(), true);
+		});
+
+	});
+
+	</script>
+
+</head>
+
+<body id="sequence" onload="">
+	<div id="page">
+	</div>
+	
+	<textarea name="editor" rows="40" cols="40" id="editor"></textarea>
+</body>
+</html>
