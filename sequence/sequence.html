@@ -22,7 +22,7 @@
 				canvas = Raphael('page', width, height);
 		
 		$('.comic').hide();
-		drawInput(canvas, width, height, $('#vaishali').html(), true);
+		drawInput(canvas, width, height, $('#vaishali').html(), $('#coord'));
 
 		$('#svg_save').click(function () {
 			var content = $('#page').html();
@@ -48,7 +48,8 @@
 		define b images/computer2.jpg 34 33 100 80 30
 		
 		panel
-
+		a: hello World
+		- 30 12
 		
 		
 	</div>
@@ -344,5 +345,8 @@ done
 	
 
 	<button id="svg_save">Open as SVG file in new window</button>
+	<br>
+	<input type="text" name="coord" value="" id="coord">
+	
 </body>
 </html>

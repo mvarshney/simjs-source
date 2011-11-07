@@ -107,7 +107,7 @@ function ParseText(str) {
 		
 		j = line.split(':');
 		var send = (j[0].indexOf(' to ') !== -1);
-		var from, to, ev = {x: 0, y: 0};
+		var from, to, ev = {x: 50, y: 50};
 		
 		if (send) {
 			ev.type = 'send';
@@ -404,7 +404,7 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 	tx.toFront();
 	
 
-	
+	// Step 5: If design mode
 	if (pconf.conf.design) {
 		tx.pconf = pconf;
 		tx.drag(
@@ -416,13 +416,15 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 				this.oy = this.attr('y');
 			},
 			function () {
+				pconf.conf.design.val([ ((this.attr('x') - pconf.x) * 100 / pconf.width).toFixed(0),
+				((this.attr('y') - pconf.y) * 100 / pconf.height).toFixed(0)].join(' '))
+					.focus().select();
 				this.attr('title',
 					[ ((this.attr('x') - pconf.x) * 100 / pconf.width).toFixed(0),
 					((this.attr('y') - pconf.y) * 100 / pconf.height).toFixed(0)].join(', '));
 			});
 	}
 }
-
 
 function handle_send(cs, pconf, pw, ph, ev) {
 	var srcangle, dstangle,
@@ -530,7 +532,6 @@ function handle_send(cs, pconf, pw, ph, ev) {
 		}
 	}
 }
-
 
 function drawComics(conf) {
 	var cs = conf.canvas;
