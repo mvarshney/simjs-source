@@ -1,17 +1,3 @@
-function test(define, panel, say, send, hide, show, move) {
-	define('a', 'host', 50, 60, 80);
-	
-	panel();
-	say('a', 'Ah yes.. please\na) divide the data\nin 128MB blocks\nb) copy each block\nin three places', 60, 30, 
-		{angle: 90, twidth:10,style2: '--.', tangle: 20});
-//	say('a', 'A long time ago ago ago\nthere ther there was a king', 60, 30);
-	
-	panel();
-	say('a', 'Hello World', 20, 40, {angles: [-90, 180], curvy: 8, type: 'cloud'});
-	say('a', 'A long time ago\nthere was a king', 60, 30, 
-		{type: 'cloud', angle: 180, tangle: 135, tcurvy: 70, twidth: 20});
-}
-
 
 function crosssitescripting(define, panel, say, send, hide, show, move) {
 define('a', ['images/computer-evil.jpg', 34, 34], 100, 20, 60)
