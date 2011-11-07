@@ -22,7 +22,7 @@
 				canvas = Raphael('page', width, height);
 		
 		$('.comic').hide();
-		drawInput(canvas, width, height, $('#hdfs').html(), true);
+		drawInput(canvas, width, height, $('#vaishali').html(), true);
 
 		$('#svg_save').click(function () {
 			var content = $('#page').html();
@@ -31,6 +31,8 @@
 			var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
 			var newWindow=window.open(uriContent, 'saved.sv');
 		});
+		
+		
 	});
 
 	</script>
@@ -42,31 +44,12 @@
 	</div>
 	
 	<div id="vaishali" class="comic">
-		define maneesh images/computer2.jpg 34 33 100 10 80
-		define vaishali images/computer2.jpg 34 33 100 80 30
+		define a images/computer2.jpg 34 33 100 10 60
+		define b images/computer2.jpg 34 33 100 80 30
 		
 		panel
-		vaishali: Hello
-			- 24 26, angle=180
-		maneesh: I love you
-			- 57 58, angle=0, twidth=10
+
 		
-		panel
-		hide maneesh
-		vaishali: Where are you, jannu...???
-			- 40 50, angle=180
-		
-		panel
-		maneesh to vaishali: I am doing my work\nI will be back
-			- 40 20, angles=90 180
-		vaishali to maneesh:
-			- 0 0, angles=-90 0 
-			
-			panel Another story
-				- type=banner, color=violet
-				
-			panel
-				
 		
 	</div>
 		
@@ -151,7 +134,7 @@
 		c: I will work on\nthe first block\nfirst
 			- 25 40
 		c to n: Please help me write\n128MB block with\nreplication 3
-			- 71 79, angles=0 180 90
+			- 71 79
 		
 		panel
 			show n
@@ -160,7 +143,7 @@
 			: How do I do that?\nWill tell you some\nother time
 				- 37 44, type=balloon, style=-
 			n to c: Here are the addresses\n of three datanodes
-				- 70 88, angles = -90 0 90
+				- 70 88
 		
 		panel Client starts writing data
 				show d1 permanent, d2 permanent, d3 permanent
@@ -234,9 +217,9 @@
 		panel
 			- width = 200
 		A, B, C: We are hosts
-			- 60 20, angle=0
+			- 60 20
 		C: I don't have IP Address :(
-			- 67 85, angle=-30, twidth= 50
+			- 67 85, angle=0
 		: DHCP Server
 			- 80 70, type=rect
 		
@@ -270,9 +253,9 @@
 		S: Address Table\n192.168.0.3 (offered)
 			- 70 20, type=rect, color=#cfc
 		S: I will mark\nthe address as "offered"
-			- 30 39, twidth = 20
+			- 30 39
 		S to C: DHCP_Offer 192.168.0.3
-			- 50 90, angles = 180 0 90
+			- 50 90
 			
 		panel Dhcp request
 		show A, B
@@ -307,7 +290,7 @@
 		panel DHCP Discover
 		show T permanent
 		C to T: DHCP_Discover
-			- 70 90, angles=0 180 90
+			- 70 90
 		C to S: DHCP_Discover
 			- 70 90, angles=0 180 90
 		: Reaches both\nservers
@@ -316,9 +299,9 @@
 		panel Both select an address each
 		hide C
 		T: Address Table:\n192.168.0.123 (offered)
-			- 35 40, type = rect, color=#cfc, angle=180
+			- 35 40, type = rect, color=#cfc
 		S: Address Table:\n192.168.0.3 (offered)
-			- 35 70, type = rect, color=#cfc, angle=180
+			- 35 70, type = rect, color=#cfc
 			
 		panel Two offers to the client
 		T to C: DHCP_Offer\n192.168.0.123
@@ -330,9 +313,9 @@
 		C: I select\n192.168.0.3
 			- 20 35
 		C to T: DHCP_Request 192.168.0.3
-			- 60 90, angles=0 180 90
+			- 60 90, angles=20 180 90
 		C to S: DHCP_Request 192.168.0.3
-			- 60 90, angles=0 180 90
+			- 60 90, angles=-20 180 90
 		
 		panel
 		hide C

@@ -256,47 +256,81 @@ function controlPoint(point, angle, stretch) {
  	return {x: x2, y: y2};
 }
 
-function handle_say(cs, pconf, pw, ph, ev) {
-	var tx, txbb, b, bb, path, g1, g2,
+function getAngle(x1, y1, x2, y2) {
+	var a = 360 - Raphael.angle(x2, y2, x1, y1);
+	while (a < 0) a += 360;
+	while (a >= 360) a -= 360;
+	return a;
+}
+
+function getZone(x1, y1, x2, y2) {
+	var a = getAngle(x1, y1, x2, y2);
+	if (a <= 45) return 0;
+	if (a <=135) return 90;
+	if (a <= 225) return 180;
+	return 270;
+}
+
+function handle_say(cs, pconf, pw, ph, ev, index) {
+	var tx, txbb, b, bb, path, g1, g2, from, to, angle, i,
 		op = ev.options || {},
 		color = op.color || '#fff',
-		type = op.type || (ev.at ? 'balloon' : 'cloud'),
 		style = op.style || '_',
 		tailwidth = op.twidth === undefined ? 5 : parseInt(op.twidth),
 		tailangle = (op.tangle === undefined) ? 0 : parseInt(op.tangle),
-		tailcurvy = op.tcurvy === undefined ? 20 : parseInt(op.tcurvy);
+		tailcurvy = op.tcurvy === undefined ? 20 : parseInt(op.tcurvy),
+		merge = !!op.merge,
+		type = op.type || ((ev.at || merge) ? 'balloon' : 'cloud');
 		
 	
 	// Step 1: draw text
 	tx = cs.text(pconf.x + pw * ev.x / 100,
 					pconf.y + ph * ev.y / 100,
-					ev.msg.toUpperCase())
+					ev.msg)
 			.attr({'font-family': '"Comic Sans MS", cursive, sans-serif'});
 	txbb = tx.getBBox();
 	
 	// Step 2: draw tail
 	if (ev.at) {
 		tailwidth = op.twidth === undefined ? Math.max(5, txbb.width/10) : parseInt(op.twidth)
-		var srcangle = -90, dstangle = 90;
-		
+		tailwidth = 5;
 		if (ev.at instanceof Array) {
 			path = [];
-			for (var i = ev.at.length - 1; i >= 0; i--) {
-				var angle = (op.angle === undefined) ? 90 : parseInt(op.angle);
+			for (i = ev.at.length - 1; i >= 0; i--) {
 				from = {x: txbb.x + txbb.width/2, y: txbb.y + txbb.height/2};
-				var to = endPoint(pconf.objects[ev.at[i]].getBBox(), angle);
-				path.push(cs.path(['M', from.x-tailwidth, from.y, 
-					'L', to.x, to.y, from.x+tailwidth, from.y, 'Z'].join(','))
+				bb = pconf.objects[ev.at[i]].getBBox();
+				angle = getZone(bb.x + bb.width/2, bb.y + bb.height/2, from.x, from.y);
+				if (op.angle !== undefined) angle = parseInt(op.angle);
+
+				var to = endPoint(bb, angle);
+				
+				path.push(cs.path(['M', from.x - tailwidth*Math.cos(angle), 
+									 from.y + tailwidth*Math.sin(angle), 
+									'L', to.x, to.y, 
+									from.x+tailwidth*Math.cos(angle), 
+									from.y-tailwidth*Math.sin(angle), 
+									'Z'].join(','))
 					.attr({'stroke-width': 1, 'stroke-dasharray': style, fill: color}));
 				
 			}
 		} else {
-			var angle = (op.angle === undefined) ? 90 : parseInt(op.angle);
 			from = {x: txbb.x + txbb.width/2, y: txbb.y + txbb.height/2};
-			var to = endPoint(pconf.objects[ev.at].getBBox(), angle);
+			bb = pconf.objects[ev.at].getBBox();
+			angle = getZone(bb.x + bb.width/2, bb.y + bb.height/2, from.x, from.y);
+			if (op.angle !== undefined) angle = parseInt(op.angle);
 			
-			path = cs.path(['M', from.x-tailwidth, from.y, 
-			'L', to.x, to.y, from.x+tailwidth, from.y, 'Z'].join(','));
+			var to = endPoint(bb, angle);
+			
+			angle = Raphael.rad(90 + getAngle(from.x, from.y, 
+										bb.x + bb.width/2, bb.y + bb.height/2));
+			
+			
+			path = cs.path(['M', from.x - tailwidth*Math.cos(angle), 
+								 from.y + tailwidth*Math.sin(angle), 
+								'L', to.x, to.y, 
+								from.x+tailwidth*Math.cos(angle), 
+								from.y-tailwidth*Math.sin(angle), 
+								'Z'].join(','));
 
 			path.attr({'stroke-width': 1, 'stroke-dasharray': style, fill: color});
 		}	
@@ -353,13 +387,22 @@ function handle_say(cs, pconf, pw, ph, ev) {
 		bb = txbb;
 	}
 	
+	ev.tx = tx;
+	ev.b = b;
+	
 	// Step 4: bring text to front
+	if (merge && index > 0) {
+		var prev = pconf.events[index - 1];
+		if (prev.b) prev.b.toFront();
+		if (prev.tx) prev.tx.toFront();
+	}
 	if (path) {
 		if (path instanceof Array) $.each(path, function (i, p){p.toFront();});
 		else path.toFront();
 	}
 	if (b) b.toFront();
 	tx.toFront();
+	
 
 	
 	if (pconf.conf.design) {
@@ -382,18 +425,12 @@ function handle_say(cs, pconf, pw, ph, ev) {
 
 
 function handle_send(cs, pconf, pw, ph, ev) {
-	var srcangle = 0,
-		dstangle = 180,
+	var srcangle, dstangle,
 		stretch = 30,
 		from, to, fromctrl, toctrl, pathstr, len, path, mid,
-		tx, txbb, bb, b;
+		tx, txbb, bb, b, frombb, tobb;
 		
-	if (ev.options && ev.options.angles)
-		srcangle = parseInt(ev.options.angles[0]);
-	if (ev.options && ev.options.angles)
-		dstangle = parseInt(ev.options.angles[1]);
-	if (ev.options && ev.options.curvy) 
-		stretch = parseInt(ev.options.curvy);
+
 		
 	// if this is a packet drop event
 	if (!ev.to) {
@@ -407,8 +444,26 @@ function handle_send(cs, pconf, pw, ph, ev) {
 	}
 	
 	// Draw the thick arrow
-	from = endPoint(pconf.objects[ev.at].getBBox(), srcangle);
-	to = endPoint(pconf.objects[ev.to].getBBox(), dstangle);
+	frombb = pconf.objects[ev.at].getBBox();
+	tobb = pconf.objects[ev.to].getBBox();
+	srcangle = getZone(frombb.x + frombb.width/2, 
+					frombb.y + frombb.height/2,
+					tobb.x + tobb.width / 2,
+					tobb.y + tobb.height/2);
+	dstangle = 	getZone(tobb.x + tobb.width/2, 
+					tobb.y + tobb.height/2,
+					frombb.x + frombb.width / 2,
+					frombb.y + frombb.height/2);
+
+	if (ev.options && ev.options.angles)
+		srcangle = parseInt(ev.options.angles[0]);
+	if (ev.options && ev.options.angles)
+		dstangle = parseInt(ev.options.angles[1]);
+	if (ev.options && ev.options.curvy) 
+		stretch = parseInt(ev.options.curvy);
+	
+	from = endPoint(frombb, srcangle);
+	to = endPoint(tobb, dstangle);
 	
 	fromctrl = controlPoint(from, srcangle, stretch);
 	toctrl = controlPoint(to, dstangle, stretch);
@@ -432,10 +487,7 @@ function handle_send(cs, pconf, pw, ph, ev) {
 	
 	// Draw message
 	if (ev.msg) {	
-		srcangle = -90;
-		if (ev.options && ev.options.angles && ev.options.angles.length >= 3)
-			srcangle = parseInt(ev.options.angles[2]);
-
+		// write text
 		tx = cs.text(pconf.x + pconf.width * ev.x / 100,
 			pconf.y + pconf.height * ev.y / 100,
 			ev.msg)
@@ -449,10 +501,17 @@ function handle_send(cs, pconf, pw, ph, ev) {
 		bb = b.getBBox();
 		tx.toFront();
 
+		// Draw line
+		srcangle = getZone(txbb.x + txbb.width/2, txbb.y + txbb.height/2,
+							mid.x, mid.y);
+		if (ev.options && ev.options.angles && ev.options.angles.length >= 3)
+			srcangle = parseInt(ev.options.angles[2]);
+
 		var from = endPoint(bb, srcangle, 5);
 		var line = ['M', from.x, ' ', from.y, 'L', mid.x, ' ', mid.y].join();
 		cs.path(line);
 		
+		// draggable in design mode
 		if (pconf.conf.design) {
 			tx.pconf = pconf;
 			tx.drag(
@@ -617,7 +676,7 @@ function drawComics(conf) {
 				}
 				
 				case 'say': {
-					handle_say(cs, pconf, pw, ph, ev);
+					handle_say(cs, pconf, pw, ph, ev, j);
 					break;
 				}
 				case 'define': {
