@@ -525,6 +525,9 @@ function handle_send(cs, pconf, pw, ph, ev) {
 					this.oy = this.attr('y');
 				},
 				function () {
+					pconf.conf.design.val([ ((this.attr('x') - pconf.x) * 100 / pconf.width).toFixed(0),
+					((this.attr('y') - pconf.y) * 100 / pconf.height).toFixed(0)].join(' '))
+						.focus().select();
 				this.attr('title',
 						[ ((this.attr('x') - pconf.x) * 100 / pconf.width).toFixed(0),
 						((this.attr('y') - pconf.y) * 100 / pconf.height).toFixed(0)].join(', '));

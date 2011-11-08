@@ -13,7 +13,6 @@
 	
 	<link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/sequence.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	
 	<script type="text/javascript" charset="utf-8">
 	$(function () {
 
@@ -32,6 +31,91 @@
 			var newWindow=window.open(uriContent, 'saved.sv');
 		});
 		
+
+		
+		
+		function computer(cs, x, y, color, mood) {
+			var g = 20, b=g/4, h = 2;
+			if (color === undefined) color = 'white';
+			if (mood === undefined) mood = 'beam';
+			x -= g/2 + b/2 + h;
+			y -= g/2 + b + h/2;
+			
+		cs.rect(x-h, y-h, g+2*h, g+2*h).attr({fill: 'white'});
+		cs.rect(x, y, g, g).attr({fill: color, stroke: 'gray'});
+		cs.path(['M', x-h, y+g+h, 
+			'L', x-h-b, y+g+2*b, 
+			x+g+h+b, y+g+2*b, 
+			x+g+h, y+g+h, 'Z'].join(','))
+			.attr({fill: color});
+		cs.rect(x-h-b, y+g+2*b, g+2*b+2*h, b/2).attr({fill: 'black'});
+		cs.path(['M', x, y+g+2.3*h, 'H', x+g,
+						'M', x-h, y+g+3.2*h, 'H', x+g+h,
+//						'M', x-2*h, y+g+4*h, 'H', x+g+2*h
+						].join(',')).attr({stroke: 0.5});
+		
+		cs.image('images/moods/face-' + mood + '.svg', x -4, y-8, 32, 32);
+		}
+		
+		function server(cs, x, y, color, mood) {
+			var h=40, w=2*h/3, b = 3;
+			if (color === undefined) color = 'white';
+			if (mood === undefined) mood = 'beam';
+
+		
+			cs.path(['M', x, y,
+								'L', x, y+h, x+w, y+h, x+w, y, x+w-w/4, y-h/5, x+w/4, y-h/5, 'Z'].join(','))
+					.attr({fill: 'white', 'stroke-width': 0.5})
+			cs.rect(x+b, y+b, w-2*b, h-2*b)
+			.attr({stroke: 'gray', fill: color});
+			cs.path(['M', x+b, y, 'L', x+w-b, y, x+w-w/4, y-h/5+b, x+w/4, y-h/5+b, 'Z'].join(','))
+				.attr({stroke: 'gray', fill: color});
+			cs.rect(x+.4*w, y+0.6*h, .4*w, b).attr({stroke: 'none', fill: 'gray'});
+			cs.rect(x+.4*w, y+0.7*h, .4*w, b).attr({stroke: 'none', fill: 'gray'});
+			cs.rect(x+.4*w, y+0.8*h, .4*w, b).attr({stroke: 'none', fill: 'gray'});						
+								
+			cs.image('images/moods/face-' + mood + '.svg', x , y-6, 32, 32);
+		}
+		
+		function rack(cs, x, y, color, mood) {
+					var w=24, h=8, b = 2;
+					if (color === undefined) color = 'white';
+					if (mood === undefined) mood = 'beam';
+
+
+					cs.path(['M', x, y, 'L', x+.7*w, y-h/2, x+1.7*w, y-h/2, x+w, y].join(','))
+					.attr({fill: '90-'+color+'-#fff', 'stroke-width': 1, 'stroke': 'gray'});
+					
+					cs.path(['M', x+w, y, 'L', x+1.7*w, y-h/2, x+1.7*w, y+h/2, x+w, y+h].join(','))
+					.attr({fill: '45-'+color+'-#fff', 'stroke-width': 1, 'stroke': 'gray'});
+					
+					
+					
+					cs.path(['M', x+1.2*w, y+.5*h, 'L', x+1.6*w, y+0.2*h].join(','))
+						.attr({stroke: 'gray', 'stroke-width': 4});
+								
+cs.rect(x, y, w, h).attr({fill: color, 'stroke-width': 1, 'stroke': 'gray'});
+//					cs.image('images/moods/face-' + mood + '.svg', x+w/4, y-8, 24, 24);
+		}
+		
+		//server(canvas, 50, 50, '#ccf');
+		//rack(canvas, 150, 50, '#ccf');
+	//	computer(canvas, 150, 50, '#ccf');
+		
+		var moods = ['beam', 'beware', 'cool', 'cry', 'dead', 'devil', 'dunno', 'goggle',
+									'hi', 'medium', 'puppyeyes', 'rolleyes', 'sad', 'sceptic', 'shy', 'silent',
+									'smile', 'spent', 'thumbsdown', 'thumbsup', 'tongue', 'vamp', 'wink',
+									'what', 'wtf', 'zzz'];
+		var colors = ['white', 'lightgreen', 'yellow', 'cyan', '#fcf', '#ccf'];
+		var x = 50, y = 50;
+		for (var i = 0; i < moods.length; i++) {
+			var color = colors[Math.floor(Math.random()*colors.length)];
+			computer(canvas, x, y, color, moods[i]);
+			//canvas.text(x-4, y+ 60, moods[i].toUpperCase());
+			x += 120;
+			if (x > 600) { x = 50; y+= 100;}
+		}
+		
 		
 	});
 
@@ -46,10 +130,9 @@
 	<div id="vaishali" class="comic">
 		define a images/computer2.jpg 34 33 100 10 60
 		define b images/computer2.jpg 34 33 100 80 30
-		
+		define n images/blade.png 45 20 100 80 40
 		panel
-		a: hello World
-		- 30 12
+	
 		
 		
 	</div>
