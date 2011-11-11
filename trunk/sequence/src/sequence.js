@@ -1,12 +1,3 @@
-var Icons = {
-	host: {img: "images/host.png", w: 68, h: 48},
-	cloud: {img: "images/cloud_orange.png", w: 89, h: 47},
-	server: {img: "images/server.png", w: 64, h: 74},
-	webserver: {img: "images/webserver.png", w: 38, h: 38},
-	trash: {img: "images/trash.png", w:24, h:24},
-	cookie: {img: "images/cookie.png", w: 48, h: 48}
-};
-
 Array.prototype.trim = function () {
 	return $.map(this, $.trim);
 }
@@ -34,7 +25,9 @@ function ParseText(str) {
 		panelId = 0,
 		lines = str.split('\n').trim(),
 		nlines = lines.length,
-		line, words, lineno, i, j;
+		line, words, lineno, i, j,
+		records = {},
+		recording = false;
 	
 	
 	for (lineno = 0; lineno < nlines; lineno++) {
@@ -42,15 +35,38 @@ function ParseText(str) {
 		if (line.length === 0) continue;
 		if (line[0] === '#') continue;
 		words = line.split(/\s+/).trim();
-		if (words[0][0] === '-') continue;
 
+
+		if (words[0] === 'record') {
+			recording = words[1];
+			records[recording] = [];
+			continue;
+		}
+		
+		if (words[0] === 'done') {
+			recording = false;
+			continue;
+		}
+		
+		if (recording) {
+			records[recording].push(line);
+			continue;
+		}
+		
+		if (words[0] === 'replay') {
+			lines = lines.slice(0, lineno).concat(records[words[1]], lines.splice(lineno + 1));
+			nlines += records[words[1]].length - 1;
+			lineno --;
+			continue;
+		}
+
+		if (words[0][0] === '-') continue;
 		// Define command. 
 		if (words[0] === 'define') {
 			var obj = {type: [words[2], words[3], words[4]], 
-						scale: words[5], 
-						x: words[6], 
-						y: words[7], 
-						hidden: (words[8] === 'hidden')};
+						x: words[5], 
+						y: words[6], 
+						hidden: (words[7] === 'hidden')};
 			
 			if (cPanel) {
 				cPanel.events.push({type: 'define', name: words[1], obj: obj});
@@ -61,7 +77,7 @@ function ParseText(str) {
 			continue;
 		}
 		
-		if (words[0] === 'done') break;
+		if (words[0] === 'end') break;
 		
 		// panel command
 		if (words[0] === 'panel') {
@@ -74,11 +90,11 @@ function ParseText(str) {
 			continue;
 		}
 		
-		if (words[0] === 'move') {
+		if (words[0] === 'move' || words[0] === 'rmove') {
 			var objs = line.split(words[0])[1].split(',').trim();
 			for (i = objs.length - 1; i >= 0; i--) {
 				j = objs[i].split(/\s+/);
-				cPanel.events.push({type: 'move',
+				cPanel.events.push({type: words[0],
 									at: j[0],
 									x: j[1],
 									y: j[2],
@@ -88,7 +104,7 @@ function ParseText(str) {
 			continue;
 		}
 		
-		if (words[0] === 'show' || words[0] === 'hide') {
+		if (words[0] === 'show' || words[0] === 'hide') { 
 			var objs = line.split(words[0])[1].split(',').trim();
 			for (i = objs.length - 1; i >= 0; i--) {
 				j = objs[i].split(/\s+/);
@@ -98,7 +114,19 @@ function ParseText(str) {
 			
 			continue;
 		}
-		
+
+		if (words[0] === 'mood' || words[0] === 'color') {
+			var objs = line.split(words[0])[1].split(',').trim();
+			for (i = objs.length - 1; i >= 0; i--) {
+				j = objs[i].split(/\s+/);
+				cPanel.events.push({type: words[0], at: j[0], val: j[1],
+						options: {permanent: j[2] === 'permanent'}});
+			}
+			
+			continue;
+		}
+
+				
 		//----- The basic elements
 		if (line.indexOf(':') === -1) {
 			console.log(line);
@@ -281,9 +309,9 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 		tailcurvy = op.tcurvy === undefined ? 20 : parseInt(op.tcurvy),
 		merge = !!op.merge,
 		type = op.type || ((ev.at || merge) ? 'balloon' : 'cloud');
-		
 	
 	// Step 1: draw text
+	if (op.caps === 'true') ev.msg = ev.msg.toUpperCase();
 	tx = cs.text(pconf.x + pw * ev.x / 100,
 					pconf.y + ph * ev.y / 100,
 					ev.msg)
@@ -303,6 +331,9 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 				if (op.angle !== undefined) angle = parseInt(op.angle);
 
 				var to = endPoint(bb, angle);
+				
+				angle = Raphael.rad(90 + getAngle(from.x, from.y, 
+											bb.x + bb.width/2, bb.y + bb.height/2));
 				
 				path.push(cs.path(['M', from.x - tailwidth*Math.cos(angle), 
 									 from.y + tailwidth*Math.sin(angle), 
@@ -360,13 +391,15 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 			h = txbb.height + 2, 
 			g = Math.max(15, w/6);
 		if (ev.options && ev.options.curvy) g = parseInt(ev.options.curvy);
-		b = cs.path(['M', a, b, 
+		var dd = ['M', a, b, 
 				'C', a, b-g, a+w, b-g, a+w, b,
 				'C', a+w+g, b, a+w+g, b+h, a+w, b+h,
 				'C', a+w, b+h+g, a, b+h+g, a, b+h,
 				'C', a-g, b+h, a-g, b, a, b,
-				'Z'].join(','))
-		.attr({fill: color, 'stroke-dasharray': style});
+				'Z'].join(',');
+		b = cs.path(dd).attr({'stroke-dasharray': style, 'stroke-width': 1.5});
+		b = cs.path(dd).attr({fill: color, stroke: 'none'});
+//		.attr({fill: color, 'stroke-dasharray': style});
 		bb = b.getBBox();
 	} else if (type === 'balloon') {
 		var a = txbb.x, b = txbb.y, w = txbb.width + 2, h = txbb.height + 2, g = 10;
@@ -430,10 +463,16 @@ function handle_send(cs, pconf, pw, ph, ev) {
 	var srcangle, dstangle,
 		stretch = 30,
 		from, to, fromctrl, toctrl, pathstr, len, path, mid,
-		tx, txbb, bb, b, frombb, tobb;
+		tx, txbb, bb, b, frombb, tobb,
+		op = ev.options || {},
+		arrow_width = op.awidth || 2,
+		arrow_style = op.astyle || '_',
+		arrow_color = op.acolor || 'blue',
+		arrow_head = op.ahead !== 'false',
+		message_color = op.color || 'white',
+		packet_color = op.pcolor || 'green';
 		
-
-		
+	
 	// if this is a packet drop event
 	if (!ev.to) {
 		from = pconf.objects[ev.at];
@@ -457,12 +496,9 @@ function handle_send(cs, pconf, pw, ph, ev) {
 					frombb.x + frombb.width / 2,
 					frombb.y + frombb.height/2);
 
-	if (ev.options && ev.options.angles)
-		srcangle = parseInt(ev.options.angles[0]);
-	if (ev.options && ev.options.angles)
-		dstangle = parseInt(ev.options.angles[1]);
-	if (ev.options && ev.options.curvy) 
-		stretch = parseInt(ev.options.curvy);
+	if (op.angles) srcangle = parseInt(op.angles[0]);
+	if (op.angles) dstangle = parseInt(op.angles[1]);
+	if (op.curvy) stretch = parseInt(op.curvy);
 	
 	from = endPoint(frombb, srcangle);
 	to = endPoint(tobb, dstangle);
@@ -476,16 +512,24 @@ function handle_send(cs, pconf, pw, ph, ev) {
 				to.x, to.y].join(',');
 
 	path = cs.path(pathstr)
-			.attr({'stroke-width': 3, 'stroke': 'blue'})
+			.attr({'stroke-width': arrow_width, 
+					'stroke': arrow_color,
+					'stroke-dasharray': arrow_style});
 	
-	cs.arrow(toctrl.x, toctrl.y, to.x, to.y, 10)
-		.attr({'stroke-width': 3, 'stroke': 'blue'});
+	if (arrow_head) {
+		cs.arrow(toctrl.x, toctrl.y, to.x, to.y, 10)
+		.attr({'stroke-width': arrow_width, 
+			'stroke': arrow_color, 
+			'stroke-dasharray': arrow_style});
+	}
 	
 	// Draw the green packet
-	len = Raphael.getTotalLength(pathstr);
-	mid = Raphael.getPointAtLength(pathstr, len / 2);
-	cs.path(Raphael.getSubpath(pathstr, len*0.4, len*0.6))
-		.attr({'stroke-width': 10, 'stroke': 'green'})
+	if (op.packet !== 'false') {
+		len = Raphael.getTotalLength(pathstr);
+		mid = Raphael.getPointAtLength(pathstr, len / 2);
+		cs.path(Raphael.getSubpath(pathstr, len*0.4, len*0.6))
+			.attr({'stroke-width': 10, 'stroke': packet_color})
+	}
 	
 	// Draw message
 	if (ev.msg) {	
@@ -499,7 +543,7 @@ function handle_send(cs, pconf, pw, ph, ev) {
 				txbb.y - 2,
 				txbb.width + 4,
 				txbb.height + 4)
-			.attr({fill: 'white', 'stroke-width': 0.5});
+			.attr({fill: message_color, 'stroke-width': 0.5});
 		bb = b.getBBox();
 		tx.toFront();
 
@@ -548,13 +592,14 @@ function drawComics(conf) {
 	for (i = 0; i < npanels; i++) {
 		var pconf = conf.panels[i],
 			op = pconf.options || {},
-			pw = op.width === undefined ? conf.panelw : parseInt(op.width),
+			pw = op.width === undefined ? conf.panelw : conf.panelw + parseInt(op.width),
 			ph = conf.panelh,
 			framed = op.frame !== undefined ? op.frame : true,
 			type = op.type !== undefined ? op.type : 'simple',
-			color = op.color || '#fff', // ''90-#8df-#fff',
+			color = op.color || '#eff', //'#fff', // ''90-#8df-#fff',
 			cleared = op.clear;
 		
+		color = '90-' + color + '-#fff';
 		pconf.conf = conf;
 
 		// Determine Panel boundary
@@ -612,19 +657,14 @@ function drawComics(conf) {
 		for (name in conf.objects) {
 			obj = conf.objects[name];
 			if (cleared || obj.hidden) continue;
-			if (obj.type instanceof Array) {
-				icon = {img: obj.type[0], w: obj.type[1], h: obj.type[2]};
-			} else {
-				icon = Icons[obj.type];
-			}
-			if (!icon) throw "Object type " + obj.type + " is not supported";
-			pconf.objects[name] = 
-						cs.image(icon.img, 
-								pconf.x + pw * obj.x / 100 - icon.w * obj.scale / 100 / 2,
-								pconf.y + ph * obj.y / 100 - icon.h * obj.scale / 100 / 2,
-								icon.w * obj.scale / 100,
-								icon.h * obj.scale / 100);
-
+			pconf.objects[name] = new Actor(cs, 
+										obj.type[0], 
+										obj.type[1],
+										obj.type[2],
+										pconf.x + pw * obj.x / 100,
+										pconf.y + ph * obj.y / 100,
+										obj.type[1],
+										obj.type[2]);
 		}
 		
 		// Draw events
@@ -632,10 +672,15 @@ function drawComics(conf) {
 		for (j = 0; j < nevents; j++) {
 			ev = pconf.events[j];
 			switch (ev.type) {
+				case 'rmove': {
+					var obj = conf.objects[ev.at];
+					ev.x = parseFloat(obj.x) + parseFloat(ev.x);
+					ev.y = parseFloat(obj.y) + parseFloat(ev.y);
+					// fallthrough to the next switch case..
+				}
 				case 'move': {
 					var obj = pconf.objects[ev.at];
-					obj.attr({x: pconf.x + pw * ev.x / 100 - obj.attr('width') / 2, 
-							  y: pconf.y + ph * ev.y / 100 - obj.attr('height') / 2});
+					obj.move(pconf.x + pw * ev.x / 100, pconf.y + ph * ev.y / 100);
 					if (ev.options && ev.options.permanent) {
 						conf.objects[ev.at].x = ev.x;
 						conf.objects[ev.at].y = ev.y;
@@ -649,24 +694,34 @@ function drawComics(conf) {
 					}
 					break;
 				}
+				case 'mood': {
+					pconf.objects[ev.at].setMood(ev.val);
+					if (ev.options && ev.options.permanent) {
+						conf.objects[ev.at].type[2] = ev.val;
+					}
+					break;
+				}
+				case 'color': {
+					pconf.objects[ev.at].setColor(ev.val);
+					if (ev.options && ev.options.permanent) {
+						conf.objects[ev.at].type[1] = ev.val;
+					}
+					break;
+				}
 				case 'show': {
 					obj = pconf.objects[ev.at];
 					if (obj) {
 						obj.show();
 					} else {
 						obj = conf.objects[ev.at];
-						if (obj.type instanceof Array) {
-							icon = {img: obj.type[0], w: obj.type[1], h: obj.type[2]};
-						} else {
-							icon = Icons[obj.type];
-						}
-						if (!icon) throw "Object type " + obj.type + " is not supported";
-						pconf.objects[ev.at] = 
-							cs.image(icon.img, 
-								pconf.x + pw * obj.x / 100 - icon.w * obj.scale / 100 / 2,
-								pconf.y + ph * obj.y / 100 - icon.h * obj.scale / 100 / 2,
-								icon.w * obj.scale / 100,
-								icon.h * obj.scale / 100);
+						pconf.objects[ev.at] = new Actor(cs, 
+													obj.type[0], 
+													obj.type[1],
+													obj.type[2],
+													pconf.x + pw * obj.x / 100,
+													pconf.y + ph * obj.y / 100,
+													obj.type[1],
+													obj.type[2]);
 					}
 					pconf.objects[ev.at].show();
 					if (ev.options && ev.options.permanent) {
