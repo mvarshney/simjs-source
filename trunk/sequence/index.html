@@ -5,8 +5,8 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Sequence</title>
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
-	<!--script src="lib/jquery-ui-1.8.16.custom.min.js" type="text/javascript" charset="utf-8"></script-->
-	
+	<script src="lib/swfobject.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/downloadify.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<script src="lib/raphael-min2.js" type="text/javascript" charset="utf-8"></script>
 	<script src="src/sequence.js" type="text/javascript" charset="utf-8"></script>
@@ -17,10 +17,10 @@
 	<script type="text/javascript" charset="utf-8">
 	$(function () {
 
-		var width = $('#page').width(),
-				height = $('#page').height(),
+		var width = 670,
+				height = 920,
 				canvas = Raphael('page', width, height);
-		
+				
 		$('.comic').hide();
 		$('.comic').each(function (index, el) {
 			var id = $(this).attr('id');
@@ -31,16 +31,41 @@
 			return false;
 		});
 		
+		Downloadify.create('downloadify',{
+			filename: function(){
+				return "save.svg";
+			},
+			data: function(){ 
+					var content = $('#page').html();
+					content = content.replace(/href/g, 'xlink:href');
+					content = content.replace(/<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
+//					var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
+	//				var newWindow=window.open(uriContent, 'saved.sv');
+	return content;
+
+			},
+//			onComplete: function(){ alert('Your File Has Been Saved!'); },
+//			onCancel: function(){ alert('You have cancelled the saving of this file.'); },
+//			onError: function(){ alert('You must put something in the File Contents or there will be nothing to save!'); },
+			transparent: false,
+			swf: 'lib/downloadify.swf',
+			downloadImage: 'images/download.png',
+			width: 100,
+			height: 30,
+			transparent: true,
+			append: false
+		});
 		
-		$('#svg_save').click(function () {
+	/*	$('#svg_save').click(function () {
 			var content = $('#page').html();
 			content = content.replace(/href/g, 'xlink:href');
 			content = content.replace(/<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
 			var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
 			var newWindow=window.open(uriContent, 'saved.sv');
-		});
+		});*/
 		
-		drawInput(canvas, width, height, $('#leader-ring-sync-1').html(), $('#coord'));
+
+		drawInput(canvas, width, height, $('#leader-ring-sync-2').html(), $('#coord'))
 		
 	});
 
@@ -56,218 +81,65 @@
 	</div>
 	
 	<div id="leader-ring-sync-2" class="comic">
-			define h1 circle Orange beam 15 40
-			define h2 circle cyan beam 15 80
-			define h3 circle Yellow beam 55 90
-			define h4 circle lime beam 85 60
-			define h5 circle #F9B7FF beam 55 25
+		define t images/stickman/sm_010_T.png 37 47 10 80 hidden
+		define h1 circle Orange smile 15 40
+		define h2 circle cyan smile 15 80
+		define h3 circle Yellow smile 55 90
+		define h4 circle lime smile 85 60
+		define h5 circle #F9B7FF smile 55 25
 
-			record ring_topology
-			h1 to h2:
-					- 0 0, curvy=1, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-			h2 to h3:
-				- 0 0, curvy=1, angles=-30 180, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-			h3 to h4:
-				- 0 0, curvy=1, angles=0 -90, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-			h4 to h5:
-				- 0 0, curvy=1, angles=90 0, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-			h5 to h1:
-				- 0 0, curvy=1, angles=180 20, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-			done
+		record ring_topology
+		h1 to h2:
+				- 0 0, curvy=1, packet=false, acolor=black, astyle=., awidth=1, ahead=false
+		h2 to h3:
+			- 0 0, curvy=1, angles=-30 180, packet=false, acolor=black, astyle=., awidth=1, ahead=false
+		h3 to h4:
+			- 0 0, curvy=1, angles=0 -90, packet=false, acolor=black, astyle=., awidth=1, ahead=false
+		h4 to h5:
+			- 0 0, curvy=1, angles=90 0, packet=false, acolor=black, astyle=., awidth=1, ahead=false
+		h5 to h1:
+			- 0 0, curvy=1, angles=180 20, packet=false, acolor=black, astyle=., awidth=1, ahead=false
+		done
 
-			record ring_ids
-			: 7
-				- 7 40, type=rect
-			: 5
-				- 7 80, type=rect
-			: 1
-				- 50 80, type=rect
-			: 4
-				- 93 60, type=rect
-			: 2
-				- 65 20, type=rect
+		record ring_ids
+		: 7
+			- 7 40, type=rect
+		: 5
+			- 7 80, type=rect
+		: 1
+			- 50 80, type=rect
+		: 4
+			- 93 60, type=rect
+		: 2
+			- 65 20, type=rect
 
-			done
+		done
 
-			panel Hirshberg-Sinclair Algorithm
-				- type=banner, color=#ccf
-			
-			
-			panel Send ID in both directions..
-			hide h1, h2, h4, h5
-			h3 to h2: ID
-				- 27 58
-			h3 to h4: ID
-					- 68 47, angles=0 -90
-			h3: That was easy!
-				- 42 28
-
-			panel .. but only so far
-				- width=-20
-			hide h1, h2, h4, h5
-			: Limit the distance\nthe message can travel
-				- 32 33, curvy=20, color=#ffc
-			h3: how do I do that?
-				- 70 56
-			mood h3 what
-			
-			panel Use TTL to limit distance
-				- width=20
-			hide h1, h2, h4, h5
-			: Send Time-to-Live\n(TTL) along\nwith your ID
-				- 24 28, type=none, caps=true
-			: TTL is the distance\nyou want the\nmessage to travel
-				- 75 28, type=rect, color=#fcc
-			h3: An awesome idea!
-				- 49 59
-			h3 to h2: ID\nTTL = 2 
-				- 12 65
-			h3 to h4: ID\nTTL = 2
-				- 83 51, angles=0 -90
-			
-			panel
-			hide h1, h5
-			mood h2 what, h4 what, h3 rolleyes
-			h2, h4: what should we do with this TTL?
-				- 49 18
-			h3 to h2: ID\nTTL = 2 
-				- 36 72
-			h3 to h4: ID\nTTL = 2
-				- 67 70, angles=0 -90
-
-			panel Decrement TTL before forwarding
-			move h5 85 20
-			mood h3 rolleyes, h1 smile, h5 smile
-			h3 to h2: 
-				- 36 72
-			h3 to h4: 
-				- 67 70, angles=0 -90
-			h2 to h1: ID\nTTL=1
-				- 32 24
-			h4 to h5: ID\nTTL=1
-				- 63 24
-			h2, h4: Ah.. we get it!
+		panel Hirshberg-Sinclair Algorithm
+		- type=banner, color=#ccf
 		
-			panel .. until it reaches zero
-			hide h2, h3, h4
-			move h5 85 20
-			mood h1 what, h5 what
-			h2 to h1: ID\nTTL=1
-				- 11 85
-			h4 to h5: ID\nTTL=1
-				- 88 87
-			h1, h5: Umm.. excuse us--
-				- 46 25
-			: -- the TTL\nwill be 0 now
-				- 50 50, merge=true
-			: what should we do?
-				- 50 75, merge=true
-			
-			panel At furthest point reverse direction
-				- width=20
-			hide h2, h3, h4
-			move h5 85 20
-			mood h1 smile, h5 smile
-			h2 to h1:
-				- 14 60, angles= 180 180, curvy=20
-			h1 to h2: ID\n"Reversed"
-				- 42 88, angles=0 0, curvy=20, pcolor=red, acolor=red
-			h4 to h5:
-				- 33 89, angles=0 0, curvy=20
-			h5 to h4: ID\n"Reversed"
-				- 74 88, angles=180 180, curvy=20, pcolor=red, acolor=red
-			: Send the message\nBACK\nto the orignator
-				- 49 34, type=none
-			
-			panel This is what just happened
-			h3 to h2:
-				- 0 0, angles=180 -90
-			h3 to h4:
-				- 0 0, angles=0 -90
-			h4 to h5:
-				- 0 0, angles=90 0
-			h2 to h1:
-				- 0 0, angles=180 180, curvy=20
-			
-			h1 to h2:
-				- 0 0, angles=0 90, pcolor=red, acolor=red
-			h5 to h4:
-				- 0 0, angles=-90 120, pcolor=red, acolor=red
-			h4 to h3:
-				- 0 0, angles=180 60, pcolor=red, acolor=red
-			h2 to h3:
-				- 0 0, angles=0 120, pcolor=red, acolor=red
-			
-			: (When TTL was 2)
-				- 22 22, type=none
-			
-			panel Double the distance next time
-				- width=-20
-			hide h1, h2, h4, h5
-			mood h3 sceptic
-			h4 to h3:
-				- 0 0, angles=-90 0, pcolor=red, acolor=red
-			h2 to h3:
-				- 0 0, angles=-90 180, pcolor=red, acolor=red
-			: I received both 
-				- 24 24, type=balloon
-			: Now I send the\nmessage twice as far
-				- 63 41, merge=true
-			h3: I keep on with this..\nUNTIL?
-				- 27 65, merge=true
-			
-			panel When to stop: I
-				- width=40
-			hide h2, h3, h4, h5
-			h2 to h1: ID=4\nTTL=2
-				- 10 86, angles=180 180, curvy=20
-			h1 to h2: ID=4\nSTOP
-				- 44 76, angles=0 0, pcolor=red, acolor=red
-			h1: If I have a greater\nID than this message--
-				- 60 25
-			:  --I send it back right away,\nand ask the sender to stop
-				- 72 53, merge=true
-			: (even when the\nTTL is not 0)
-				- 79 83, merge=true
-			
-			panel 
-				- width=-40
-			hide h1, h2, h4, h5
-			mood h3 silent
-			h4 to h3: ID\nSTOP
-				- 72 61, angles=-90 0, pcolor=red, acolor=red
-			h3: I will not send\nany more message..
-				- 36 24, style=-
-			
-			panel When to Stop: II
-			hide h1, h2, h4, h5
-			h4 to h3: ID=4\nTTL=6
-				- 82 64, angles=-90 0, pcolor=red, acolor=red
-			h3 to h2: ID=4\nTTL=16
-				- 12 70, angles=180 -90
-			h3: If I get my forward\ndirection message, I stop
-				- 40 26
-			: AND --
-				- 72 44, merge=true
-	
-			panel
-			hide h1, h2, h4, h5
-			mood h3 cool
-			h4 to h3: ID=4\nTTL=6
-				- 82 64, angles=-90 0, pcolor=red, acolor=red
-			h3 to h2: ID=4\nTTL=16
-				- 12 70, angles=180 -90
-			h3: I AM THE LEADER
-				- 49 29
+		rules
+		sending rule
+		
+		1 send messages is both directions
+		2 indicate how far the message should go
+		3 when it has reached the max distance, the message must turn around and come back
+		4 when the reversed are reached from both ends, double the distance and try again
+		5 short circuit rule: when my id is greater than message; immediately return back and 
+				say stop; the sender will not send any further		
+		6 node that receives its forward direction message, is the leader
+		
+
 			
 	</div>
 	
 	<div id="leader-ring-sync-1" class="comic">
-		define h1 circle Orange beam 15 40
-		define h2 circle cyan beam 15 80
-		define h3 circle Yellow beam 55 90
-		define h4 circle lime beam 85 60
-		define h5 circle #F9B7FF beam 55 25
+		define t images/stickman/sm_010_T.png 37 47 10 80 hidden
+		define h1 circle Orange smile 15 40
+		define h2 circle cyan smile 15 80
+		define h3 circle Yellow smile 55 90
+		define h4 circle lime smile 85 60
+		define h5 circle #F9B7FF smile 55 25
 		
 		record ring_topology
 		h1 to h2:
@@ -295,162 +167,187 @@
 			- 65 20, type=rect
 
 		done
-		
-		panel
-			- clear=true, width=-50, color=#fcc
-		: LEADER ELECTION\nIN SYNCHRONOUS\nRING NETWORK
-			- 50 50, type=none
-		
-		panel leader election in ring topology
-			- width = 25
-		h1, h2, h3, h4, h5: We want to\nelect a LEADER
-			- 50 55
-		replay ring_topology
-		
-		
-		panel Each player has unique id
-			- width = 25
-		replay ring_topology
-		replay ring_ids
-		h1, h2, h3, h4, h5: But we don't know\neach other's IDs!
-			- 50 55
-		mood h1 sad, h2 sad, h3 sad, h4 sad, h5 sad
-		
-		panel LeLann, Chang-Roberts Algorithm
-			- type=banner, color=#ccf
-		
-		panel Rule 1
-		- clear=true, width=-40, color=#efe
-		show h4
-		move h4 85 90
-		: THOU SHALT SEND\nYOUR ID TO YOUR\nRIGHT NEIGHBOR
-			- 50 30, color=#ffc
-		h4: That's easy enough!
-		 - 31 73
-		
-		panel Everybody sends their ID to the right
-			- width=80
-		replay ring_ids
-		h1 to h2: 7
-				- 24 58, color=#dfd
-		h2 to h3: 5
-			- 35 74, angles=-30 180, color=#dfd
-		h3 to h4: 1
-			- 66 68, angles=0 -90, color=#dfd
-		h4 to h5: 4
-			- 68 41, angles=90 0, color=#dfd
-		h5 to h1: 2
-			- 40 44, angles=180 20, color=#dfd
-		
-		panel
-			- clear=true, width=-40
-		show h4, h3
-		move h4 80 70, h3 80 10
-		h3 to h4: 1
-		 - 94 54, color=#dfd
-		hide h3
-		mood h4 what
-		h4: So now I have this\nID from neighbor --
-			- 42 29
-		: -- what do I do\nwith it?
-			- 25 56, merge=true
-		
-		panel Rule 2 Part I
-		- clear=true, width=-40, color=#efe
-		show h4, h3, h2
-		move h4 80 70, h3 80 10, h2 60 100
-		h3 to h4: 5
-		 - 94 54, color=#dfd, angles=0 90
-		h4 to h2: 5
-			- 84 88, color=#dfd, angles=-90 90
-		hide h3, h2
-		: IF THE ID THOU\nRECEIVETH IS GREATER\nTHAN THOUST ID --
-			- 40 35, color=#ffc
-		: -- FORWARD IT!
-			- 32 64, color=#ffc, merge = true
-		
-		panel Rule 2 Part II
-		- clear=true, width=-40, color=#efe
-		show h4, h3
-		move h4 80 70, h3 80 10
-		mood h4 silent
-		h3 to h4: 1
-		 - 94 54, color=#dfd, angles=0 90
-		h4 to : 
-		hide h3
-		: IF IT IS LESSER --
-			- 50 25, color=#ffc, type=balloon
-		: -- DO NOT SEND\nIT FURTHER!
-			- 32 48, color=#ffc, merge = true
-		h4: I can do that!
-			- 41 88
-		
-		
-		panel After one round
-			- width=80
-		replay ring_ids
-		h1 to :
-		h2 to h3: 7 (forward by 5)
-			- 35 65, angles=-30 180, color=#dfd
-		h3 to h4: 5 (forward by 1)
-			- 66 68, angles=0 -90, color=#dfd
-	h4 to :
-		h5 to h1: 4 (forward by 2)
-			- 40 44, angles=180 20, color=#dfd
-	h1: dropped 2
-		- 11 21
-	h4: dropped 1
-		- 87 30
 	
-		panel After two rounds
-			- width=80
-		replay ring_ids
-		h1 to :
-		h3 to h4: 7 (forward by 5, 1)
-			- 60 68, angles=0 -90, color=#dfd
 
-		h4 to h5: 5 (forward by 4, 1)
-			- 47 45, angles=90 0, color=#dfd
-		h1: dropped 4
-		- 30 20		
-		
-		panel And so on...
-			- width=80
-		mood h2 sad, h3 sad, h4 sad, h4 sad, h1 puppyeyes
-		h2, h4, h5: We made it\nas far as to 7
-			- 76 35
-		h3: I was dropped\nnext door
-			- 87 85
-		h1: I WAS NOT\nDROPPED!
-			- 35 34, color=#fee
-		: WHAT ABOUT ME ?!?
-			- 45 52, merge=true, color=#fee
+	panel LeLann, Chang-Roberts Algorithm
+		- type=banner, color=#ccf
 
+
+	panel
+		- width=20
+	show t
+	move t 90 85
+	rmove h5 0 -10
+	replay ring_topology
+	replay ring_ids
+	#h1, h2, h3, h4, h5: We are ready
+	t: Everybody: send your ID\nto your right neighbor
+		- 50 50
+			
+	
+	panel
+		- width=20
+	rmove h5 0 -10, h1 -5 0, h2 -5 0
+	h1 to h2: ID=7
+			- 24 58, color=Orange, pcolor=orange
+	h2 to h3: ID=5
+		- 18 95, angles=-30 180, color=cyan, pcolor=cyan
+	h3 to h4: ID=1
+		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
+	h4 to h5: ID=4
+		- 85 15, angles=90 0, color=lime, pcolor=lime
+	h5 to h1: ID=2
+		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
+	#h1, h2, h3, h4, h5: Done.\nBut what do we\ndo with them now?
+	#	- 55 46
+	
+	
+	
+	panel
+		- width=-40, clear=true
+	show t
+	t: Those of you who\nhave HIGHER ID\nthan what you received --
+		- 56 22
+	: drop that message
+		- 49 49, merge=true
+	show h4, h3
+	mood h4 silent
+	rmove h4 0 5
+	h3 to h4: ID=1
+		- 57 77, angles=0 -90, color=yellow, pcolor=yellow
+	hide h3
+	h4 to :
+	: 4
+		- 96 63, type=rect
+	
+	panel
+	replay ring_ids
+	mood h1 rolleyes, h2 medium, h3 medium, h4 rolleyes, h5 medium
+	h3 to h4: ID=1
+		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
+	h4 to :
+	h5 to h1: ID=2
+		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
+	h1 to :
+	h1, h4: He means us..
+			- 52 48
+	
+	panel
+		- width=-20, clear=true
+	show t
+	t: Those of you who\nhave LOWER ID\nthan what you received --
+		- 56 22
+	: forward that message
+		- 49 49, merge=true
+	show h2, h3, h4
+	hide h2, h4
+	mood h3 thumbsup
+	h2 to h3: ID=5
+		- 33 76, angles=-30 180, color=cyan, pcolor=cyan
+	h3 to h4: ID=5
+		- 90 91, angles=0 -90, color=cyan, pcolor=cyan
+	: 1
+	 - 54 75, type=rect
 		
-		panel Rule 3
-		- clear=true, width=-40, color=#efe
-		show h4, h3
-		move h4 80 70, h3 80 10
-		mood h4 shy
-		color h4 Orange
-		h3 to h4: 7
-		 - 94 54, color=#dfd, angles=0 90
-		hide h3
-		: IF THOU RECEIVETH\nYOUR OWN ID --
-			- 50 25, color=#ffc
-		: -- THOU ART\nTHE LEADER!
-			- 22 48, color=#ffc, merge = true
-		h4: WOOHOO!
-			- 41 78
+
+	panel 
+		- width=20
+	replay ring_ids
+	h2 to h3: ID=7
+		- 18 95, angles=-30 180, color=orange, pcolor=orange
+	h3 to h4: ID=5
+		- 90 91, angles=0 -90, color=cyan, pcolor=cyan
+	h5 to h1: ID=4
+		- 26 20, angles=180 20, color=lime, pcolor=lime
+	h2, h3, h5: That's us
+		- 49 55
+	mood h1 medium, h2 rolleyes, h3 rolleyes, h4 medium, h5 rolleyes
+	
+	panel
+		- width=-40, clear=true
+	show t
+	t: And keep on with it..
 		
-		panel
-		move h1 50 10, h2 20 90, h3 40 90, h4 60 90, h5 80 90
-		mood h1 cool, h2 rolleyes, h3 rolleyes, h4 rolleyes, h5 rolleyes
-		: There will ALWAYS be ONE\nplayer whose message will not\nbe dropped by anybody.
-			- 50 30, type=none
-		: And he will be the LEADER
-			- 50 60
-		
+	panel Who drops in next round?
+		- width=20
+	replay ring_ids
+	h5 to h1: ID=4
+		- 26 20, angles=180 20, color=lime, pcolor=lime
+	h1 to :
+	h5: I forwarded 4's\nmessage previously..
+		- 54 56
+	h1: .. which I dropped now
+		- 47 86
+
+	panel .. And who forwards?
+		- width=20	
+	replay ring_ids
+	h3 to h4: ID=7
+		- 90 91, angles=0 -90, color=orange, pcolor=orange
+	h4 to h5: ID=5
+		- 85 15, angles=90 0, color=cyan, pcolor=cyan
+	h3, h4: We do!
+	
+	panel After another round
+	h4 to h5: ID=7
+		- 85 15, angles=90 0, color=orange, pcolor=orange
+	h5 to h1: ID=5
+		- 26 20, angles=180 20, color=cyan, pcolor=cyan	
+	h1 to :
+	
+	panel .. and another round
+
+	h5 to h1: ID=7
+		- 26 20, angles=180 20, color=orange, pcolor=orange	
+	h1: I received my message!\nWhat does that mean?
+		- 49 60
+	
+	panel
+		- clear = true
+	show t
+	t: If you receive your own message
+		- 50 19
+	: you are the LEADER!!
+		- 71 40, merge=true
+	show h1
+	move h1 80 80
+	mood h1 cool
+	h1: WOOHOO!
+		- 45 74
+
+	record removed
+	panel Lets try this one..
+		- width=20
+	: 1
+		- 7 40, type=rect
+	: 2
+		- 7 80, type=rect
+	: 3
+		- 50 80, type=rect
+	: 4
+		- 93 60, type=rect
+	: 5
+		- 65 20, type=rect
+	h1 to h2:
+			- 24 58, color=Orange, pcolor=orange
+	h2 to h3:
+		- 18 95, angles=-30 180, color=cyan, pcolor=cyan
+	h3 to h4:
+		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
+	h4 to h5:
+		- 85 15, angles=90 0, color=lime, pcolor=lime
+	h5 to h1:
+		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
+	h1 to h2:
+		- 0 0, angles=-30 30, color=#F9B7FF, pcolor=#F9B7FF
+	h2 to h3:
+		- 0 0, angles=0 120, color=#F9B7FF, pcolor=#F9B7FF
+	h3 to h4:
+		- 0 0, angles=30 210, color=#F9B7FF, pcolor=#F9B7FF
+	h4 to h5:
+		- 0 0, angles=150 -30, color=#F9B7FF, pcolor=#F9B7FF
+		done
+
 	</div>
 		
 	<div class="comic" id="hdfs">
@@ -743,9 +640,8 @@ done
 	</div>
 	
 
-	<button id="svg_save">Open as SVG file in new window</button>
-	<br>
+	<p id="downloadify"></p>
 	<input type="text" name="coord" value="" id="coord">
-	
+
 </body>
 </html>
