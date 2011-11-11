@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.0"
+   width="320"
+   height="320"
+   id="svg2">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3134">
+      <stop
+         style="stop-color:#ffeb00;stop-opacity:1"
+         offset="0"
+         id="stop3136" />
+      <stop
+         style="stop-color:#ff8d00;stop-opacity:1"
+         offset="1"
+         id="stop3138" />
+    </linearGradient>
+    <radialGradient
+       cx="126.73664"
+       cy="143.15707"
+       r="144.24496"
+       fx="126.73664"
+       fy="143.15707"
+       id="radialGradient3140"
+       xlink:href="#linearGradient3134"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       cx="126.73664"
+       cy="143.15707"
+       r="144.24496"
+       fx="126.73664"
+       fy="143.15707"
+       id="radialGradient6087"
+       xlink:href="#linearGradient3134"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1">
+    <!--path
+       d="M 304.96645 157.85236 A 141.74496 141.74496 0 1 1  21.476517,157.85236 A 141.74496 141.74496 0 1 1  304.96645 157.85236 z"
+       transform="matrix(1.0595557,0,0,1.0595557,-12.942251,-7.2533635)"
+       style="fill:url(#radialGradient6087);fill-opacity:1;stroke:#b26200;stroke-width:5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path2160" /-->
+    <path
+       d="M 51.128371,193.42489 C 100.82287,249.66998 156.98654,263.59252 224.84477,201.00659"
+       style="fill:none;fill-rule:evenodd;stroke:#5f2700;stroke-width:13.46479416;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4135" />
+    <g
+       transform="translate(5.9060403,-62.281879)"
+       id="g14347">
+      <g
+         transform="matrix(1.1939325,0,0,1.0852194,218.49735,65.958434)"
+         id="g14313">
+        <path
+           d="M -77.315437 144.69798 A 34.89933 35.167786 0 1 1  -147.1141,144.69798 A 34.89933 35.167786 0 1 1  -77.315437 144.69798 z"
+           transform="matrix(0.913546,0,0,0.7204329,-13.712497,26.334314)"
+           style="opacity:0.99173554;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:13.46500015;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="path14309" />
+        <rect
+           width="64.327339"
+           height="32.936031"
+           x="-148.38951"
+           y="97.285271"
+           style="opacity:0.99173554;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.42365456;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect14311" />
+      </g>
+      <g
+         transform="matrix(1.1939325,0,0,1.0852194,313.5309,65.958434)"
+         id="g14317">
+        <path
+           d="M -77.315437 144.69798 A 34.89933 35.167786 0 1 1  -147.1141,144.69798 A 34.89933 35.167786 0 1 1  -77.315437 144.69798 z"
+           transform="matrix(0.913546,0,0,0.7204329,-13.712497,26.334314)"
+           style="opacity:0.99173554;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:13.46500015;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="path14319" />
+        <rect
+           width="64.327339"
+           height="32.936031"
+           x="-148.38951"
+           y="97.285271"
+           style="opacity:0.99173554;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:10.42365456;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect14321" />
+      </g>
+    </g>
+  </g>
+</svg>
