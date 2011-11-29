@@ -296,7 +296,8 @@ function getZone(x1, y1, x2, y2) {
 	if (a <= 45) return 0;
 	if (a <=135) return 90;
 	if (a <= 225) return 180;
-	return 270;
+	if (a <= 315) return 270;
+	return 0;
 }
 
 function handle_say(cs, pconf, pw, ph, ev, index) {
@@ -307,6 +308,7 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 		tailwidth = op.twidth === undefined ? 5 : parseInt(op.twidth),
 		tailangle = (op.tangle === undefined) ? 0 : parseInt(op.tangle),
 		tailcurvy = op.tcurvy === undefined ? 20 : parseInt(op.tcurvy),
+		xshift = op.xshift === undefined ? 50 : parseInt(op.xshift),
 		merge = !!op.merge,
 		type = op.type || ((ev.at || merge) ? 'balloon' : 'cloud');
 	
@@ -345,7 +347,8 @@ function handle_say(cs, pconf, pw, ph, ev, index) {
 				
 			}
 		} else {
-			from = {x: txbb.x + txbb.width/2, y: txbb.y + txbb.height/2};
+			from = {x: txbb.x + txbb.width * xshift / 100, 
+					y: txbb.y + txbb.height/2};
 			bb = pconf.objects[ev.at].getBBox();
 			angle = getZone(bb.x + bb.width/2, bb.y + bb.height/2, from.x, from.y);
 			if (op.angle !== undefined) angle = parseInt(op.angle);
@@ -470,7 +473,9 @@ function handle_send(cs, pconf, pw, ph, ev) {
 		arrow_color = op.acolor || 'blue',
 		arrow_head = op.ahead !== 'false',
 		message_color = op.color || 'white',
-		packet_color = op.pcolor || 'green';
+		packet_color = op.pcolor || 'green',
+		packet_location = op.plocate === undefined ? 50 : parseInt(op.plocate),
+		packet_width = op.pwidth === undefined ? 10 : parseInt(op.pwidth);
 		
 	
 	// if this is a packet drop event
@@ -523,11 +528,13 @@ function handle_send(cs, pconf, pw, ph, ev) {
 			'stroke-dasharray': arrow_style});
 	}
 	
-	// Draw the green packet
+	// Draw the packet
 	if (op.packet !== 'false') {
 		len = Raphael.getTotalLength(pathstr);
-		mid = Raphael.getPointAtLength(pathstr, len / 2);
-		cs.path(Raphael.getSubpath(pathstr, len*0.4, len*0.6))
+		mid = Raphael.getPointAtLength(pathstr, len * packet_location/100);
+		cs.path(Raphael.getSubpath(pathstr, 
+				(packet_location - packet_width/2) /100 * len, 
+				(packet_location + packet_width/2)/100 * len))
 			.attr({'stroke-width': 10, 'stroke': packet_color})
 	}
 	
@@ -553,7 +560,7 @@ function handle_send(cs, pconf, pw, ph, ev) {
 		if (ev.options && ev.options.angles && ev.options.angles.length >= 3)
 			srcangle = parseInt(ev.options.angles[2]);
 
-		var from = endPoint(bb, srcangle, 5);
+		var from = endPoint(bb, srcangle);
 		var line = ['M', from.x, ' ', from.y, 'L', mid.x, ' ', mid.y].join();
 		cs.path(line);
 		
@@ -637,9 +644,33 @@ function drawComics(conf) {
 		
 		pconf.width = pw;
 		pconf.height = ph;
-		
-		// Draw title
-		if (pconf.msg) {
+
+		// Draw grid
+		if (op.grid === 'true') {
+			for (j = 10; j < 100; j+=20) {
+				cs.path(['M', pconf.x + pw*j/100, pconf.y, 
+						'V', pconf.y + ph].join(','))
+				.attr({'stroke-width': 0.5, 
+							'stroke': 'green'});
+							
+				cs.path(['M', pconf.x + pw*(j+10)/100, pconf.y, 
+						'V', pconf.y + ph].join(','))
+				.attr({'stroke-width': 0.5, 'stroke': 'pink'});
+				
+				cs.path(['M', pconf.x, pconf.y + ph*j/100, 
+					'H', pconf.x + pw].join(','))
+				.attr({'stroke-width': 0.5, 
+						'stroke': 'green'});
+				
+				cs.path(['M', pconf.x, pconf.y + ph*(j+10)/100, 
+					'H', pconf.x + pw].join(','))
+				.attr({'stroke-width': 0.5, 'stroke': 'pink'});
+				
+			}
+		}
+
+		// Draw title		
+		if (pconf.msg) {		
 			var tx = cs.text(0, 0, pconf.msg.toUpperCase())
 				.attr({'font-weight': 'bold', 
 						x: pconf.x +  4,
@@ -756,7 +787,7 @@ function drawComics(conf) {
 
 function drawInput(canvas, width, height, input, design) {
 	var conf = ParseText(input);
-
+//console.log(JSON.stringify(conf, null, 4));
 	conf.canvas = canvas;
 	conf.width = width;
 	conf.height = height;
@@ -767,6 +798,17 @@ function drawInput(canvas, width, height, input, design) {
 	conf.design = design;
 
 	drawComics(conf);
+	
+	var defines = [];
+	for (var name in conf.objects) {
+		var o = conf.objects[name];
+		defines.push(['define', name, 
+						o.type[0], 
+						o.type[1], o.type[2],
+						o.x, o.y,
+						o.hidden ? "hidden" : ""].join(' '));
+	}
+	console.log(defines.join("\n"));
 }
 
 
