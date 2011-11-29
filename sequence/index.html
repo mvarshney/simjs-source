@@ -2,6 +2,7 @@
 	"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+	<!--meta http-equiv="refresh" content="300"-->
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Sequence</title>
 	<script src="lib/jquery-1.6.2.min.js" type="text/javascript" charset="utf-8"></script>
@@ -18,7 +19,7 @@
 	$(function () {
 
 		var width = 670,
-				height = 920,
+				height = 740,
 				canvas = Raphael('page', width, height);
 				
 		$('.comic').hide();
@@ -39,14 +40,8 @@
 					var content = $('#page').html();
 					content = content.replace(/href/g, 'xlink:href');
 					content = content.replace(/<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
-//					var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
-	//				var newWindow=window.open(uriContent, 'saved.sv');
-	return content;
-
+					return content;
 			},
-//			onComplete: function(){ alert('Your File Has Been Saved!'); },
-//			onCancel: function(){ alert('You have cancelled the saving of this file.'); },
-//			onError: function(){ alert('You must put something in the File Contents or there will be nothing to save!'); },
 			transparent: false,
 			swf: 'lib/downloadify.swf',
 			downloadImage: 'images/download.png',
@@ -55,17 +50,9 @@
 			transparent: true,
 			append: false
 		});
-		
-	/*	$('#svg_save').click(function () {
-			var content = $('#page').html();
-			content = content.replace(/href/g, 'xlink:href');
-			content = content.replace(/<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
-			var uriContent = "data:image/svg+xml," + encodeURIComponent(content);
-			var newWindow=window.open(uriContent, 'saved.sv');
-		});*/
-		
+				
 
-		drawInput(canvas, width, height, $('#leader-ring-sync-2').html(), $('#coord'))
+		drawInput(canvas, width, height, $('#hdfs').html(), $('#coord'))
 		
 	});
 
@@ -80,384 +67,355 @@
 		
 	</div>
 	
-	<div id="leader-ring-sync-2" class="comic">
-		define t images/stickman/sm_010_T.png 37 47 10 80 hidden
-		define h1 circle Orange smile 15 40
-		define h2 circle cyan smile 15 80
-		define h3 circle Yellow smile 55 90
-		define h4 circle lime smile 85 60
-		define h5 circle #F9B7FF smile 55 25
-
-		record ring_topology
-		h1 to h2:
-				- 0 0, curvy=1, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h2 to h3:
-			- 0 0, curvy=1, angles=-30 180, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h3 to h4:
-			- 0 0, curvy=1, angles=0 -90, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h4 to h5:
-			- 0 0, curvy=1, angles=90 0, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h5 to h1:
-			- 0 0, curvy=1, angles=180 20, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		done
-
-		record ring_ids
-		: 7
-			- 7 40, type=rect
-		: 5
-			- 7 80, type=rect
-		: 1
-			- 50 80, type=rect
-		: 4
-			- 93 60, type=rect
-		: 2
-			- 65 20, type=rect
-
-		done
-
-		panel Hirshberg-Sinclair Algorithm
-		- type=banner, color=#ccf
-		
-		rules
-		sending rule
-		
-		1 send messages is both directions
-		2 indicate how far the message should go
-		3 when it has reached the max distance, the message must turn around and come back
-		4 when the reversed are reached from both ends, double the distance and try again
-		5 short circuit rule: when my id is greater than message; immediately return back and 
-				say stop; the sender will not send any further		
-		6 node that receives its forward direction message, is the leader
-		
-
-			
+	<div id="hdfs" class="comic">
+		define c laptop #fcf smile 15 75 hidden
+		define n server yellow smile 90 30 hidden
+		define d1 rack orange smile 40 90 hidden
+		define d2 rack cyan smile 60 80 hidden
+		define d3 rack lime smile 80 90 hidden
+		define u images/stickman/sm_010_T.png 37 47 10 85 hidden
+	
+	panel
+	
 	</div>
 	
-	<div id="leader-ring-sync-1" class="comic">
-		define t images/stickman/sm_010_T.png 37 47 10 80 hidden
-		define h1 circle Orange smile 15 40
-		define h2 circle cyan smile 15 80
-		define h3 circle Yellow smile 55 90
-		define h4 circle lime smile 85 60
-		define h5 circle #F9B7FF smile 55 25
+	<div id="hdfs-4" class="comic">
+		define c laptop #fcf smile 15 75 hidden
+		define n server yellow smile 90 30 hidden
+		define d1 rack orange smile 40 90 hidden
+		define d2 rack cyan smile 60 80 hidden
+		define d3 rack lime smile 80 90 hidden
+		define u images/stickman/sm_010_T.png 37 47 10 85 hidden
 		
-		record ring_topology
-		h1 to h2:
-				- 0 0, curvy=1, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h2 to h3:
-			- 0 0, curvy=1, angles=-30 180, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h3 to h4:
-			- 0 0, curvy=1, angles=0 -90, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h4 to h5:
-			- 0 0, curvy=1, angles=90 0, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		h5 to h1:
-			- 0 0, curvy=1, angles=180 20, packet=false, acolor=black, astyle=., awidth=1, ahead=false
-		done
-		
-		record ring_ids
-		: 7
-			- 7 40, type=rect
-		: 5
-			- 7 80, type=rect
-		: 1
-			- 50 80, type=rect
-		: 4
-			- 93 60, type=rect
-		: 2
-			- 65 20, type=rect
+panel Fault tolerance in HDFS. Part II: Recovery
+	- type=banner, color=#fcf
 
-		done
-	
+panel Recovery from three failure types
+	: We will see how HDFS handles:
+	- 50 20, type=none
+	show c, d1, d2, d3
+	move c 20 40, d1 80 40, d2 80 60, d3 80 90
+	mood d3 dead, d1 sad, d2 sad
+	c to d1: When data cannot\nbe written
+	- 25 37
+	d1 to : 
+	move c 45 60
+	d2 to c: When data cannot\nbe read
+	- 25 58
+	c to :
+	hide c
+	d3: When a namenode\n is dead
+	- 40 85, type=rect
 
-	panel LeLann, Chang-Roberts Algorithm
-		- type=banner, color=#ccf
+	color d3 lightgray 
+	
+panel Recovery #1: Write Failures
+	show c, d1, d2, d3
+	move c 15 75 permanent, d1 40 90 permanent, d2 60 80 permanent, d3 80 90  permanent
+	c to d1:
+	- 0 0, angles=90 120, curvy=40
+	c to d1:
+	- 0 0, angles=90 120, curvy=40, plocate=35
+	c to d1:
+	- 0 0, angles=90 120, curvy=40, plocate=65
+	c to d1:
+	- 0 0, angles=90 120, curvy=40, plocate=80
+	d1 to d2: 
+	- 0 0, angles = 90 120, curvy=40
+	d1 to d2: 
+	- 0 0, angles = 90 120, curvy=40, plocate=35
+	d1 to d2: 
+	- 0 0, angles = 90 120, curvy=40, plocate=65
+	d1 to d2: 
+	- 0 0, angles = 90 120, curvy=40, plocate=80
+	d2 to d3:
+	- 0 0, angles = 90 90, curvy=40
+	d2 to d3:
+	- 0 0, angles = 90 90, curvy=40, plocate=35
+	d2 to d3:
+	- 0 0, angles = 90 90, curvy=40, plocate=65
+	d2 to d3: Packet
+	- 90 59, angles = 90 90, curvy=40, plocate=80
+	c: One thing I should have said earlier..\nI write the block in smaller data\n units (usually 64KB) called "packets"
+	- 50 31, xshift=0
+	: Remember replication pipleline?
+	- 50 95, type=none
+
+panel
+show c, d1, d2, d3
+	d1 to c: ACK
+	- 85 51, acolor=green, astyle=-, angles=90 45, curvy=20, plocate=30, pwidth=14
+	d2 to c: ACK
+	- 85 51, acolor=green, astyle=-, angles=90 90, curvy=30, plocate=40
+	d3 to c: ACK
+	- 85 51, acolor=green, astyle=-, angles=90 120, curvy=55, plocate=20
+	- pwidth=6
+	c: Moreover, each datanode replies\nback an ACK for each packet to\nconfirm that they got it
+	- 51 20, angle=0
 
 
-	panel
-		- width=20
-	show t
-	move t 90 85
-	rmove h5 0 -10
-	replay ring_topology
-	replay ring_ids
-	#h1, h2, h3, h4, h5: We are ready
-	t: Everybody: send your ID\nto your right neighbor
-		- 50 50
-			
+panel
+	show c, d1, d2, d3
+	mood d2 spent
+	d1 to c:
+	- 0 0, packet=false, acolor=green, astyle=-, angles=90 45, curvy=20
+	d2 to :
 	
-	panel
-		- width=20
-	rmove h5 0 -10, h1 -5 0, h2 -5 0
-	h1 to h2: ID=7
-			- 24 58, color=Orange, pcolor=orange
-	h2 to h3: ID=5
-		- 18 95, angles=-30 180, color=cyan, pcolor=cyan
-	h3 to h4: ID=1
-		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
-	h4 to h5: ID=4
-		- 85 15, angles=90 0, color=lime, pcolor=lime
-	h5 to h1: ID=2
-		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
-	#h1, h2, h3, h4, h5: Done.\nBut what do we\ndo with them now?
-	#	- 55 46
+	c: So, if I don't get ACKs from some\ndatanode, I know it is dead.\nI adjust the pipeline to skip him
+	- 49 23
 	
 	
-	
-	panel
-		- width=-40, clear=true
-	show t
-	t: Those of you who\nhave HIGHER ID\nthan what you received --
-		- 56 22
-	: drop that message
-		- 49 49, merge=true
-	show h4, h3
-	mood h4 silent
-	rmove h4 0 5
-	h3 to h4: ID=1
-		- 57 77, angles=0 -90, color=yellow, pcolor=yellow
-	hide h3
-	h4 to :
-	: 4
-		- 96 63, type=rect
-	
-	panel
-	replay ring_ids
-	mood h1 rolleyes, h2 medium, h3 medium, h4 rolleyes, h5 medium
-	h3 to h4: ID=1
-		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
-	h4 to :
-	h5 to h1: ID=2
-		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
-	h1 to :
-	h1, h4: He means us..
-			- 52 48
-	
-	panel
-		- width=-20, clear=true
-	show t
-	t: Those of you who\nhave LOWER ID\nthan what you received --
-		- 56 22
-	: forward that message
-		- 49 49, merge=true
-	show h2, h3, h4
-	hide h2, h4
-	mood h3 thumbsup
-	h2 to h3: ID=5
-		- 33 76, angles=-30 180, color=cyan, pcolor=cyan
-	h3 to h4: ID=5
-		- 90 91, angles=0 -90, color=cyan, pcolor=cyan
-	: 1
-	 - 54 75, type=rect
-		
-
-	panel 
-		- width=20
-	replay ring_ids
-	h2 to h3: ID=7
-		- 18 95, angles=-30 180, color=orange, pcolor=orange
-	h3 to h4: ID=5
-		- 90 91, angles=0 -90, color=cyan, pcolor=cyan
-	h5 to h1: ID=4
-		- 26 20, angles=180 20, color=lime, pcolor=lime
-	h2, h3, h5: That's us
-		- 49 55
-	mood h1 medium, h2 rolleyes, h3 rolleyes, h4 medium, h5 rolleyes
-	
-	panel
-		- width=-40, clear=true
-	show t
-	t: And keep on with it..
-		
-	panel Who drops in next round?
-		- width=20
-	replay ring_ids
-	h5 to h1: ID=4
-		- 26 20, angles=180 20, color=lime, pcolor=lime
-	h1 to :
-	h5: I forwarded 4's\nmessage previously..
-		- 54 56
-	h1: .. which I dropped now
-		- 47 86
-
-	panel .. And who forwards?
-		- width=20	
-	replay ring_ids
-	h3 to h4: ID=7
-		- 90 91, angles=0 -90, color=orange, pcolor=orange
-	h4 to h5: ID=5
-		- 85 15, angles=90 0, color=cyan, pcolor=cyan
-	h3, h4: We do!
-	
-	panel After another round
-	h4 to h5: ID=7
-		- 85 15, angles=90 0, color=orange, pcolor=orange
-	h5 to h1: ID=5
-		- 26 20, angles=180 20, color=cyan, pcolor=cyan	
-	h1 to :
-	
-	panel .. and another round
-
-	h5 to h1: ID=7
-		- 26 20, angles=180 20, color=orange, pcolor=orange	
-	h1: I received my message!\nWhat does that mean?
-		- 49 60
-	
-	panel
-		- clear = true
-	show t
-	t: If you receive your own message
-		- 50 19
-	: you are the LEADER!!
-		- 71 40, merge=true
-	show h1
-	move h1 80 80
-	mood h1 cool
-	h1: WOOHOO!
-		- 45 74
-
-	record removed
-	panel Lets try this one..
-		- width=20
-	: 1
-		- 7 40, type=rect
-	: 2
-		- 7 80, type=rect
-	: 3
-		- 50 80, type=rect
-	: 4
-		- 93 60, type=rect
-	: 5
-		- 65 20, type=rect
-	h1 to h2:
-			- 24 58, color=Orange, pcolor=orange
-	h2 to h3:
-		- 18 95, angles=-30 180, color=cyan, pcolor=cyan
-	h3 to h4:
-		- 90 91, angles=0 -90, color=yellow, pcolor=yellow
-	h4 to h5:
-		- 85 15, angles=90 0, color=lime, pcolor=lime
-	h5 to h1:
-		- 26 12, angles=180 20, color=#F9B7FF, pcolor=#F9B7FF
-	h1 to h2:
-		- 0 0, angles=-30 30, color=#F9B7FF, pcolor=#F9B7FF
-	h2 to h3:
-		- 0 0, angles=0 120, color=#F9B7FF, pcolor=#F9B7FF
-	h3 to h4:
-		- 0 0, angles=30 210, color=#F9B7FF, pcolor=#F9B7FF
-	h4 to h5:
-		- 0 0, angles=150 -30, color=#F9B7FF, pcolor=#F9B7FF
-		done
-
-	</div>
-		
-	<div class="comic" id="hdfs">
-		define c images/computer2.jpg 34 33 100 10 80
-		define n images/blade.png 45 20 100 80 40
-		define d1 images/blade.png 45 20 100 40 90
-		define d2 images/blade.png 45 20 100 60 80
-		define d3 images/blade.png 45 20 100 80 90
-		define u images/BluePerson.gif 30 30 100 20 70 hidden
-		
-		panel
-			- clear = true, width=120, color=#faa
-		: Hadoop\nDistributed\nFile\nSystem\n(HDFS)
-			- 50 50, type = none
-		
-		panel
-			- clear=true, width=60, color=#cfc
-			: The\nCast
-				- 50 50, type=none
-		
-		panel
-			- width = 220
-		n: I am NAMENODE.\nI coordinate everything
-			- 71 13
-		c: I am CLIENT.\nI read/write data
-			- 23 30
-		d1, d2, d3: We are DATANODES.\nWe store data
-			- 60 60
-		
-		panel
-			n: There is only\nONE of me
-				- 64 13
-			c: People sit in\nfront of me\n(there can be any\nnumber of me)
-				- 22 30
-			d1, d2, d3: There are MANY of us.\nSometimes even thousands!
-				- 60 60
-			
-		panel Writing Data in HDFS Cluster
-			- type=banner, color=#cfc
-		
-		panel Request from User
-		show u
-		hide d1 permanent, d2 permanent, d3 permanent, n permanent
-		move c 70 88
-		u: Please write 200 MB\ndata for me
-			- 35 30
-		c: Okay. I will see what\nI can do for you. But--
-			- 71 55
-		
-		panel Block and Replication
-		show u
-		move c 20 78, u 70 88
-		c: --are you not\nforgetting\nsomething?
-			- 22 35
-		u: Ah yes.. please:\na) divide the data\nin 128MB blocks\nb) copy each block\nin three places
-			- 73 45
-		
-		panel
-		show u
-		move c 20 78, u 70 88
-		c: A good client always knows\nthese two things: 
-			- 56 18
-		: BLOCKSIZE: large file is divided\nin blocks (usually 64 or 128MB)
-			- 54 48, type=rect, color=#fc9
-		: REPLICATION FACTOR:\nnumber of places each\nblock must be replicated\n(usually 3)
-			- 64 81, type=rect, color=#fc9
-		
-		panel Divide file into blocks
-		show n
-		move n 41 40
-		hide n
-		: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx
-			- 25 40, type=rect, color=#fcc
-		n: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxx
-			- 79, 45, type=rect, color=#fcc, twidth=1
-		n: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxx
-			- 79, 80, type=rect, color=#fcc, twidth=1
-		
-		panel Ask Namnode
-		show n
-		c: I will work on\nthe first block\nfirst
-			- 25 40
-		c to n: Please help me write\n128MB block with\nreplication 3
-			- 71 79
-		
-		panel
-			show n
-			n: Need to find 3 datanodes\nfor this guy
-				- 37 13
-			: How do I do that?\nWill tell you some\nother time
-				- 37 44, type=balloon, style=-
-			n to c: Here are the addresses\n of three datanodes
-				- 70 88
-		
-		panel Client starts writing data
-				show d1 permanent, d2 permanent, d3 permanent
-				c: I send my data to\nfirst datanode only
-					- 50 32, angle=45
-				c to d1:
-					- 0 0, angles=90 90, curvy=40
-		
-		panel
-		d1: While I am recieving\ndata, I forward the same\ndata to the next datanode
-			- 50 22
+panel
+		show c, d1, d2, d3
+		mood d2 spent
 		c to d1:
-			- 0 0, angles=90 120, curvy=40
-		d1 to d2: 
-			- 0 0, angles = 90 120, curvy=40
-			
-		panel
+		- 0 0, angles=90 120, curvy=40		
+		d1 to d3: 
+		- 0 0, angles = 90 120, curvy=60
+		c: Here's the adjusted pipeline.\nNote that the block will be\n"under replicated", but the namenode\nwill take care of that later on
+		- 50 25, xshift=0
+
+panel Recovery #2: Read failures
+	show c, n
+	rmove c 0 10
+	c: Remember, when I asked for\nlocation of a block, the\nnamenode gave me\n locations of all datanodes
+	- 38 35
+	n to c: DN 1, DN 2, DN 3
+	- 74 89, angles=-90 0 90
+
+panel 
+	show c, d1, d2
+	move d1 65 63, d2 85 90
+	mood d1 dead
+	color d1 lightgray
+	
+	c to d1: Got Data? No?
+	- 49 43, astyle=-, acolor=red, pcolor=red
+	c to d2: Got Data?
+	- 63 76, angles=-30 180, plocate=30
+	c: If one datanode is dead,\nI read from the others in the list
+	- 46 19, angle=90, xshift=30
+
+panel recovery #2: datanode failure
+	show n
+	n: First-- I must tell you\nthat I keep two tables..
+	- 30 29
+	
+	: List of Blocks\nBlock 1 - stored at DN1, DN2, DN3\nBlock 2 - stored at DN1, DN4, DN5
+	- 47 57, type=rect, color=#fcf
+	: List of Datanodes\nDatanode 1 - has block 1, 2, ..\nDatanode 2 - has block 1, 5, ..
+	- 46 85, type=rect, color=#fcf
+
+panel Under Replicated Blocks
+	show n
+	n: I scan the first list (list\nof blocks) periodically, and see if\nthere are blocks that\nare not replicated properly
+	- 40 38
+	: And if I find some, I ask\nother datanodes to copy it
+	- 61 74, merge=true
+
+panel
+	show n, d1, d2
+	move d2 80 80, d1 20 80
+	n to d2: Could you copy the\nblock from that datanode
+	- 35 19, plocate=20
+	d2 to d1: Hey, I need to\ncopy a block from you 
+	- 31 44, angles=180 90 -90, plocate=20
+	d1 to d2: Here you go..
+	- 80 93, angles=-90 225, pwidth=30
+
+panel
+	show n
+	move n 10 90
+	mood n rolleyes
+	: And when I find a datanode has died..
+	- 50 14, type=balloon
+	n: I find the blocks stored there\n(from the second list), and\ntreat them as "under replicated"
+	- 50 44, merge=true, xshift=10
+	: Now I ask other datanodes to\ncopy those blocks (same\nas what I did earlier)
+	- 57 78, merge=true
+		
+panel
+	- color=#fcc
+	show u
+	u: Umm.. one more question: All of\nthis works if there is atleast one valid\ncopy of the block somewhere.. right?
+	- 50 23, xshift=20
+	
+	: That's correct. HDFS cannot\nguarantee that atleast one\nreplica will always survive.\nBut it tries it best by smartly\nselecting replica locations,\nas we will see next --
+	- 59 72, type=rect, color=#cfc
+		
+	</div>
+	
+	<div id="hdfs-3" class="comic">
+		define c laptop #fcf smile 15 75 hidden
+		define n server yellow smile 90 30 hidden
+		define d1 rack orange smile 40 90 hidden
+		define d2 rack cyan smile 60 80 hidden
+		define d3 rack lime smile 80 90 hidden
+		define u images/stickman/sm_010_T.png 37 47 10 85 hidden
+		
+panel Fault tolerance in HDFS. Part I: Types of faults and their detection
+		- type=banner, color=#fcf
+		
+
+panel Fault I: Node Failure
+	show u, d1
+	rmove d1 30 0, u 10 0
+	color d1 lightgray
+	mood d1 dead
+	u: There are typically three kinds of faults:\nThe first is NODE FAILURE
+	- 48 31
+	d1: Goodbye,\ncruel world
+	- 70 58, style=.
+	
+	
+
+panel Fault II: Communication Failure
+	show u, d1, d2
+	rmove d2 30 0
+	mood d1 what
+	u: Second is COMMUNICATION FAILURE\n(cannot send and receive data)
+	- 50 30
+	d1 to d2:
+	- 0 0, angles=0 -90
+	d2 to :
+	d1: where IS everybody?
+	- 70 64, style=-
+	hide d2
+
+
+panel Fault III: Data Corruption
+	show u
+	rmove u -10 -40
+	: Third is DATA CORRUPTION
+	- 51 20, type=none
+	hide u
+	show d1, d2
+	mood d1 sad, d2 sad
+	move d1 20 60, d2 80 60
+	d1 to d2: Data can be corrupted while\nsending over network
+	- 50 38, pwidth=20, pcolor=red
+	rmove d2 15 10
+	d2: Data on Disk
+	- 79 68, type=rect, color=red
+	: Or corrupted while it is\nstored in hard disks
+	- 30 83, type=rect
+	
+panel Detection #1: Node Failures
+	show n, d1
+	mood n dead, d1 dead
+	color n lightgray, d1 lightgray
+	rmove n -10 10, d1 -20 0
+	
+	: NOTE:\nIf Namenode is dead,\nthe entire cluster is dead!\nNamenode is the SINGLE\nPOINT OF FAILURE
+	- 33 36, type=none
+
+	: Instead, let's focus on\nhow datanode failures\nare detected
+	- 63 81, type=none
+	
+panel Detecting Datanode Failure
+	show n, d1, d2, d3
+	move d1 20 90, d2 50 90, d3 80 90
+	d1 to n: 
+	- 0 0, angles=60 200, acolor=green, astyle=-, plocate=10, pwidth=6
+	d2 to n:
+	- 0 0, acolor=green, angles=60 245, astyle=-
+	d3 to n:
+	- 0 0, angles=60 -60, acolor=green, astyle=-
+	d1, d2, d3: We send HEARTBEAT\nmessage every 3 seconds.\nThis is our way of\n saying we are alive
+	- 34 36, angle=90
+
+panel
+	show n, d1
+	mood d1 dead, n puppyeyes
+	color d1 lightgray
+	move d1 85 90
+	
+	n: If I don't get a message\nin 10 minutes, the\ndatanode is dead to me
+	- 34 23
+	d1: (I may be ALIVE and\nthere was only a\nnetwork failure, but\nthe namenode treats\nboth as same)
+	- 28 72, style=-
+	
+panel Detection #2: Network Failures
+	show c, d1
+	move c 10 50, d1 85 50
+	c to d1: Data
+	- 30 40, angles=30 150
+	d1 to c: ACK
+	- 51 46, angles=210 -30, astyle=-, pcolor=blue
+	: Whenever data is sent,\nan ACK is replied by the reciever
+	- 50 20, type=none
+	: If the ACK is not received (after several\nretries), the sender assumes that the host\nis dead, or the network has failed
+	- 50 83, type=none
+
+panel Detection #3: Corrupted Data
+	show c, d1
+	move c 10 50, d1 85 50
+	: Checksum is sent along with\ntransmitted data
+	- 50 20, type=none
+	
+	c to d1: Checksum
+	- 27 33, plocate=30, pcolor=blue, astyle=.
+	c to d1: Data
+	- 58 33, pwidth=30, astyle=.
+
+	d1: Data\nXXXXXXXX\nXXXXXXXX
+	- 82 72, type=rect, color=green, angle=-60
+	: _Checksum_
+	- 82 91, type=rect, color=#ccf 
+	
+	d1: Moreover, when I store\ndata in hard disks,\nI also store the checksum
+	- 32 81, angle=-90
+
+
+panel Detecting Corrupted Hard drives
+	show n, d3
+	rmove n 0 10, d3 -50 0
+
+	d3: Periodically, all datanodes\nsend BLOCKREPORT to\nthe namenode
+	- 35 33
+	d3 to n: List of all\nblocks I have
+	- 84 77
+
+panel
+	- width=40
+	show n, d3
+	rmove d3 -50 0
+	d3: Before sending block report\nI check if checksums are ok.\nI don't send info for\nblocks that are corrupted
+	- 30 25, xshift=10
+	d3 to n: I have\nfour blocks
+	- 36 59
+	n: I thought he had five\nblocks.. so one\nblock is corrupted
+	- 76 78
+	mood n medium
+
+panel Recap: Heartbeat messages and block reports
+	- width=180
+	show n, d1, d2
+	move n 60 30, d1 10 90, d2 50 90
+
+	d1: We send heartbeats every\n3 seconds to say we are alive
+	- 21 34
+	d1 to n: HEARTBEAT
+	- 33 58, plocate=25
+	d2 to n: BLOCK\nREPORT
+	- 35 79
+	: We send block reports\nand we skip blocks\nthat are corrupted
+	- 82 36, type=balloon
+	d2: (which is how the\nnamenode will know\nwhich blocks are lost)
+	- 85 71, merge=true
+
+	</div>
+	
+	<div id="hdfs-2" class="comic">
+		define c laptop #fcf smile 15 75 
+		define n server yellow smile 80 40 hidden
+		define d1 rack orange smile 40 90 
+		define d2 rack cyan smile 60 80 
+		define d3 rack lime smile 80 90 
+		define u images/stickman/sm_010_T.png 37 47 10 85 hidden
+		
+
+panel
 		c to d1:
 			- 0 0, angles=90 120, curvy=40
 		d1 to d2: 
@@ -466,179 +424,248 @@
 			- 0 0, angles = 90 90, curvy=40
 		d2: I do the same\nwhat previous guy did
 			- 30 18
-		d3: I am the last\nin chain
-			- 80 30
-		
-		panel TA..DA.. Replication Pipeline
+		d3: I am the last\nin chain..
+			- 80 30, angle=45
+
+panel TA..DA.. Replication Pipeline
+		rmove c 0 -20, d1 0 -20, d2 0 -20, d3 0 -20
 		c to d1:
 			- 0 0, angles=90 120, curvy=40
 		d1 to d2: 
 			- 0 0, angles = 90 120, curvy=40
 		d2 to d3:
 			- 0 0, angles = 90 90, curvy=40
-		
-		panel
+		: Very Important Concept!
+		- 50 88, type=rect
+
+panel Inform Namenode when done
 		hide c
 		show n permanent
-		: Once all data (for\nthis block) is\nwritten to hard disk
-			- 36 24
+		: Once all data (for\nthis block) is\nwritten to hard disk\nsend DONE to namenode
+			- 28 28, type=none
 		d1 to n: Done
 			- 24 60, angles=90 180 0
-		d2 to n: Me too
+		d2 to n: Done
 			- 32 72, angles=90 225 0
-		d3 to n: Me too
+		d3 to n: Done
 			- 90 74, angles=90 -90 90
-		
-		panel
-		hide d1, d2, d3
+
+panel
+		hide d1 permanent, d2 permanent, d3 permanent
 		n: Block successfully stored\nand replicated in HDFS
 			- 30 19, angle=180
 		c: And I repeat the same\nsteps with remaining blocks
-			- 59 63, angle=0
-			
-	</div>
+			- 61 79, angle=0
+
+panel When all blocks are written..
+		c to n: All blocks written,\nplease close file
+		- 30 28
+		n: And NOW I store all\ninformation in my\npersistent storage
+		- 59 80
+
+panel Recap
+		show d1, d2, d3
+		move d1 85 70, d2 85 80, d3 85 90
+		rmove n 10 0
+		c: I divided the file in blocks--
+		- 38 23, xshift=20
+		n: --for each block,\nI provided address\nof datanodes--
+		- 47 50
+		d1: --we stored data via\nReplication Pipeline
+		- 45 84
+
+panel Reading Data in HDFS Cluster
+		- type=banner, color=#fcf
+
+panel Request from user
+		show u
+		hide n
+		rmove c 70 5
+		
+		: Writing file in HDFS -- check.\nWhat about reading them?\nLet's ask the client again..
+		- 39 31, type=balloon
+		u: Mr. Client, please read\nthis file for me..
+		- 50 57, merge=true
+		c: Roger...
+		- 47 86
+		
+panel Contact namenode first..
+		rmove n 10 -10 permanent
+		c: Please give me info\non this file
+		- 25 26, xshift=20
+		c to n: Filename
+		- 63 37, angles=90 180
+		n: Here is a list of\nblocks for this file
+		- 70 84, xshift=80
+		n to c: block 1, 2, ...
+		- 38 55, angles=-90 0
+
+panel For each block...
+		#c: Lets start with\nthe first block
+		#- 21 24
+		c to n: Please tell me where\nthe block is located
+		- 27 23, angles=90 180 -90
+		n: list of datanodes sorted\nby their distance from you
+		- 64 83, xshift=80
+		n to c: DN 1, DN 2, DN3
+		- 60 49, angles=-90 0
+
+
+panel Download data
+		hide n
+		show d1
+		move d1 80 75
+		c: Now I download data from the nearest\ndatanode (the first in list)
+		- 50 26, angle=90, xshift=30
+		c to d1: Please give me block n
+		- 72 45, angles=30 150 -90
+		d1 to c: DATA for block n
+		- 74 94, angles=225 -30, pwidth=40
+
+panel
+		hide n
+		c: Repeat the last two steps\nuntil all blocks are downloaded
+		- 54 29
+
+panel	
+	- color=#fee
+	hide c, n
+	show u
+
+	u: Umm.. Question --\nWhat happens when\nthe datanode is dead,\nor does not have the data,\nor the data is corrupted ...
+	- 50 30
 	
-	<div class="comic" id="dhcp">
-		define A images/computer2.jpg 34 33 100 20 30
-		define B images/computer2.jpg 34 33 100 10 45
-		define C images/computer2.jpg 34 33 100 20 70
-		define S images/server.png 64 74 50 80 50
-		define T images/server.png 64 74 50 80 24 hidden
-
-		panel 
-			- clear = true, width = 140
-		: Dynamic\nHost\nConfiguration\nProtocol\n(DHCP)
-			- 50 50, type = none
-		
-	
-		panel
-			- width = 200
-		A, B, C: We are hosts
-			- 60 20
-		C: I don't have IP Address :(
-			- 67 85, angle=0
-		: DHCP Server
-			- 80 70, type=rect
-		
-		panel Dhcp discover
-		C to S: DHCP_Discover
-			- 70 90, angles = 0 180 90
-		C to A: DHCP_Discover
-			- 70 90, angles = 0 0 90
-		C to B: DHCP_Discover
-			- 70 90, angles = 0 0 90
-		: Broadcast\nin the subnet
-			- 60 25
-		
-		panel
-		hide C, S
-		A to : 
-		B to :
-		: All other hosts\nwill ignore the discover packet
-			- 52 70
-		
-		panel
-		hide A permanent, B permanent, C
-		move S 80 70 permanent
-		S: Address Table\n192.168.0.1 (used)\n192.168.0.2 (used)\n192.168.0.3 (free)\n192.168.0.4 (free)\n...
-			- 30 50, type = rect, color=#cfc
-		S: I need to find\none free address
-			- 75 20
-		
-		
-		panel DHCP Offer
-		S: Address Table\n192.168.0.3 (offered)
-			- 70 20, type=rect, color=#cfc
-		S: I will mark\nthe address as "offered"
-			- 30 39
-		S to C: DHCP_Offer 192.168.0.3
-			- 50 90
-			
-		panel Dhcp request
-		show A, B
-		C to A:
-			- 0 0, angles = 0 0
-		C to B:
-			- 0 0, angles = 0 0
-		C to S: DHCP_Request 192.168.0.3
-			- 50 90, angles= 0 180 90
-		A to :
-		B to :
-		: Also Broadcast
-			- 70 30
-
-		panel
-		hide C
-		S: Address Table\n192.168.0.1 (used)\n192.168.0.2 (used)\n192.168.0.3 (USED)\n192.168.0.4 (free)\n...
-			- 30 50, type = rect, color=#cfc
-		S: One more\naddress used
-			- 75 20
-		
-		panel DHCP Ack
-		S: Another happy client!\nI will now start a "lease" timer\nbut more on that some other time
-			- 55 35, twidth=20
-		S to C: DHCP_Ack 192.168.0.3
-			- 50 90, angles = 180 0 90
-			
-		panel Two DHCP Servers. Client must select one of them
-			- type=banner, color=#afa
-
-		
-		panel DHCP Discover
-		show T permanent
-		C to T: DHCP_Discover
-			- 70 90
-		C to S: DHCP_Discover
-			- 70 90, angles=0 180 90
-		: Reaches both\nservers
-			- 30 30
-		
-		panel Both select an address each
-		hide C
-		T: Address Table:\n192.168.0.123 (offered)
-			- 35 40, type = rect, color=#cfc
-		S: Address Table:\n192.168.0.3 (offered)
-			- 35 70, type = rect, color=#cfc
-			
-		panel Two offers to the client
-		T to C: DHCP_Offer\n192.168.0.123
-			- 25 30, angles=180 30 0
-		S to C: DHCP_Offer\n192.168.0.3
-			- 55 90, angles=180 -30 90
-
-		panel Client selects one address
-		C: I select\n192.168.0.3
-			- 20 35
-		C to T: DHCP_Request 192.168.0.3
-			- 60 90, angles=20 180 90
-		C to S: DHCP_Request 192.168.0.3
-			- 60 90, angles=-20 180 90
-		
-		panel
-		hide C
-		T: I will put the address\nback in free pool
-			- 28 15, angle=180
-		: Address Table:\n192.168.0.123 (FREE)
-			- 41 33, type = rect, color=#cfc, angle=180
-		S: I will mark the address\nas used
-			- 33 68, angle=180
-		: Address Table:\n192.168.0.3 (USED)
-			- 41 87, type = rect, color=#cfc, angle=180
-		
-		panel
-		S to C: DHCP_Ack 192.168.0.3
-			- 50 90, angles=180 0 90
-done		
-
-
-		say('T', 'Address Table:\n192.168.0.123 (FREE)', 
-			35, 20, {type: 'rect', angles: [0, 180]});
-		say('S', 'Address Table:\n192.168.0.3 (USED)', 
-			35, 50, {type: 'rect', angles: [0, 180]});
-		send('S', "C", "DHCP_Ack 192.168.0.3", 70, 90, {angles: [180, 0, 90]});
+	: Actually, HDFS can very elegantly\nhandle these faults and more\nas we will see next --
+	- 61 82, type=rect, color=#cfc
 
 	</div>
+
+	<div id="hdfs-1" class="comic">
+		define c laptop #fcf smile 15 75
+		define n server yellow smile 80 40
+		define d1 rack orange smile 40 90
+		define d2 rack cyan smile 60 80
+		define d3 rack lime smile 80 90
+		define u images/stickman/sm_010_T.png 37 47 10 85 hidden
+		
+		panel
+			- clear = true, width=-40, color=#faa
+		: Hadoop\nDistributed\nFile\nSystem\n(HDFS)
+			- 50 50, type = none, caps=true
+		
+panel The Cast
+		- width = 260
+		move c 10 75, n 35 75, d1 60 90, d2 75 82, d3 90 90
+		mood c beam, n beam, d1 beam, d2 beam, d3 beam
+		c: People sit in front of me\nand ask me to read/write data
+		- 17 34
+		: There is only ONE of me..
+		- 48 23, type=balloon
+		n: ..and I coordinate\neverything around here
+		- 53 49, merge=true
+		d1, d2, d3: We store data..\n..there are MANY of us\nsometimes even thousands!
+		- 85 36
+		: CLIENT
+		- 9 94, type=rect, color=#cfc
+		: NAMENODE
+		- 35 94, type=rect, color=#cfc
+		: DATANODES
+		- 75 94, type=rect, color=#cfc
+		
+panel Writing Data in HDFS Cluster
+			- type=banner, color=#fcf
+		
+panel Request from User
+			show u
+			hide d1 permanent, d2 permanent, d3 permanent, n permanent
+			move c 85 70
+			: Let's start with writing some data..
+			- 47 23, type=balloon
+			u: Mr. Client, please write\n200 MB data for me
+				- 40 46, merge=true, xshift=10
+			c: It'll be my pleasure.\nBut--
+				- 46 77
+		
+		
+		panel Block and Replication
+		show u
+		move c 20 78, u 70 85
+		mood c rolleyes
+		c: --are you not\nforgetting\nsomething?
+			- 22 35
+		u: Ah yes.. please:\na) divide the data\nin 128MB blocks\nb) copy each block\nin three places
+			- 68 37, xshift=90
+		
+		
+		panel
+		move c 20 78
+		mood c wink
+		c: A good client always knows\nthese two things: 
+			- 56 18, xshift=20
+		: BLOCKSIZE: large file is divided\nin blocks (usually 64 or 128MB)
+			- 54 48, type=rect, color=#fc9
+		: REPLICATION FACTOR:\neach block is stored in\nmultiple locations (usually 3)
+			- 64 81, type=rect, color=#fc9
+		
+
+		panel Divide file into blocks
+		show n
+		move n 41 40
+		hide n
+		: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxxxxxxx
+			- 28 34, type=rect, color=#ccf
+		n: xxxxxxxxxxx\nxxxxxxxxxxx\nxxxxxx
+			- 79 27, type=rect, color=#ccf, twidth=1
+		n: xxxxxxxxxxx\nxxxxxx
+			- 79 54, type=rect, color=#ccf, twidth=1
+		c: First-- I divide the\nbig file into blocks
+		- 57 80
+		
+		panel Ask Namnode
+		show n
+		c: Lets work on\nthe first block\nfirst
+			- 27 32
+		c to n: Mr. Namenode: please help\nme write a 128MB block\nwith replication of 3
+			- 64 83, angles=0 180 90
+		
+		panel Namenode assigns datanodes
+		show n
+		hide c
+		n: Replication 3.. Hmm..\nneed to find 3 datanodes\nfor this client
+		- 30 47
+		n: How do I do that?\nWill tell you some other time
+		- 58 83, style=-
+		
+		panel
+			show n
+			rmove n 10 0
+			n: Here you go buddy..\nAddresses of three datanodes.\nI have also sorted them\nin increasing distance from you
+			- 38 27, xshift=90
+			n to c: Datanode 1, Datanode 2, Datanode 3
+				- 54 91, angles=-90 0 90
+			c: thanks!
+			- 25 55
+
 	
+		panel Client starts writing data
+		show d1 permanent, d2 permanent, d3 permanent
+		c: I send my data to\nfirst datanode only
+			- 35 28, angle=60
+		c to d1:
+			- 0 0, angles=90 90, curvy=40
+		d1: I store the data\nin hard drive, and--
+		- 62 53
+		
+		panel
+		d1: WHILE I am recieving\ndata, I forward the same\ndata to the next datanode
+			- 50 22, xshift=10
+		c to d1:
+			- 0 0, angles=90 120, curvy=40
+		d1 to d2: 
+			- 0 0, angles = 90 120, curvy=40
+			
+	
+	</div>
 
 	<p id="downloadify"></p>
 	<input type="text" name="coord" value="" id="coord">
