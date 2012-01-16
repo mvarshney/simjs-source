@@ -101,7 +101,16 @@ Sim.Queue.prototype.size = function () {
 
 Sim.PQueue = function () {
 	this.data = [];
+	this.order = 0;
 };
+
+Sim.PQueue.prototype.greater = function(ro1, ro2) {
+	if (ro1.deliverAt > ro2.deliverAt) return true;
+	if (ro1.deliverAt == ro2.deliverAt) 
+		return ro1.order > ro2.order;
+	return false;
+};
+
 
 /* Root at index 0
  * Parent (i) = Math.floor((i-1) / 2)
@@ -111,6 +120,7 @@ Sim.PQueue = function () {
 
 Sim.PQueue.prototype.insert = function (ro) {
 	ARG_CHECK(arguments, 1, 1);
+	ro.order = this.order ++;
 	
 	var index = this.data.length;
 	this.data.push(ro);
@@ -122,7 +132,7 @@ Sim.PQueue.prototype.insert = function (ro) {
 	// heap up
 	while (index > 0) {
 		var parentIndex = Math.floor((index - 1) / 2);
-		if (a[parentIndex].deliverAt > ro.deliverAt) {
+		if (this.greater(a[parentIndex], ro)) {
 			a[index] = a[parentIndex];
 			index = parentIndex;
 		} else {
@@ -155,10 +165,10 @@ Sim.PQueue.prototype.remove = function () {
 		var rightChildIndex = 2 * index + 2;
 
 		var smallerChildIndex = rightChildIndex < len 
-		&& a[rightChildIndex].deliverAt < a[leftChildIndex].deliverAt 
+		  && !this.greater(a[rightChildIndex], a[leftChildIndex])
 				? rightChildIndex : leftChildIndex;
 
-		if (a[smallerChildIndex].deliverAt > node.deliverAt) {
+		if (this.greater(a[smallerChildIndex], node)) {
 			break;
 		}
 
@@ -166,7 +176,6 @@ Sim.PQueue.prototype.remove = function () {
 		index = smallerChildIndex;
 	}
 	a[index] = node;
-	
 	return top;
 };
 
