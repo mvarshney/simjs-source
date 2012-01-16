@@ -219,27 +219,16 @@ Sim.prototype.simulate = function (endTime, maxEvents) {
 	return true;
 };
 
-Sim.prototype.runLoop = function () {
+Sim.prototype.step = function () {
 	while (true) {
-		// Get the earliest event
 		var ro = this.queue.remove();
-		
-		// If there are no more events, we are done with simulation here.
-		if (ro == undefined) break;
-
-		// Uh oh.. we are out of time now
-		if (ro.deliverAt > this.endTime) break;
-		
-		// Advance simulation time
-		this.simTime =  ro.deliverAt;
-		
-		// If this event is already cancelled, ignore
+		if (!ro) return false;
+		this.simTime = ro.deliverAt;
 		if (ro.cancelled) continue;
-
 		ro.deliver();
+		break;
 	}
-	
-	this.finalize();
+	return true;
 };
 
 Sim.prototype.finalize = function () {
@@ -409,65 +398,6 @@ Sim.Facility.prototype.useFCFSCallback = function (ro) {
 	ro.deliver();
 	
 }
-
-/***** TO BE REMOVED 
-Sim.Facility.prototype.useFCFSSchedule = function (timestamp) {
-	ARG_CHECK(arguments, 1, 1);
-	
-	while (this.free > 0 && !this.queue.empty()) {
-		var ro = this.queue.shift(timestamp); // TODO
-		if (ro.cancelled) {
-			continue;
-		}
-		for (var i = 0; i < this.freeServers.length; i++) {
-			if (this.freeServers[i]) {
-				this.freeServers[i] = false;
-				ro.msg = i;
-				break;
-			};
-		}
-
-		this.free --;
-		this.busyDuration += ro.duration;
-
-		ro.saved_deliver = ro.deliver;
-		ro.deliver = this.useFCFSCallback;
-		
-		// cancel all other reneging requests
-		ro.cancelRenegeClauses();
-
-		ro.deliverAt = ro.entity.time() + ro.duration;
-		ro.entity.sim.queue.insert(ro);
-	}
-};
-
-Sim.Facility.prototype.useFCFS = function (duration, ro) {
-	ARG_CHECK(arguments, 2, 2);
-	
-	ro.duration = duration;
-	this.stats.enter(ro.entity.time());
-	this.queue.push(ro, ro.entity.time());
-	this.useFCFSSchedule(ro.entity.time());
-};
-
-Sim.Facility.prototype.useFCFSCallback = function () {
-	var ro = this;
-	var facility = ro.source;
-	// We have one more free server
-	facility.free ++;
-	facility.freeServers[ro.msg] = true;
-
-	facility.stats.leave(ro.scheduledAt, ro.deliverAt);
-	
-	// restore the deliver function, and deliver
-	ro.deliver = ro.saved_deliver;
-	delete ro.saved_deliver;
-	ro.deliver();
-	
-	// if there is someone waiting, schedule it now
-	facility.useFCFSSchedule(ro.entity.time());
-};
-****/
 
 Sim.Facility.prototype.useLCFS = function (duration, ro) {
 	ARG_CHECK(arguments, 2, 2);
